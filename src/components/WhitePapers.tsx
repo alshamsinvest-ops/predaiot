@@ -1,12 +1,233 @@
-import React from 'react';
-import { Download, ExternalLink } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Download, ExternalLink, Leaf, Zap, Activity } from 'lucide-react';
+import * as d3 from 'd3';
 
 interface WhitePapersProps {
   locale: 'EN' | 'AR';
 }
 
+function AnimatedCounter({ value, duration = 2000, prefix = '', suffix = '', decimals = 0 }: { value: number, duration?: number, prefix?: string, suffix?: string, decimals?: number }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime: number | null = null;
+    let animationFrame: number;
+    
+    const animate = (time: number) => {
+      if (!startTime) startTime = time;
+      const progress = time - startTime;
+      const percentage = Math.min(progress / duration, 1);
+      
+      // easeOutQuart
+      const easePattern = 1 - Math.pow(1 - percentage, 4);
+      setCount(easePattern * value);
+      
+      if (percentage < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setCount(value);
+      }
+    };
+    
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [value, duration]);
+
+  return <>{prefix}{count.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}{suffix}</>;
+}
+
+const profitData = [
+  { month: 'Jan', value: 52000 },
+  { month: 'Feb', value: 56000 },
+  { month: 'Mar', value: 64000 },
+  { month: 'Apr', value: 71000 },
+  { month: 'May', value: 83000 },
+  { month: 'Jun', value: 91000 },
+  { month: 'Jul', value: 98000 },
+  { month: 'Aug', value: 92000 },
+  { month: 'Sep', value: 81000 },
+  { month: 'Oct', value: 72000 },
+  { month: 'Nov', value: 58000 },
+  { month: 'Dec', value: 44903 }
+];
+
 export default function WhitePapers({ locale }: WhitePapersProps) {
   const isAR = locale === 'AR';
+  const d3Container = useRef<SVGSVGElement | null>(null);
+
+  useEffect(() => {
+    if (!d3Container.current) return;
+    
+    // Clear previous
+    d3.select(d3Container.current).selectAll('*').remove();
+    d3.select('body').selectAll('.d3-chart-tooltip').remove();
+
+    const tooltip = d3.select('body')
+      .append('div')
+      .attr('class', 'd3-chart-tooltip')
+      .style('position', 'absolute')
+      .style('opacity', 0)
+      .style('background', '#18181b') // bg-zinc-900
+      .style('border', '1px solid #3f3f46') // border-zinc-700
+      .style('color', '#fff')
+      .style('padding', '8px 12px')
+      .style('border-radius', '8px')
+      .style('font-family', 'ui-mono, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace')
+      .style('font-size', '12px')
+      .style('pointer-events', 'none')
+      .style('box-shadow', '0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5)')
+      .style('z-index', 50);
+
+    const margin = { top: 20, right: 30, bottom: 40, left: 60 };
+    const width = 800 - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
+
+    const svg = d3.select(d3Container.current)
+      .attr('viewBox', `0 0 800 300`)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Define gradient
+    const defs = svg.append("defs");
+    const gradient = defs.append("linearGradient")
+      .attr("id", "area-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "0%")
+      .attr("y2", "100%");
+
+    gradient.append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "#34d399") // emerald-400
+      .attr("stop-opacity", 0.5);
+
+    gradient.append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#34d399")
+      .attr("stop-opacity", 0);
+
+    const x = d3.scalePoint()
+      .domain(profitData.map(d => d.month))
+      .range([0, width])
+      .padding(0.5);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(profitData, d => d.value) as number * 1.1])
+      .range([height, 0]);
+
+    // X Grid lines
+    svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x)
+        .tickSize(-height)
+        .tickFormat(() => "")
+      )
+      .attr('color', '#27272a') // zinc-800
+      .attr('stroke-opacity', 0.5);
+
+    // Y Grid lines
+    svg.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(y)
+        .ticks(5)
+        .tickSize(-width)
+        .tickFormat(() => "")
+      )
+      .attr('color', '#27272a') // zinc-800
+      .attr('stroke-opacity', 0.5);
+
+    // X Axis
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .attr('color', '#52525b') // zinc-600
+      .selectAll("text")
+      .attr('color', '#a1a1aa') // zinc-400
+      .style('font-family', 'sans-serif')
+      .style('font-size', '12px');
+
+    // Y Axis
+    svg.append('g')
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${(d as number)/1000}k`))
+      .attr('color', '#52525b')
+      .selectAll("text")
+      .attr('color', '#a1a1aa')
+      .style('font-family', 'sans-serif')
+      .style('font-size', '12px');
+
+    // Add Y axis label:
+    svg.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 0 - margin.left + 15)
+      .attr('x', 0 - (height / 2))
+      .attr('dy', '1em')
+      .style('text-anchor', 'middle')
+      .style('fill', '#a1a1aa')
+      .style('font-family', 'sans-serif')
+      .style('font-size', '12px')
+      .text('OMR');
+
+    // Area under line
+    const area = d3.area<{month: string, value: number}>()
+      .x(d => x(d.month) as number)
+      .y0(height)
+      .y1(d => y(d.value))
+      .curve(d3.curveMonotoneX);
+
+    svg.append('path')
+      .datum(profitData)
+      .attr('fill', 'url(#area-gradient)')
+      .attr('opacity', 0.5)
+      .attr('d', area);
+
+    // Line
+    const line = d3.line<{month: string, value: number}>()
+      .x(d => x(d.month) as number)
+      .y(d => y(d.value))
+      .curve(d3.curveMonotoneX);
+
+    svg.append('path')
+      .datum(profitData)
+      .attr('fill', 'none')
+      .attr('stroke', '#34d399') // emerald-400
+      .attr('stroke-width', 3)
+      .attr('d', line);
+
+    // Add points
+    svg.selectAll(".dot")
+      .data(profitData)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => x(d.month) as number)
+      .attr("cy", d => y(d.value))
+      .attr("r", 5)
+      .attr("fill", "#050505")
+      .attr("stroke", "#34d399")
+      .attr("stroke-width", 2)
+      .style("cursor", "pointer")
+      .on("mouseover", function(event, d) {
+        d3.select(this).attr("r", 8).attr("fill", "#34d399");
+        tooltip.transition().duration(200).style('opacity', 1);
+        tooltip.html(`
+          <div style="font-weight: bold; color: #a1a1aa; margin-bottom: 4px; font-size: 10px; text-transform: uppercase;">${d.month} 2026</div>
+          <div style="color: #34d399; font-size: 14px; font-weight: bold;">${d.value.toLocaleString()} OMR</div>
+        `);
+      })
+      .on("mousemove", function(event) {
+        tooltip
+          .style('left', (event.pageX + 15) + 'px')
+          .style('top', (event.pageY - 20) + 'px');
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("r", 5).attr("fill", "#050505");
+        tooltip.transition().duration(200).style('opacity', 0);
+      });
+
+    return () => {
+      d3.select('body').selectAll('.d3-chart-tooltip').remove();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-zinc-950 py-20 px-6 font-sans">
@@ -84,6 +305,76 @@ export default function WhitePapers({ locale }: WhitePapersProps) {
               <span>{isAR ? 'اقرأ الـ Use Case الرسمي' : 'Read Official Use Case'}</span>
               <ExternalLink className="w-5 h-5 flex-shrink-0" />
             </a>
+          </div>
+        </div>
+
+        {/* D3 Chart Section */}
+        <div className="mt-16 bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-emerald-500/50 transition-all">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-white mb-2 leading-tight">
+              {isAR ? 'توقع الأرباح المستردة على مدار 12 شهراً (مشروع مسقط 500MW)' : 'Projected Recovered Profits (12 Months, Muscat 500MW Installation)'}
+            </h3>
+            <p className="text-sm text-zinc-400 max-w-3xl">
+              {isAR 
+                ? 'يوضح هذا الرسم البياني التراكم الشهري للقيمة الاقتصادية أو "الأموال المستردة" التي يتم استعادتها بواسطة خوارزميات PREDAIOT، بمتوسط تسارع سنوي يصل إلى أكثر من 862 ألف ريال عماني من الأرباح المكتشفة.'
+                : 'This chart illustrates the monthly compounding of economic value or "Found Money" recovered by PREDAIOT algorithms, projecting an accelerated total exceeding 862K OMR in unlocked annual returns.'}
+            </p>
+          </div>
+          
+          <div className="w-full overflow-hidden bg-black/40 rounded-2xl border border-zinc-800/50 p-4 relative">
+            {/* Simple tooltip target area */}
+            <svg ref={d3Container} className="w-full h-auto drop-shadow-xl" style={{ maxHeight: '400px' }} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            <div className="bg-black/40 border border-zinc-800/50 rounded-2xl p-6 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                 <Leaf className="w-16 h-16 text-emerald-400" />
+              </div>
+              <p className="text-xs text-zinc-500 uppercase tracking-wider font-mono font-bold mb-1">
+                {isAR ? 'معيار تعويض الكربون' : 'Carbon Offset Metric'}
+              </p>
+               <div className="text-3xl font-bold text-white font-mono flex items-baseline focus-within:ring-0">
+                 <AnimatedCounter value={125430} />
+                 <span className="text-sm text-zinc-500 ml-1">kg</span>
+               </div>
+               <p className="text-xs text-emerald-400 mt-2 font-medium">
+                 {isAR ? 'تخفيض ثاني أكسيد الكربون عبر كبح تشغيل الديزل' : 'CO2 reduced via diesel startup suppression'}
+               </p>
+            </div>
+
+            <div className="bg-black/40 border border-zinc-800/50 rounded-2xl p-6 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                 <Activity className="w-16 h-16 text-emerald-400" />
+              </div>
+              <p className="text-xs text-zinc-500 uppercase tracking-wider font-mono font-bold mb-1">
+                {isAR ? 'كفاءة استقرار الشبكة' : 'Grid Stabilization Efficiency'}
+              </p>
+               <div className="text-3xl font-bold text-white font-mono flex items-baseline">
+                 <AnimatedCounter value={99.8} decimals={1} />
+                 <span className="text-sm text-zinc-500 ml-1">%</span>
+               </div>
+               <p className="text-xs text-emerald-400 mt-2 font-medium">
+                 {isAR ? 'رقم قياسي للتردد المتماسك خلال الذروة' : 'Consistent frequency record during peak window'}
+               </p>
+            </div>
+            
+            <div className="bg-black/40 border border-zinc-800/50 rounded-2xl p-6 relative overflow-hidden group md:col-span-2 lg:col-span-1">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                 <Zap className="w-16 h-16 text-emerald-400" />
+              </div>
+              <p className="text-xs text-zinc-500 uppercase tracking-wider font-mono font-bold mb-1">
+                {isAR ? 'حماية تدهور البطارية' : 'Circular Battery Protection'}
+              </p>
+               <div className="text-3xl font-bold text-emerald-400 font-mono flex items-baseline">
+                 <span className="text-xl mr-0.5">+</span>
+                 <AnimatedCounter value={14.2} decimals={1} />
+                 <span className="text-sm text-emerald-500/50 ml-1">%</span>
+               </div>
+               <p className="text-xs text-emerald-400 mt-2 font-medium">
+                 {isAR ? 'تحسين دورة التدهور مقارنة بالجدول اليدوي' : 'Degradation cycle improvement vs. static schedule'}
+               </p>
+            </div>
           </div>
         </div>
 

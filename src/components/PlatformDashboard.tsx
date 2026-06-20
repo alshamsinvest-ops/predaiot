@@ -8,6 +8,7 @@ import {
 
 export default function PlatformDashboard() {
   const [activeTab, setActiveTab2] = useState<'OVERVIEW' | 'ASSETS' | 'SIMULATION' | 'RECOMMENDATIONS' | 'SETTINGS' | 'METHODOLOGY'>('OVERVIEW');
+  const [selectedAssetType, setSelectedAssetType] = useState<'Utility Scale Solar' | 'BESS' | 'Wind Farms'>('BESS');
   const [chargingWindow, setChargingWindow] = useState<'STANDARD' | 'OPTIMIZED'>('STANDARD');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSimulatingCycle, setIsSimulatingCycle] = useState<boolean>(false);
@@ -282,8 +283,26 @@ export default function PlatformDashboard() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
               Economic Intelligence Portal
             </h1>
+            <div className="mt-4 mb-3 flex flex-wrap items-center gap-3">
+              <span className="text-[10px] text-white/50 uppercase tracking-widest font-mono">Asset Type:</span>
+              <div className="flex flex-wrap bg-[#050505] border border-white/10 rounded-full p-1 shadow-inner">
+                {(['Utility Scale Solar', 'BESS', 'Wind Farms'] as const).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setSelectedAssetType(type)}
+                    className={`px-4 py-1.5 rounded-full text-[11px] font-semibold transition-all ${
+                      selectedAssetType === type 
+                        ? 'bg-white/10 text-emerald-400 border border-white/5 shadow-sm' 
+                        : 'text-white/40 hover:text-white/80 hover:bg-white/5'
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
             <p className="text-xs text-white/50 font-sans mt-1">
-              Muscat Grid Regional Node portfolio control: <strong className="text-white/80 font-mono">OPWP_Asset_Block4_BESS</strong>
+              Muscat Grid Regional Node portfolio control: <strong className="text-white/80 font-mono">OPWP_Asset_Block4_{selectedAssetType.replace(/\s+/g, '_').toUpperCase()}</strong>
             </p>
           </div>
 
