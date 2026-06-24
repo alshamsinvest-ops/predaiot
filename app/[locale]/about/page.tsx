@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
 import { Section, PageHeader, Card } from "@/components/ui";
 import IndustrialImage from "@/components/IndustrialImage";
+import FounderPhoto from "@/components/FounderPhoto";
 import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import { COMPANY } from "@/lib/constants";
@@ -29,9 +30,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <Section className="py-8">
         <div className="grid items-start gap-8 lg:grid-cols-[1fr_1.4fr]">
           <Card>
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-secondary/15 font-display text-2xl font-extrabold text-secondary">
-              CM
-            </div>
+            <FounderPhoto />
             <h2 className="mt-4 font-display text-xl font-bold">{t("founderName")}</h2>
             <p className="text-sm text-secondary">{t("founderRole")}</p>
             <ul className="mt-4 space-y-2 text-sm text-ink-muted">
