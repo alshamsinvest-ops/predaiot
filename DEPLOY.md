@@ -69,7 +69,33 @@ curl https://<cloud-run-url>/api/health           # {"ok":true}
 # the WhatsApp ping to +968 7411 4028, and a Copilot reply.
 ```
 
-## CI
-`.github/workflows/ci.yml` runs typecheck + `next build` on every push/PR so the
-branch is always known-deployable. It does **not** deploy (no credentials in CI by
-default); add a deploy job with `FIREBASE_TOKEN` / Workload Identity when ready.
+## CI / CD (GitHub Actions)
+
+- **`.github/workflows/ci.yml`** — typecheck + `next build` on every push/PR, so the
+  branch is always known-deployable. No credentials, no deploy.
+- **`.github/workflows/deploy.yml`** — auto-deploys on **push to `main`** (or manual
+  *Run workflow*): builds the API image → Artifact Registry → Cloud Run, captures the
+  API URL, then builds the Next.js app with that URL and runs
+  `firebase deploy --only hosting,firestore:rules,storage`.
+
+### Required GitHub repository secrets
+Set these in **Settings → Secrets and variables → Actions** before the first deploy.
+
+| Secret | Purpose |
+|--------|---------|
+| `GCP_SA_KEY` | Service-account JSON. Roles: Cloud Run Admin, Cloud Build Editor, Artifact Registry Writer, Firebase Hosting Admin, Cloud Datastore (Firestore) Index/Rules, Service Account User. |
+| `ANTHROPIC_API_KEY` | Copilot (Claude). |
+| `AIRTABLE_API_KEY` | CRM writes. |
+| `RESEND_API_KEY` | Email. |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_NUMBER` | WhatsApp. |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` … `_APP_ID` | Firebase web config (build-time). |
+| `NEXT_PUBLIC_GOOGLE_CALENDAR_URL` | Booking embed (optional). |
+| `FIREBASE_ADMIN_CLIENT_EMAIL`, `FIREBASE_ADMIN_PRIVATE_KEY` | Server session route (runtime). |
+
+> **One-time bootstrap (you):** the project, enabled APIs, Auth providers, Firestore,
+> Storage, and the custom domain (steps 0 & 4 above) still require your account.
+> After that, every push to `main` ships automatically.
+>
+> For keyless auth, replace `credentials_json` in `deploy.yml` with
+> `workload_identity_provider` + `service_account` (Workload Identity Federation).
+
