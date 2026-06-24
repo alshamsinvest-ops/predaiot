@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Mail, Phone, MapPin, Zap, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import { COMPANY } from "@/lib/constants";
 
 export default function Footer() {
@@ -30,9 +31,8 @@ export default function Footer() {
     <footer className="border-t border-white/10 bg-primary-900">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-4">
         <div>
-          <Link href="/" className="flex items-center gap-2 font-display text-lg font-extrabold">
-            <Zap className="h-5 w-5 text-accent" />
-            PREDAIOT
+          <Link href="/" className="flex items-center" aria-label="PREDAIOT home">
+            <BrandLogo className="h-9 w-auto" />
           </Link>
           <p className="mt-3 text-sm text-ink-muted">{t("footer.tagline")}</p>
           <ul className="mt-4 space-y-2 text-sm text-ink-muted">

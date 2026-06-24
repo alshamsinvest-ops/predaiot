@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import LanguageToggle from "./LanguageToggle";
+import BrandLogo from "@/components/BrandLogo";
 import { LinkButton } from "@/components/ui";
 
 const NAV = [
@@ -25,9 +26,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-900/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2 font-display text-lg font-extrabold">
-          <Zap className="h-5 w-5 text-accent" />
-          PREDAIOT
+        <Link href="/" className="flex items-center" aria-label="PREDAIOT home">
+          <BrandLogo className="h-8 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">

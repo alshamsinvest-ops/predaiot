@@ -29,7 +29,7 @@ export const COMPANY = {
   phoneE164: "+96874114028",
   whatsappNumber: "96874114028",
   location: "Muscat, Sultanate of Oman",
-  linkedin: "https://www.linkedin.com/company/predaiot",
+  linkedin: "https://www.linkedin.com/in/chams-eddine-madi-74b407379/",
 } as const;
 
 /** PRIMARY economic figures — homepage hero, case study, audit defaults. */
