@@ -1,10 +1,11 @@
 /**
- * Client → Express backend (Path C hybrid).
- * In dev the API runs on its own port; in prod set NEXT_PUBLIC_API_URL to the
- * deployed backend (or a Firebase Hosting rewrite target).
+ * API base URL.
+ * Default is "" (same-origin) so the app uses Next.js route handlers under
+ * /api/* — works out of the box on Vercel as a single deployment.
+ * Set NEXT_PUBLIC_API_URL to point at a standalone Express backend instead
+ * (the Path C hybrid: e.g. http://localhost:8787 in dev, or a Cloud Run URL).
  */
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
 export async function apiPost<T = unknown>(
   path: string,
