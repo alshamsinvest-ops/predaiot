@@ -1,0 +1,50 @@
+# Firebase App Hosting — Next.js 16 frontend.
+# Used if you deploy the web app via App Hosting (recommended for Next.js).
+# Secrets are referenced from Cloud Secret Manager; set them with:
+#   firebase apphosting:secrets:set <NAME>
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  # Public (available at build + runtime in the browser)
+  - variable: NEXT_PUBLIC_API_URL
+    value: "https://predaiot-api-REGION-PROJECT.run.app"  # Cloud Run API URL
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_GOOGLE_CALENDAR_URL
+    value: ""
+    availability: [BUILD, RUNTIME]
+
+  # Firebase web config (public)
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: NEXT_PUBLIC_FIREBASE_API_KEY
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "preda-iot.firebaseapp.com"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "predaiot"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "predaiot.appspot.com"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    secret: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    secret: NEXT_PUBLIC_FIREBASE_APP_ID
+    availability: [BUILD, RUNTIME]
+
+  # Firebase Admin (server-only — used by /api/auth/session)
+  - variable: FIREBASE_ADMIN_PROJECT_ID
+    value: "predaiot"
+    availability: [RUNTIME]
+  - variable: FIREBASE_ADMIN_CLIENT_EMAIL
+    secret: FIREBASE_ADMIN_CLIENT_EMAIL
+    availability: [RUNTIME]
+  - variable: FIREBASE_ADMIN_PRIVATE_KEY
+    secret: FIREBASE_ADMIN_PRIVATE_KEY
+    availability: [RUNTIME]

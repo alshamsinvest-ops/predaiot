@@ -5,15 +5,6 @@
     "frameworksBackend": {
       "region": "europe-west1"
     },
-    "rewrites": [
-      {
-        "source": "/api/**",
-        "run": {
-          "serviceId": "predaiot-api",
-          "region": "europe-west1"
-        }
-      }
-    ],
     "headers": [
       {
         "source": "**",

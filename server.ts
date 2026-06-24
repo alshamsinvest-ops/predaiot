@@ -31,7 +31,8 @@ import { estimateValue } from "./lib/value";
 dotenv.config({ path: ".env.local" });
 dotenv.config();
 
-const PORT = Number(process.env.API_PORT || 8787);
+// Cloud Run injects PORT; fall back to API_PORT for local dev.
+const PORT = Number(process.env.PORT || process.env.API_PORT || 8787);
 const app = express();
 app.use(express.json());
 
