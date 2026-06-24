@@ -32,6 +32,10 @@ export const metadata: Metadata = {
     template: `%s · ${COMPANY.name}`,
   },
   description: COMPANY.legalTagline,
+  icons: {
+    icon: [{ url: "/brand/favicon.png", type: "image/png" }],
+    apple: "/brand/favicon.png",
+  },
 };
 
 export default async function LocaleLayout({

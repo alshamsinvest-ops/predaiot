@@ -32,7 +32,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-4">
         <div>
           <Link href="/" className="flex items-center" aria-label="PREDAIOT home">
-            <BrandLogo className="h-9 w-auto" />
+            <BrandLogo imgClassName="h-9 w-auto" />
           </Link>
           <p className="mt-3 text-sm text-ink-muted">{t("footer.tagline")}</p>
           <ul className="mt-4 space-y-2 text-sm text-ink-muted">
