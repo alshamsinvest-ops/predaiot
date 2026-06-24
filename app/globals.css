@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette */
+  --color-primary: #071a2f;
+  --color-primary-50: #0b2540;
+  --color-primary-700: #061528;
+  --color-primary-900: #04101f;
+  --color-secondary: #00b2ff;
+  --color-accent: #00e676;
+
+  --color-ink: #e8eef6;
+  --color-ink-muted: #93a4ba;
+  --color-line: rgba(255, 255, 255, 0.08);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter-tight), var(--font-inter), sans-serif;
+
+  --animate-fade-up: fade-up 0.6s ease-out forwards;
+  --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
+  --animate-ticker: ticker 1s steps(1) infinite;
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-primary-900);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* RTL-aware containers handled via logical properties + dir attribute */
+[dir="rtl"] {
+  text-align: right;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Premium industrial-AI surfaces */
+.surface {
+  background: linear-gradient(180deg, rgba(11, 37, 64, 0.6) 0%, rgba(4, 16, 31, 0.6) 100%);
+  border: 1px solid var(--color-line);
+  backdrop-filter: blur(8px);
+}
+
+.navy-overlay {
+  position: relative;
+}
+.navy-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7, 26, 47, 0.72) 0%, rgba(4, 16, 31, 0.92) 100%);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 0 1px rgba(0, 178, 255, 0.25), 0 12px 48px -12px rgba(0, 178, 255, 0.45);
+}
+.glow-accent {
+  box-shadow: 0 0 0 1px rgba(0, 230, 118, 0.25), 0 12px 48px -12px rgba(0, 230, 118, 0.45);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 178, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 178, 255, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-primary-900);
+}

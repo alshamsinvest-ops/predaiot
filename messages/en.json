@@ -1,0 +1,261 @@
+{
+  "nav": {
+    "home": "Home",
+    "audit": "Economic Audit",
+    "bess": "BESS",
+    "solar": "Solar + Storage",
+    "technology": "Technology",
+    "industries": "Industries",
+    "pricing": "Pricing",
+    "cases": "Cases",
+    "papers": "White Papers",
+    "investors": "Investors",
+    "about": "About",
+    "contact": "Contact",
+    "security": "Security",
+    "privacy": "Privacy",
+    "portal": "Client Portal",
+    "login": "Sign in",
+    "more": "More"
+  },
+  "common": {
+    "startDiagnostic": "Start My Free 7-Day Diagnostic",
+    "bookCall": "Book Strategy Call",
+    "talkExpert": "Talk to an Expert",
+    "whatsapp": "WhatsApp",
+    "continueGoogle": "Continue with Google",
+    "illustrative": "illustrative interface",
+    "omr": "OMR",
+    "usd": "USD",
+    "learnMore": "Learn more",
+    "getStarted": "Get started",
+    "contactSales": "Contact Sales",
+    "perYear": "per year",
+    "loading": "Working…",
+    "send": "Send",
+    "poweredByClaude": "Powered by Claude",
+    "vision2040": "Aligned with Oman Vision 2040"
+  },
+  "hero": {
+    "headline": "Every Asset Produces Energy. PREDAIOT Ensures It Produces Value.",
+    "subhead": "Identify hidden economic losses, optimize dispatch decisions, and recover untapped value across solar, battery, and industrial energy assets — built on Oman's own market data.",
+    "dash": {
+      "soc": "Battery SOC",
+      "score": "Economic Efficiency Score",
+      "recovery": "Revenue Recovery"
+    }
+  },
+  "leak": {
+    "kicker": "Free 7-Day Leak Test",
+    "headline": "We'll Find Your Leak in 7 Days — Free. No Catch.",
+    "sub": "A free diagnostic of your asset's economic performance, scaled from Oman's published market data.",
+    "name": "Full name",
+    "email": "Work email",
+    "phone": "Phone / WhatsApp",
+    "company": "Company",
+    "assetType": "Asset type",
+    "capacity": "Capacity (MW)",
+    "upload": "Upload data (CSV/Excel, max 10MB)",
+    "uploadHint": "Optional — telemetry or dispatch logs. We never execute uploaded files.",
+    "noData": "I don't have data yet",
+    "noDataHint": "We'll show an illustrative result scaled from the 862,903 OMR / 500 MW benchmark.",
+    "submit": "Run my free Leak Test",
+    "registerWhatsapp": "Register via WhatsApp instead",
+    "guaranteeTitle": "Our written guarantee",
+    "resultTitle": "Your illustrative Leak Test result",
+    "resultIllustrative": "Illustrative estimate — scaled linearly from PREDAIOT's published 862,903 OMR / 500 MW benchmark. Your real diagnostic uses your own 8,760-hour data.",
+    "resultRecovery": "Estimated annual recoverable value",
+    "resultRange": "Profitability uplift, zero CAPEX",
+    "shareWhatsapp": "Share on WhatsApp",
+    "promoTitle": "Founder's offer",
+    "countdownEnds": "Offer window closes in",
+    "clientsClaimed": "of 10 founding slots claimed",
+    "thanks": "Thank you — your Leak Test request is in.",
+    "thanksBody": "We'll send your result via WhatsApp and email within 7 days.",
+    "rateLimited": "You've already requested a Leak Test in the last 30 days. We'll be in touch.",
+    "days": "days",
+    "hours": "hrs",
+    "minutes": "min",
+    "seconds": "sec"
+  },
+  "home": {
+    "problemKicker": "The Economic Decision Gap",
+    "problemTitle": "Technically optimized. Economically leaking.",
+    "problemBody": "Most energy assets are tuned for technical performance — availability, uptime, round-trip efficiency. Almost none are tuned for economic dispatch against live market prices. That gap is where value quietly leaks.",
+    "solutionTitle": "PREDAIOT closes the gap",
+    "solutionBody": "Our Shadow Economic Engine replays your asset against Oman's real market signals — System Marginal Price, scarcity pricing, dispatch windows — to find recoverable value with zero CAPEX.",
+    "howTitle": "How it works",
+    "how1Title": "1. Free 7-Day Leak Test",
+    "how1Body": "Share basic asset details. We benchmark your economic efficiency against published Oman market data.",
+    "how2Title": "2. Economic Audit",
+    "how2Body": "A full 8,760-hour analysis of your asset, delivered in 7 days with a recoverable-value report.",
+    "how3Title": "3. Pilot & Deployment",
+    "how3Body": "90-day shadow-mode pilot, then revenue-share deployment with zero upfront cost.",
+    "modulesTitle": "Product modules",
+    "trustTitle": "Real traction",
+    "trustSub": "We only show what's real. Pre-revenue, pre-seed — and moving.",
+    "ctaTitle": "Find out what your asset is leaving on the table.",
+    "ctaBody": "Free for 7 days, with a written guarantee."
+  },
+  "audit": {
+    "title": "Economic Audit",
+    "lead": "Start with the free 7-Day Leak Test. Upgrade to a full audit only if we find value.",
+    "tiersTitle": "Choose your depth",
+    "free": "Free 7-Day Leak Test",
+    "freeDesc": "Economic efficiency benchmark with a written 5% guarantee.",
+    "auditTier": "Economic Audit",
+    "auditDesc": "Full 8,760-hour analysis, 7-day delivery, recoverable-value report.",
+    "pilot": "Pilot Program",
+    "pilotDesc": "90-day shadow-mode pilot running alongside your operations.",
+    "deployment": "Deployment",
+    "deploymentDesc": "Revenue-share, zero upfront. We earn only when you recover value.",
+    "promoNote": "50% off the full audit — first 10 clients or within 14 days."
+  },
+  "pricing": {
+    "title": "Pricing",
+    "lead": "Transparent, in OMR. USD shown as an indicative secondary.",
+    "from": "from",
+    "freeName": "Free 7-Day Leak Test",
+    "freeLine": "0 OMR — with written guarantee",
+    "auditName": "Economic Audit",
+    "auditLine": "7-day delivery · 8,760-hour analysis",
+    "pilotName": "Pilot Program",
+    "pilotLine": "90-day shadow-mode",
+    "deployName": "Deployment",
+    "deployLine": "40% PREDAIOT / 60% client revenue share · zero upfront",
+    "enterpriseName": "Enterprise / Utilities",
+    "enterpriseLine": "Custom scope for grid-scale portfolios"
+  },
+  "bess": {
+    "title": "BESS Economic Optimization",
+    "lead": "Your battery is technically healthy. Is it economically optimal?",
+    "p1Title": "Technical efficiency ≠ economic value",
+    "p1Body": "A battery can hit 95% round-trip efficiency and still dispatch at the wrong hours. Economic optimization aligns charge/discharge with market price signals.",
+    "leversTitle": "Where value is recovered",
+    "lever1": "Price-aware dispatch against System Marginal Price",
+    "lever2": "Scarcity-window capture",
+    "lever3": "Degradation-aware cycling",
+    "lever4": "Ancillary vs. energy arbitrage trade-offs"
+  },
+  "solar": {
+    "title": "Solar + Storage",
+    "lead": "Stack solar generation with storage economics for compounding value.",
+    "body": "Solar assets paired with storage unlock arbitrage and curtailment-recovery value. PREDAIOT models the combined economic envelope against Oman market data."
+  },
+  "technology": {
+    "title": "Architecture",
+    "lead": "The Shadow Economic Engine — how we turn public market data into recoverable value.",
+    "pipelineTitle": "Data pipeline",
+    "pipelineBody": "Ingest asset telemetry → align with Oman market signals (SMP, scarcity) → replay dispatch → quantify the economic gap.",
+    "secondaryTitle": "Smaller asset class — simulation",
+    "secondaryLabel": "Peak-case internal simulation — smaller asset class"
+  },
+  "industries": {
+    "title": "Industries we serve",
+    "lead": "Six verticals where economic dispatch decisions move real money.",
+    "utilities": "Utilities",
+    "utilitiesDesc": "Grid-scale dispatch economics and portfolio optimization.",
+    "solar": "Solar",
+    "solarDesc": "Curtailment recovery and price-aware generation.",
+    "bess": "BESS",
+    "bessDesc": "Battery arbitrage and degradation-aware cycling.",
+    "industrial": "Industrial",
+    "industrialDesc": "Load-shifting and on-site generation economics.",
+    "oilgas": "Oil & Gas",
+    "oilgasDesc": "Power-cost optimization for energy-intensive operations.",
+    "infrastructure": "Infrastructure",
+    "infrastructureDesc": "Long-horizon asset economic planning."
+  },
+  "security": {
+    "title": "Security",
+    "lead": "Your data is treated as confidential operational telemetry.",
+    "items": {
+      "https": "HTTPS enforced end-to-end, no mixed content.",
+      "auth": "Firebase Authentication manages session tokens and CSRF protection.",
+      "uploads": "Uploads are validated server-side (CSV/Excel only, ≤10MB, schema-checked, macros rejected) and never executed.",
+      "rules": "Firestore rules ensure users can only read and write their own data.",
+      "encryption": "Uploaded telemetry is encrypted at rest in Firebase Storage with strict access rules.",
+      "audit": "Every data-access event is logged with user, action, and timestamp."
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lead": "Aligned with Oman's Personal Data Protection Law (Royal Decree 6/2022)."
+  },
+  "cases": {
+    "title": "Case Study & Traction",
+    "simKicker": "Simulation case study",
+    "simLabel": "Illustrative — published methodology, not a live client deployment",
+    "simTitle": "862,903 OMR recovered per 500 MW asset",
+    "simBody": "Using PREDAIOT's published methodology on Oman's National Open Data Portal, a 500 MW asset shows 862,903 OMR in additional annual revenue — a 9.1%–15% profitability increase with zero CAPEX.",
+    "tractionTitle": "Real traction"
+  },
+  "papers": {
+    "title": "White Papers",
+    "lead": "Gated research. Tell us where to send it.",
+    "gate": "Enter your email to receive the download link.",
+    "download": "Send me the paper",
+    "paper1Title": "The Hidden Economic Opportunity in Oman's Energy Transition",
+    "paper1Desc": "How published Oman market data reveals recoverable value across energy assets."
+  },
+  "investors": {
+    "title": "Investors",
+    "lead": "Pre-seed. Real traction only — no inflated claims.",
+    "stage": "Stage: Pre-revenue, pre-seed",
+    "contact": "Request the investor brief",
+    "gate": "Sign in to request the confidential investor brief."
+  },
+  "about": {
+    "title": "About PREDAIOT",
+    "founderName": "Chams Eddine Madi",
+    "founderRole": "Founder & CEO",
+    "founderBio": "Chams Eddine Madi founded PREDAIOT to close the economic decision gap in energy assets — turning Oman's own published market data into recoverable value for operators across the GCC.",
+    "mission": "Our mission",
+    "missionBody": "Every asset produces energy. We make sure it produces value."
+  },
+  "contact": {
+    "title": "Contact",
+    "lead": "Book a call, send a message, or register via WhatsApp.",
+    "name": "Full name",
+    "email": "Email",
+    "company": "Company",
+    "message": "Message",
+    "send": "Send message",
+    "book": "Book a strategy call",
+    "bookHint": "Pick a real slot on the founder's calendar.",
+    "registerWhatsapp": "Register via WhatsApp",
+    "thanks": "Thanks — we'll be in touch shortly."
+  },
+  "portal": {
+    "title": "Client Portal",
+    "lead": "Sign in to manage your assets and uploads.",
+    "signedInAs": "Signed in as",
+    "uploadTitle": "Upload telemetry",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "title": "Sign in to PREDAIOT",
+    "google": "Continue with Google",
+    "or": "or",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "register": "Create account",
+    "toggleRegister": "Need an account? Register",
+    "toggleSignIn": "Have an account? Sign in"
+  },
+  "copilot": {
+    "title": "PREDAIOT Copilot",
+    "placeholder": "Ask about economic dispatch, BESS, or the free diagnostic…",
+    "intro": "Hi — I'm the PREDAIOT Copilot. Ask me about economic dispatch optimization or how the free diagnostic works.",
+    "open": "Open Copilot"
+  },
+  "footer": {
+    "tagline": "Economic Decision Intelligence for Energy Assets",
+    "company": "Company",
+    "product": "Product",
+    "legal": "Legal",
+    "rights": "All rights reserved.",
+    "preSeed": "Pre-revenue · Pre-seed · Muscat, Oman"
+  }
+}
