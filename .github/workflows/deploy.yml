@@ -1,0 +1,104 @@
+name: Deploy
+
+# Auto-deploys on push to main, or on manual dispatch.
+# Develop on feature branches; merge to main to ship.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+env:
+  GCP_PROJECT: predaiot
+  GCP_REGION: europe-west1
+  API_SERVICE: predaiot-api
+  AR_REPO: predaiot
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      # ---- Authenticate to Google Cloud ----
+      # Provide GCP_SA_KEY (service-account JSON) OR configure Workload Identity
+      # Federation and swap in workload_identity_provider/service_account.
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      # ---- Build & push the API image, then deploy to Cloud Run ----
+      - name: Ensure Artifact Registry repo
+        run: |
+          gcloud artifacts repositories create "$AR_REPO" \
+            --repository-format=docker --location="$GCP_REGION" \
+            --project="$GCP_PROJECT" 2>/dev/null || true
+          gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build & push API image
+        run: |
+          IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/${AR_REPO}/api:${GITHUB_SHA}"
+          docker build -f Dockerfile.api -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Deploy API to Cloud Run
+        run: |
+          gcloud run deploy "$API_SERVICE" \
+            --image "$IMAGE" \
+            --region "$GCP_REGION" \
+            --project "$GCP_PROJECT" \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --set-env-vars "CORS_ORIGINS=https://preda-iot.com,AIRTABLE_BASE_ID=appeUbnHpGamghy8q,AIRTABLE_TABLE_ID=tbl6r1kqhvRN4IDgI" \
+            --update-env-vars "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }},AIRTABLE_API_KEY=${{ secrets.AIRTABLE_API_KEY }},RESEND_API_KEY=${{ secrets.RESEND_API_KEY }},TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }},TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }},TWILIO_WHATSAPP_NUMBER=${{ secrets.TWILIO_WHATSAPP_NUMBER }}"
+
+      - name: Capture API URL
+        run: |
+          API_URL=$(gcloud run services describe "$API_SERVICE" \
+            --region "$GCP_REGION" --project "$GCP_PROJECT" \
+            --format='value(status.url)')
+          echo "Cloud Run API: $API_URL"
+          echo "API_URL=$API_URL" >> "$GITHUB_ENV"
+
+      # ---- Build & deploy the Next.js frontend + rules to Firebase ----
+      - name: Install web deps
+        run: npm ci --no-audit --no-fund
+
+      - name: Build Next.js
+        env:
+          NEXT_PUBLIC_API_URL: ${{ env.API_URL }}
+          NEXT_PUBLIC_GOOGLE_CALENDAR_URL: ${{ secrets.NEXT_PUBLIC_GOOGLE_CALENDAR_URL }}
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+        run: npm run build
+
+      - name: Deploy to Firebase (Hosting + rules)
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
+          # Runtime env injected into the Next.js SSR backend (session route):
+          FIREBASE_ADMIN_PROJECT_ID: ${{ env.GCP_PROJECT }}
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+        run: |
+          npm i -g firebase-tools
+          firebase deploy \
+            --only hosting,firestore:rules,storage \
+            --project "$GCP_PROJECT" \
+            --non-interactive

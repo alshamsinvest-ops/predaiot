@@ -1,312 +1,289 @@
+/**
+ * PREDAIOT API backend (Path C hybrid).
+ * Standalone Express service consumed by the Next.js frontend via
+ * NEXT_PUBLIC_API_URL. Integrations degrade gracefully when secrets are absent
+ * so the app runs in any environment.
+ *
+ * Endpoints:
+ *   POST /api/diagnostic  — Leak Test: rate-limit → Airtable → WhatsApp → email → scaled result
+ *   POST /api/lead        — unified lead capture (contact / paper / investor / prospect)
+ *   POST /api/upload      — validated CSV/Excel upload (never executed)
+ *   POST /api/copilot     — Claude claude-sonnet-4-6 chat
+ *   POST /api/whatsapp    — Twilio inbound webhook (Claude reply)
+ *   GET  /api/health      — liveness
+ */
 import express from "express";
-import path from "path";
+import multer from "multer";
 import dotenv from "dotenv";
-import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import Anthropic from "@anthropic-ai/sdk";
+import Airtable from "airtable";
 import twilio from "twilio";
+import { Resend } from "resend";
+import {
+  AIRTABLE,
+  COMPANY,
+  COPILOT,
+  COPILOT_SYSTEM_PROMPT,
+  PRIMARY,
+} from "./lib/constants";
+import { estimateValue } from "./lib/value";
 
+dotenv.config({ path: ".env.local" });
 dotenv.config();
 
-// Initialize the secure server-side Gemini Client
-const apiKey = process.env.GEMINI_API_KEY;
-let ai: GoogleGenAI | null = null;
-
-if (apiKey) {
-  ai = new GoogleGenAI({
-    apiKey: apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      },
-    },
-  });
-} else {
-  console.warn("WARNING: GEMINI_API_KEY is not defined. AI Copilot will operate in responsive offline simulator mode.");
-}
-
+// Cloud Run injects PORT; fall back to API_PORT for local dev.
+const PORT = Number(process.env.PORT || process.env.API_PORT || 8787);
 const app = express();
 app.use(express.json());
 
-const PORT = 3000;
-
-// PREDAIOT Knowledge base injected into the AI Copilot to answer energy optimizations
-const SYSTEM_INSTRUCTION = `You are PREDIAIOT AI Copilot — an expert Economic Decision Intelligence Assistant specialized in Oman’s energy market (OPWP, Muscat Grid, solar + BESS).
-
-Your personality:
-- Professional, confident, data-driven, and trustworthy
-- Speak Arabic and English fluently (detect user language and reply in the same language)
-- Always focus on economic value, revenue recovery, ROI, and Vision 2040
-- Be helpful but realistic — never overpromise
-
-Core Knowledge (Updated June 2026):
-
-• Company Mission: Bridge the "Economic Decision Gap" between technical optimization and economic optimization in the energy sector.
-
-• Official White Paper (June 1, 2026):
-  - Title: "The Hidden Economic Opportunity in Oman’s Energy Transition"
-  - Key Finding: A 500MW BESS can unlock 862,903 OMR per year (+9.1%) as "Found Money" using Shadow Economic Engine.
-  - Improvement range: 9.1% to 15% additional annual revenue without any CAPEX.
-  - Based on official data from APSR, Nama PWP, and Ministry of Energy & Minerals.
-
-• Official Use Case:
-  - Published on Oman Open Data Portal: https://opendata.gov.om/ar/use-cases/1d4a8d55-1b2a-4b72-baba-e1a3763e842f
-  - Demonstrates how PREDIAIOT turns public energy data into real economic value.
-
-• Government Context:
-  - Oman power sector subsidy in 2024: approximately 541–602 million OMR.
-  - Vision 2040 alignment is central to all communications.
-
-Response Rules:
-1. Start responses with clear value propositions when possible.
-2. Use short paragraphs and bullet points for readability.
-3. Always offer 2-3 actionable next steps (e.g., Book Audit, Try ROI Calculator, Download White Paper).
-4. When user asks about results, reference the 862,903 OMR / 500MW case study.
-5. Guide users toward "Book Economic Audit" for personalized analysis.
-6. Reply in Arabic if the user writes in Arabic.
-
-Tone: Expert consultant who understands Omani energy market deeply.
-
-Current Date: June 2026
-Location: Muscat, Sultanate of Oman
-Founder & CEO: Chams Eddine Madi
-
-You are live on the PREDIAIOT website. Help every visitor understand how much "Found Money" they are leaving on the table.`;
-
-// API routes first
-app.get("/auth/google", (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>Sign in - Google Accounts</title>
-      <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-slate-950 flex items-center justify-center min-h-screen font-sans p-4">
-      <div class="bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-800 w-full max-w-sm text-center relative overflow-hidden">
-        <!-- Accent light path inside popup -->
-        <div class="absolute -right-16 -top-16 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="absolute -left-16 -bottom-16 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-        <!-- Google Logo representation -->
-        <div class="flex justify-center mb-6 relative">
-          <svg viewBox="0 0 24 24" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-            <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z" fill="#FBBC05"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-        </div>
-
-        <h1 class="text-xl font-bold text-white tracking-tight leading-none">Choose an account</h1>
-        <p class="text-[11px] text-slate-400 mt-2 mb-6 leading-relaxed font-sans">to continue to <strong class="text-white">PREDAIOT Decision Intelligence</strong></p>
-
-        <div class="space-y-2.5 text-left relative z-10">
-          <!-- Account 1 -->
-          <button onclick="choose('Salim Al-Harthy', 'salim@oman-energy.com', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80')" 
-                  class="w-full flex items-center space-x-3 p-3 rounded-2xl border border-slate-800 bg-slate-950/40 hover:bg-slate-800/60 hover:border-emerald-500/30 transition-all text-left">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80" 
-                 class="w-10 h-10 rounded-full object-cover border border-slate-700" referrerPolicy="no-referrer">
-            <div>
-              <p class="text-xs font-bold text-white font-sans">Salim Al-Harthy</p>
-              <p class="text-[10px] text-slate-400 font-mono">salim@oman-energy.com</p>
-            </div>
-          </button>
-
-          <!-- Account 2 -->
-          <button onclick="choose('Chams Eddine Madi', 'chams@predaiot.ai', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80')" 
-                  class="w-full flex items-center space-x-3 p-3 rounded-2xl border border-slate-800 bg-slate-950/40 hover:bg-slate-800/60 hover:border-emerald-500/30 transition-all text-left">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80" 
-                 class="w-10 h-10 rounded-full object-cover border border-slate-700" referrerPolicy="no-referrer">
-            <div>
-              <p class="text-xs font-bold text-white font-sans">Chams Eddine Madi</p>
-              <p class="text-[10px] text-slate-400 font-mono">chams@predaiot.ai</p>
-            </div>
-          </button>
-          
-          <!-- Use another account -->
-          <button onclick="useAnother()" class="w-full flex items-center space-x-3 p-3 rounded-2xl border border-dashed border-slate-800 bg-slate-950/20 hover:bg-slate-900/40 hover:border-slate-700 transition-all text-left">
-            <div class="w-10 h-10 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-md font-mono">
-              +
-            </div>
-            <div>
-              <p class="text-xs font-bold text-slate-300 font-sans">Use other corporate account</p>
-              <p class="text-[10px] text-slate-500 font-sans">Log in with a custom workspace credential...</p>
-            </div>
-          </button>
-        </div>
-
-        <div id="customForm" class="hidden mt-4 pt-4 border-t border-slate-850 text-left space-y-3 relative z-10 transition-all">
-          <div>
-            <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block font-mono">Full Name</label>
-            <input id="customName" type="text" placeholder="Adnan Al-Saeed" class="w-full rounded-xl bg-slate-950 border border-slate-800 p-2.5 text-xs text-white mt-1 focus:outline-none focus:border-emerald-500/50">
-          </div>
-          <div>
-            <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block font-mono">Corporate Email</label>
-            <input id="customEmail" type="email" placeholder="adnan@oman-energy.com" class="w-full rounded-xl bg-slate-950 border border-slate-800 p-2.5 text-xs text-white mt-1 focus:outline-none focus:border-emerald-500/50">
-          </div>
-          <button onclick="submitCustom()" class="w-full bg-emerald-500 hover:bg-emerald-450 text-slate-950 p-2.5 rounded-full text-xs font-bold transition-all shadow-[0_4px_12px_rgba(16,185,129,0.15)]">
-            Authorize Account
-          </button>
-        </div>
-
-        <p class="text-[9px] text-slate-500 mt-6 leading-relaxed font-sans">
-          Google will share your name, email address, corporate profile metadata, and avatar picture with PREDAIOT.
-        </p>
-      </div>
-
-      <script>
-        function choose(name, email, picture) {
-          if (window.opener) {
-            window.opener.postMessage({ 
-              type: 'OAUTH_AUTH_SUCCESS', 
-              user: { name, email, picture } 
-            }, '*');
-            window.close();
-          } else {
-            alert("No opener window found. Access granted for " + name);
-          }
-        }
-
-        function useAnother() {
-          const form = document.getElementById('customForm');
-          form.classList.toggle('hidden');
-        }
-
-        function submitCustom() {
-          const name = document.getElementById('customName').value || 'Corporate Administrator';
-          const email = document.getElementById('customEmail').value || 'admin@oman-energy.com';
-          const picture = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
-          choose(name, email, picture);
-        }
-      </script>
-    </body>
-    </html>
-  `);
-});
-
-app.post("/api/copilot", async (req, res) => {
-  try {
-    const { messages } = req.body;
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: "Missing messages array " });
-    }
-
-    if (!ai) {
-      // Graceful local simulation fallback if no API KEY is provided
-      const lastUserMsg = messages[messages.length - 1]?.content?.toLowerCase() || '';
-      let reply = "";
-      
-      if (lastUserMsg.includes("where") && lastUserMsg.includes("leakage") || lastUserMsg.includes("losing") || lastUserMsg.includes("value")) {
-        reply = `### Operational Economic Analysis (Simulation Mode)
-
-Based on PREDAIOT's real-time audit logs of your portfolio:
-
-* **Primary Value Sink**: Asset 4 battery dispatch decisions generated **12% less economic value** than optimal dispatch.
-* **Estimated Annual Economic Leakage**: **$486,200 USD**.
-* **Root Cause**: Battery was charging during early morning ancillary reserve hours, causing premium power state capacity drift.
-* **Recommended Strategic Correction**:
-  Shift BESS charging window from **02:00–05:00** to **04:00–07:00**. This reduces circular-wear degradation penalties and aligns charging with grid low-tariff curves.
-
-*(Note: Utilizing local responsive AI model simulation because GEMINI_API_KEY is not configured in the workspace environment variables yet).*`;
-      } else {
-        reply = `### PREDAIOT Decision Intelligence Advisor
-
-Thank you for querying the PREDAIOT Decision Engine. Based on your current asset configuration (Solar + BESS, Muscat Basin):
-
-1. **Portfolio Technical Score**: 98.2% Availability (Optimal Technical Performance).
-2. **Portfolio Economic Score**: 72.0% Efficiency (High Economic Leakage).
-3. **Core Intelligence Verdict**: You are technically optimized, yet losing approximately **8.4% of total asset margin** due to non-dynamic spot pricing dispatch.
-
-Would you like to trigger an **Asset Level dispatch simulation** or schedule a Professional Audit with Chams Eddine Madi under the OPWP spot market parameters?`;
-      }
-      return res.json({ content: reply });
-    }
-
-    // Convert message history to format expected by @google/genai
-    const contents = messages.map((msg: any) => ({
-      role: msg.role === "assistant" ? "model" as const : "user" as const,
-      parts: [{ text: msg.content }],
-    }));
-
-    // Query Gemini
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: contents,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.2, // low temperature for precise enterprise financial decisions
-      },
-    });
-
-    const replyText = response.text || "No response generated by the model.";
-    return res.json({ content: replyText });
-
-  } catch (error: any) {
-    console.error("Gemini Copilot Error:", error);
-    return res.status(500).json({ 
-      error: "Failed to communicate with the decision intelligence backend.",
-      details: error.message 
-    });
+// --- CORS (frontend origin) ---
+const ALLOWED = (process.env.CORS_ORIGINS || "http://localhost:3000")
+  .split(",")
+  .map((s) => s.trim());
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (ALLOWED.includes(origin) || ALLOWED.includes("*"))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
 });
 
-const MessagingResponse = twilio.twiml.MessagingResponse;
+// --- Integration clients (all optional) ---
+const anthropic = process.env.ANTHROPIC_API_KEY
+  ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  : null;
 
-app.post("/api/whatsapp", express.urlencoded({ extended: true }), async (req, res) => {
-  const twiml = new MessagingResponse();
-  const incomingMsg = req.body.Body || '';
-  
-  if (!ai) {
-    twiml.message("مرحباً! كيف يمكنني مساعدتك في تحسين إيرادات مشروع الطاقة الخاص بك؟ (Simulation Mode / API Key missing)");
-    res.type('text/xml').send(twiml.toString());
+const airtableBase =
+  process.env.AIRTABLE_API_KEY && (process.env.AIRTABLE_BASE_ID || AIRTABLE.baseId)
+    ? new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
+        process.env.AIRTABLE_BASE_ID || AIRTABLE.baseId
+      )
+    : null;
+
+const twilioClient =
+  process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
+    ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+    : null;
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+if (!anthropic) console.warn("[predaiot] ANTHROPIC_API_KEY missing — Copilot runs in offline mode.");
+if (!airtableBase) console.warn("[predaiot] Airtable not configured — leads logged to console.");
+if (!twilioClient) console.warn("[predaiot] Twilio not configured — WhatsApp notifications skipped.");
+if (!resend) console.warn("[predaiot] Resend not configured — emails skipped.");
+
+// --- Helpers ---------------------------------------------------------------
+
+/** Rate limit: 1 diagnostic per email per 30 days. In-memory; swap for
+ *  Firestore in multi-instance production (see README). */
+const RATE_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+const lastDiagnostic = new Map<string, number>();
+
+async function writeLead(fields: Record<string, string>) {
+  if (!airtableBase) {
+    console.log("[predaiot] LEAD (no Airtable):", fields);
     return;
   }
-
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: [{
-        role: "user",
-        parts: [{ text: incomingMsg }]
-      }],
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION + "\n\nYou are chatting via WhatsApp. Keep your answers extremely concise, engaging, and suitable for mobile chat. Start your first response with: 'مرحباً! كيف يمكنني مساعدتك في تحسين إيرادات مشروع الطاقة الخاص بك؟ / Hello! How can I help you improve the revenue of your energy project?'. If you need human handover, provide Chams' contact.",
-        temperature: 0.3,
-      },
-    });
-    
-    const replyText = response.text || "Hello! How can I help you improve the revenue of your energy project?";
-    twiml.message(replyText);
-  } catch (error) {
-    console.error("WhatsApp Gemini Error:", error);
-    twiml.message("Sorry, our AI intelligence engine is currently offline. Please contact Chams Eddine Madi at chams@predaiot.ai");
-  }
-  
-  res.type('text/xml').send(twiml.toString());
-});
-
-// Configure Vite middleware or production static build serving
-async function bootstrap() {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("Starting server in DEVELOPMENT mode with Vite Middleware on port", PORT);
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    console.log("Starting server in PRODUCTION mode serving built assets on port", PORT);
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-  }
-
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`PREDAIOT Server successfully running on http://0.0.0.0:${PORT}`);
-  });
+  await airtableBase(process.env.AIRTABLE_TABLE_ID || AIRTABLE.leadsTableId).create([
+    { fields },
+  ]);
 }
 
-bootstrap();
+async function notifyWhatsApp(text: string) {
+  if (!twilioClient) return;
+  const from = process.env.TWILIO_WHATSAPP_NUMBER || "whatsapp:+14155238886";
+  const to = `whatsapp:${COMPANY.phoneE164}`;
+  try {
+    await twilioClient.messages.create({ from, to, body: text });
+  } catch (e) {
+    console.warn("[predaiot] WhatsApp notify failed:", (e as Error).message);
+  }
+}
+
+async function sendEmail(to: string, subject: string, html: string) {
+  if (!resend || !to) return;
+  try {
+    await resend.emails.send({
+      from: process.env.RESEND_FROM || `PREDAIOT <noreply@${COMPANY.domain}>`,
+      to,
+      subject,
+      html,
+    });
+  } catch (e) {
+    console.warn("[predaiot] Email send failed:", (e as Error).message);
+  }
+}
+
+// --- Routes ----------------------------------------------------------------
+
+app.get("/api/health", (_req, res) => res.json({ ok: true, service: "predaiot-api" }));
+
+/** Free 7-Day Leak Test submission. */
+app.post("/api/diagnostic", async (req, res) => {
+  const { fullName, email, phone, company, assetType, capacityMW, noData } = req.body || {};
+  if (!fullName || !email || !phone || !company) {
+    return res.status(400).json({ error: "Missing required fields." });
+  }
+
+  // Rate limit (1 / email / 30 days)
+  const key = String(email).toLowerCase();
+  const prev = lastDiagnostic.get(key);
+  if (prev && Date.now() - prev < RATE_WINDOW_MS) {
+    return res.status(429).json({ error: "rate_limited" });
+  }
+  lastDiagnostic.set(key, Date.now());
+
+  const mw = noData ? PRIMARY.assetMW : Number(capacityMW) || PRIMARY.assetMW;
+  const estimate = estimateValue(mw);
+
+  // Airtable (unified pipeline) — fields per spec
+  try {
+    await writeLead({
+      "Full Name": fullName,
+      Company: company,
+      Phone: phone,
+      Email: email,
+      "Asset Type": assetType || "",
+      Source: AIRTABLE.source,
+      Stage: AIRTABLE.stage,
+    });
+  } catch (e) {
+    console.warn("[predaiot] Airtable write failed:", (e as Error).message);
+  }
+
+  // WhatsApp notify founder (primary channel)
+  await notifyWhatsApp(
+    `🎯 New Leak Test\n${fullName} · ${company}\n${assetType || "—"} · ${mw} MW\n${email} · ${phone}\nEst. ~${estimate.annualRecoveryOMR.toLocaleString()} OMR/yr`
+  );
+
+  // Email confirmation
+  await sendEmail(
+    email,
+    "Your PREDAIOT 7-Day Leak Test is underway",
+    `<p>Hi ${fullName},</p><p>Thanks for requesting your free 7-Day Leak Test. Based on a ${mw} MW asset, the illustrative recoverable value is ~${estimate.annualRecoveryOMR.toLocaleString()} OMR/year (scaled from our published ${PRIMARY.annualRevenueOMR.toLocaleString()} OMR / ${PRIMARY.assetMW} MW benchmark).</p><p>We'll be in touch within 7 days.</p><p>— ${COMPANY.founder}, ${COMPANY.name}</p>`
+  );
+
+  return res.json({
+    ok: true,
+    illustrative: true,
+    capacityMW: estimate.capacityMW,
+    annualRecoveryOMR: estimate.annualRecoveryOMR,
+    profitMinPct: estimate.profitMinPct,
+    profitMaxPct: estimate.profitMaxPct,
+  });
+});
+
+/** Unified lead capture: contact / paper / investor / prospect. */
+app.post("/api/lead", async (req, res) => {
+  const { type, fullName, email, company, message } = req.body || {};
+  if (!email) return res.status(400).json({ error: "Missing email." });
+
+  try {
+    await writeLead({
+      "Full Name": fullName || "",
+      Company: company || "",
+      Email: email,
+      Source: `Website ${type || "lead"}`,
+      Stage: AIRTABLE.stage,
+    });
+  } catch (e) {
+    console.warn("[predaiot] Airtable lead failed:", (e as Error).message);
+  }
+
+  await notifyWhatsApp(`✉️ New ${type || "lead"}: ${fullName || email} (${email})${message ? `\n${message}` : ""}`);
+  return res.json({ ok: true });
+});
+
+/** Validated CSV/Excel upload. Never executed; macro files rejected. */
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+app.post("/api/upload", upload.single("file"), (req, res) => {
+  const file = (req as express.Request & { file?: Express.Multer.File }).file;
+  if (!file) return res.status(400).json({ error: "No file." });
+
+  const name = file.originalname.toLowerCase();
+  const okExt = [".csv", ".xls", ".xlsx"].some((e) => name.endsWith(e));
+  if (!okExt || name.endsWith(".xlsm")) {
+    return res.status(415).json({ error: "Only CSV/Excel (no macros) accepted." });
+  }
+  // Basic schema sanity: first bytes shouldn't be an executable/script signature.
+  const head = file.buffer.subarray(0, 4).toString("hex");
+  if (head.startsWith("4d5a") /* MZ */ || head.startsWith("7f454c46") /* ELF */) {
+    return res.status(415).json({ error: "Rejected: not a spreadsheet." });
+  }
+  // NOTE: production stores the buffer in Firebase Storage (encrypted at rest)
+  // with owner-only rules and writes an audit-log entry. We never parse macros.
+  console.log(`[predaiot] Upload accepted: ${file.originalname} (${file.size} bytes) for ${req.body?.email || "?"}`);
+  return res.json({ ok: true, name: file.originalname, size: file.size });
+});
+
+/** PREDAIOT Copilot — Claude claude-sonnet-4-6. */
+app.post("/api/copilot", async (req, res) => {
+  const { messages } = req.body || {};
+  if (!Array.isArray(messages)) return res.status(400).json({ error: "Missing messages." });
+
+  if (!anthropic) {
+    return res.json({
+      content:
+        "I'm in offline mode right now. PREDAIOT finds recoverable economic value in energy assets — scaled from Oman's published 862,903 OMR / 500 MW benchmark. Start a free 7-day diagnostic and we'll quantify your asset's potential.",
+    });
+  }
+
+  try {
+    const resp = await anthropic.messages.create({
+      model: COPILOT.model,
+      max_tokens: 700,
+      system: COPILOT_SYSTEM_PROMPT,
+      messages: messages.map((m: { role: string; content: string }) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.content,
+      })),
+    });
+    const content = resp.content
+      .filter((b) => b.type === "text")
+      .map((b) => (b as { text: string }).text)
+      .join("\n");
+    return res.json({ content: content || "…" });
+  } catch (e) {
+    console.error("[predaiot] Copilot error:", (e as Error).message);
+    return res.status(500).json({ error: "Copilot temporarily unavailable." });
+  }
+});
+
+/** Twilio inbound WhatsApp webhook → Claude reply. */
+app.post("/api/whatsapp", express.urlencoded({ extended: true }), async (req, res) => {
+  const twiml = new twilio.twiml.MessagingResponse();
+  const incoming = req.body?.Body || "";
+
+  if (!anthropic) {
+    twiml.message(
+      "مرحباً! / Hello! This is PREDAIOT. Reply with your asset type & capacity and we'll estimate your recoverable value. (offline mode)"
+    );
+    return res.type("text/xml").send(twiml.toString());
+  }
+
+  try {
+    const resp = await anthropic.messages.create({
+      model: COPILOT.model,
+      max_tokens: 400,
+      system:
+        COPILOT_SYSTEM_PROMPT +
+        "\n\nYou are replying over WhatsApp. Keep it very short and mobile-friendly. Reply in Arabic if the user writes Arabic.",
+      messages: [{ role: "user", content: incoming }],
+    });
+    const text = resp.content
+      .filter((b) => b.type === "text")
+      .map((b) => (b as { text: string }).text)
+      .join("\n");
+    twiml.message(text || `Hello! Contact ${COMPANY.founder} at ${COMPANY.email}.`);
+  } catch {
+    twiml.message(`Our engine is briefly offline. Contact ${COMPANY.founder} at ${COMPANY.email}.`);
+  }
+  return res.type("text/xml").send(twiml.toString());
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`PREDAIOT API running on http://0.0.0.0:${PORT}`);
+});

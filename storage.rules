@@ -1,0 +1,25 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Uploaded telemetry lives under telemetry/{userId}/... — owner only.
+    // Server-side validation (type, size, macro rejection) happens in the API
+    // before storage; rules enforce ownership and content constraints.
+    match /telemetry/{userId}/{fileName} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.size < 10 * 1024 * 1024
+        && (
+          request.resource.contentType == 'text/csv' ||
+          request.resource.contentType == 'application/vnd.ms-excel' ||
+          request.resource.contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+    }
+
+    // Default deny.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
