@@ -88,17 +88,10 @@ export const PROMO_HOOK_TEXT =
 /** The ONLY trust items permitted. No fabricated logos or testimonials. */
 export const REAL_TRACTION = [
   { key: "patent", en: "Patent filed (Tunisia)", ar: "براءة اختراع مودعة (تونس)" },
-  { key: "omantel", en: "Omantel Accelerator, Cohort 7", ar: "مسرّعة عمانتل، الدفعة 7" },
-  { key: "loi", en: "Signed LOI with Sunified (GCC)", ar: "خطاب نوايا موقّع مع Sunified (الخليج)" },
   {
     key: "opendata",
     en: "Methodology published on Oman's National Open Data Portal",
     ar: "منهجية منشورة على البوابة الوطنية للبيانات المفتوحة في عُمان",
-  },
-  {
-    key: "oetc",
-    en: "Active technical dialogue with OETC Load Dispatch Centre",
-    ar: "حوار فني نشِط مع مركز التحكم في الأحمال OETC",
   },
   { key: "stage", en: "Pre-revenue, pre-seed stage", ar: "مرحلة ما قبل الإيرادات وما قبل التأسيس" },
 ] as const;

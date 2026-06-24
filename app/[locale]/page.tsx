@@ -4,12 +4,15 @@ import { ArrowRight, Activity, Battery, LineChart, ShieldCheck, Zap, Building2 }
 import { Link } from "@/i18n/navigation";
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
+import IndustrialImage from "@/components/IndustrialImage";
+import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import {
   PRIMARY,
   REAL_TRACTION,
   fmtOMR,
   COMPANY,
+  GUARANTEE_TEXT,
 } from "@/lib/constants";
 
 export async function generateMetadata({
@@ -49,9 +52,11 @@ export default async function HomePage({
   return (
     <>
       {/* HERO */}
-      <Section className="relative pt-12">
-        <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+      <div className="relative overflow-hidden">
+        <IndustrialImage img={IMAGES.solarField} locale={locale} variant="background" priority overlay="strong" />
+        <Section className="relative pt-12">
+          <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
+          <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
             <Kicker>{tc("vision2040")}</Kicker>
             <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
@@ -75,9 +80,10 @@ export default async function HomePage({
               </span>
             </div>
           </div>
-          <HeroDashboard />
-        </div>
-      </Section>
+            <HeroDashboard />
+          </div>
+        </Section>
+      </div>
 
       {/* FREE LEAK TEST TEASER (prominent) */}
       <Section className="py-10">
@@ -94,11 +100,8 @@ export default async function HomePage({
             </div>
             <div className="rounded-2xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-6">
               <ShieldCheck className="h-6 w-6 text-[--color-accent]" />
-              <p className="mt-3 text-sm text-[--color-ink-muted]">{tl("guaranteeTitle")}</p>
-              <p className="mt-1 text-sm">
-                {/* guarantee text sourced from constants via audit page; teaser keeps it short */}
-                {tl("resultRange")}: {PRIMARY.profitMin}%–{PRIMARY.profitMax}%
-              </p>
+              <p className="mt-3 text-sm font-semibold">{tl("guaranteeTitle")}</p>
+              <p className="mt-1 text-sm text-[--color-ink-muted]">{GUARANTEE_TEXT}</p>
             </div>
           </div>
         </div>

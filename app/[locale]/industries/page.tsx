@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Building2, Sun, Battery, Factory, Fuel, Network } from "lucide-react";
 import { Section, PageHeader, Card } from "@/components/ui";
+import IndustrialImage from "@/components/IndustrialImage";
+import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -31,9 +33,12 @@ export default async function IndustriesPage({ params }: { params: Promise<{ loc
 
   return (
     <>
-      <Section className="pt-12">
-        <PageHeader title={t("title")} lead={t("lead")} />
-      </Section>
+      <div className="relative overflow-hidden">
+        <IndustrialImage img={IMAGES.grid} locale={locale} variant="background" priority />
+        <Section className="pt-16">
+          <PageHeader title={t("title")} lead={t("lead")} />
+        </Section>
+      </div>
       <Section className="py-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {verticals.map((v) => (

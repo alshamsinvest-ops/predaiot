@@ -3,6 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Sun, ArrowRight } from "lucide-react";
 import { Section, PageHeader, Card, LinkButton } from "@/components/ui";
 import JsonLd from "@/components/JsonLd";
+import IndustrialImage from "@/components/IndustrialImage";
+import { IMAGES } from "@/lib/images";
 import { buildMetadata, serviceJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -25,9 +27,12 @@ export default async function SolarPage({ params }: { params: Promise<{ locale: 
   return (
     <>
       <JsonLd data={serviceJsonLd("Solar + Storage Optimization", t("lead"), "/solar")} />
-      <Section className="pt-12">
-        <PageHeader kicker={tc("vision2040")} title={t("title")} lead={t("lead")} />
-      </Section>
+      <div className="relative overflow-hidden">
+        <IndustrialImage img={IMAGES.solarAerial} locale={locale} variant="background" priority />
+        <Section className="pt-16">
+          <PageHeader kicker={tc("vision2040")} title={t("title")} lead={t("lead")} />
+        </Section>
+      </div>
       <Section className="py-8">
         <Card>
           <Sun className="h-7 w-7 text-[--color-accent]" />

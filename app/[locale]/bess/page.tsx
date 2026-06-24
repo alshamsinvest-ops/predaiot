@@ -3,6 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Battery, TrendingUp, Activity, Layers, ArrowRight } from "lucide-react";
 import { Section, PageHeader, Card, LinkButton } from "@/components/ui";
 import JsonLd from "@/components/JsonLd";
+import IndustrialImage from "@/components/IndustrialImage";
+import { IMAGES } from "@/lib/images";
 import { buildMetadata, serviceJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -32,9 +34,12 @@ export default async function BessPage({ params }: { params: Promise<{ locale: s
   return (
     <>
       <JsonLd data={serviceJsonLd("BESS Economic Optimization", t("lead"), "/bess")} />
-      <Section className="pt-12">
-        <PageHeader kicker={tc("vision2040")} title={t("title")} lead={t("lead")} />
-      </Section>
+      <div className="relative overflow-hidden">
+        <IndustrialImage img={IMAGES.industrial} locale={locale} variant="background" priority />
+        <Section className="pt-16">
+          <PageHeader kicker={tc("vision2040")} title={t("title")} lead={t("lead")} />
+        </Section>
+      </div>
       <Section className="py-8">
         <Card>
           <h2 className="font-display text-2xl font-bold">{t("p1Title")}</h2>

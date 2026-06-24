@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Cpu, Database, GitBranch, ShieldCheck, AlertTriangle } from "lucide-react";
 import { Section, PageHeader, Card } from "@/components/ui";
+import IndustrialImage from "@/components/IndustrialImage";
+import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import { SECONDARY, fmtOMR } from "@/lib/constants";
 
@@ -30,9 +32,12 @@ export default async function TechnologyPage({ params }: { params: Promise<{ loc
 
   return (
     <>
-      <Section className="pt-12">
-        <PageHeader title={t("title")} lead={t("lead")} />
-      </Section>
+      <div className="relative overflow-hidden">
+        <IndustrialImage img={IMAGES.controlRoom} locale={locale} variant="background" priority />
+        <Section className="pt-16">
+          <PageHeader title={t("title")} lead={t("lead")} />
+        </Section>
+      </div>
 
       <Section className="py-8">
         <Card>
