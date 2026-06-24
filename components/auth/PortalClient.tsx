@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Upload, LogOut } from "lucide-react";
-import { onAuthStateChanged, getFirebaseAuth, signOut, type User } from "@/lib/firebase/client";
+import { onAuthStateChanged, getFirebaseAuth, signOut, isFirebaseConfigured, type User } from "@/lib/firebase/client";
 import { API_BASE } from "@/lib/api";
 import GoogleSignInButton from "@/components/forms/GoogleSignInButton";
 
@@ -54,9 +54,16 @@ export default function PortalClient() {
         <div className="surface rounded-2xl p-8">
           <h1 className="font-display text-2xl font-extrabold">{t("title")}</h1>
           <p className="mt-2 text-sm text-[--color-ink-muted]">{t("lead")}</p>
-          <div className="mt-6">
-            <GoogleSignInButton onSignedIn={() => {}} />
-          </div>
+          {isFirebaseConfigured() ? (
+            <div className="mt-6">
+              <GoogleSignInButton onSignedIn={() => {}} />
+            </div>
+          ) : (
+            <p className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-[--color-ink-muted]">
+              Secure sign-in is being finalized. Start your free diagnostic and we'll set up
+              your portal access.
+            </p>
+          )}
         </div>
       </div>
     );

@@ -37,6 +37,11 @@ function readConfig() {
 
 let app: FirebaseApp | null = null;
 
+/** True when Firebase web config is present (so auth UI can degrade gracefully). */
+export function isFirebaseConfigured(): boolean {
+  return !!readConfig().apiKey;
+}
+
 export function getFirebaseApp(): FirebaseApp | null {
   const config = readConfig();
   if (!config.apiKey) return null; // not configured yet — UI degrades gracefully
