@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "PREDAIOT — Economic Decision Intelligence for Energy Assets (Oman / GCC)",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "concurrently -n web,api -c cyan,magenta \"next dev -p 3000\" \"npm:dev:api\"",
     "dev:api": "tsx watch server.ts",
