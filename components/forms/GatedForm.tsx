@@ -16,13 +16,16 @@ export default function GatedForm({
   gateLabel,
   withGoogle = true,
   fileUrl,
+  files,
 }: {
   type: "paper" | "investor";
   ctaLabel: string;
   gateLabel: string;
   withGoogle?: boolean;
   fileUrl?: string;
+  files?: { label: string; url: string }[];
 }) {
+  const downloads = files ?? (fileUrl ? [{ label: ctaLabel, url: fileUrl }] : []);
   const tc = useTranslations("common");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -50,16 +53,21 @@ export default function GatedForm({
         <CheckCircle2 className="mx-auto h-8 w-8 text-[--color-accent]" />
         <p className="mt-2 text-sm">{tc("send")} ✓</p>
         <p className="text-sm text-[--color-ink-muted]">{gateLabel}</p>
-        {fileUrl ? (
-          <a
-            href={fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[--color-accent] px-6 py-3 text-sm font-semibold text-[#04101f]"
-          >
-            <Download className="h-4 w-4" /> {ctaLabel}
-          </a>
+        {downloads.length ? (
+          <div className="mt-4 flex flex-col gap-2">
+            {downloads.map((d) => (
+              <a
+                key={d.url}
+                href={d.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[--color-accent] px-6 py-3 text-sm font-semibold text-[#04101f]"
+              >
+                <Download className="h-4 w-4" /> {d.label}
+              </a>
+            ))}
+          </div>
         ) : null}
       </div>
     );

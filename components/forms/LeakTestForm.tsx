@@ -14,6 +14,14 @@ interface ResultState {
   profitMinPct: number;
   profitMaxPct: number;
   illustrative: boolean;
+  // Real computed audit (when a data file was uploaded and scored)
+  computed?: boolean;
+  financialLossOMR?: number;
+  recoverablePct?: number;
+  method?: string;
+  measured?: boolean;
+  periods?: number;
+  notes?: string[];
 }
 
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -72,12 +80,43 @@ export default function LeakTestForm() {
     const localEstimate = estimateValue(form.noData ? 500 : capacityMW);
 
     try {
-      // Optional file upload (validated again server-side).
-      if (file) {
+      // If the visitor uploaded data, run the REAL audit engine on it.
+      if (file && !form.noData) {
         const fd = new FormData();
         fd.append("file", file);
+        fd.append("fullName", form.name);
         fd.append("email", form.email);
-        await fetch(`${API_BASE}/api/upload`, { method: "POST", body: fd }).catch(() => {});
+        fd.append("phone", form.phone);
+        fd.append("company", form.company);
+        fd.append("assetType", form.assetType);
+        fd.append("capacityMW", String(capacityMW));
+        const ar = await fetch(`${API_BASE}/api/audit`, { method: "POST", body: fd });
+        if (ar.status === 429) {
+          setRateLimited(true);
+          setBusy(false);
+          return;
+        }
+        const adata = await ar.json().catch(() => ({}));
+        if (adata?.computed && adata.audit?.ok) {
+          const a = adata.audit;
+          setResult({
+            capacityMW,
+            annualRecoveryOMR: a.financialLossOMR,
+            profitMinPct: localEstimate.profitMinPct,
+            profitMaxPct: localEstimate.profitMaxPct,
+            illustrative: false,
+            computed: true,
+            financialLossOMR: a.financialLossOMR,
+            recoverablePct: a.recoverablePct,
+            method: a.method,
+            measured: a.measured,
+            periods: a.periods,
+            notes: a.notes,
+          });
+          setBusy(false);
+          return;
+        }
+        // Parsing failed — fall through to illustrative.
       }
 
       const res = await fetch(`${API_BASE}/api/diagnostic`, {
@@ -127,34 +166,57 @@ export default function LeakTestForm() {
 
   if (result) {
     const usd = omrToUsd(result.annualRecoveryOMR);
-    const shareMsg = `PREDAIOT Leak Test (illustrative): ~${fmtOMR(
-      result.annualRecoveryOMR
-    )} OMR/yr recoverable on a ${result.capacityMW} MW asset. Free 7-day diagnostic → ${COMPANY.url}`;
+    const computed = result.computed === true;
+    const shareMsg = computed
+      ? `PREDAIOT economic audit: ${fmtOMR(result.financialLossOMR ?? 0)} OMR recoverable (${result.recoverablePct}% of revenue), computed from my data. → ${COMPANY.url}`
+      : `PREDAIOT Leak Test (illustrative): ~${fmtOMR(result.annualRecoveryOMR)} OMR/yr recoverable on a ${result.capacityMW} MW asset. Free 7-day diagnostic → ${COMPANY.url}`;
     return (
       <div className="space-y-6">
         <div className="surface rounded-2xl p-8">
-          <div className="mb-4 inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] text-[--color-ink-muted]">
-            {tc("illustrative")}
+          <div
+            className={`mb-4 inline-flex rounded-full border px-3 py-1 text-[11px] ${
+              computed
+                ? "border-[--color-accent]/40 bg-[--color-accent]/10 text-[--color-accent]"
+                : "border-white/15 bg-white/5 text-[--color-ink-muted]"
+            }`}
+          >
+            {computed ? "Computed from your data" : tc("illustrative")}
           </div>
           <h3 className="font-display text-2xl font-extrabold">{t("resultTitle")}</h3>
-          <p className="mt-2 text-sm text-[--color-ink-muted]">{t("resultIllustrative")}</p>
+          <p className="mt-2 text-sm text-[--color-ink-muted]">
+            {computed
+              ? `Calculated with PREDAIOT's Economic Decision method across ${(result.periods ?? 0).toLocaleString()} periods${
+                  result.measured ? "" : " (expected performance estimated from your data envelope)"
+                }.`
+              : t("resultIllustrative")}
+          </p>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-5">
-              <p className="text-xs text-[--color-ink-muted]">{t("resultRecovery")}</p>
+              <p className="text-xs text-[--color-ink-muted]">
+                {computed ? "Recoverable economic value (Financial Loss)" : t("resultRecovery")}
+              </p>
               <p className="mt-1 font-display text-3xl font-extrabold text-[--color-accent]">
                 {fmtOMR(result.annualRecoveryOMR)} <span className="text-base">OMR</span>
               </p>
-              <p className="text-xs text-[--color-ink-muted]">≈ ${fmtOMR(usd)} USD / {tc("perYear")}</p>
+              <p className="text-xs text-[--color-ink-muted]">≈ ${fmtOMR(usd)} USD</p>
             </div>
             <div className="rounded-2xl border border-[--color-secondary]/30 bg-[--color-secondary]/5 p-5">
-              <p className="text-xs text-[--color-ink-muted]">{t("resultRange")}</p>
+              <p className="text-xs text-[--color-ink-muted]">
+                {computed ? "Share of realized revenue" : t("resultRange")}
+              </p>
               <p className="mt-1 font-display text-3xl font-extrabold text-[--color-secondary]">
-                {result.profitMinPct}%–{result.profitMaxPct}%
+                {computed ? `${result.recoverablePct}%` : `${result.profitMinPct}%–${result.profitMaxPct}%`}
               </p>
               <p className="text-xs text-[--color-ink-muted]">{result.capacityMW} MW</p>
             </div>
           </div>
+
+          {computed ? (
+            <p className="mt-4 rounded-xl border border-white/10 bg-black/20 p-3 font-mono text-[11px] text-[--color-ink-muted]">
+              {result.method}
+            </p>
+          ) : null}
 
           <a
             href={whatsappLink(COMPANY.whatsappNumber, shareMsg)}

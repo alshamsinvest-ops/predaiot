@@ -21,6 +21,36 @@ export default async function PapersPage({ params }: { params: Promise<{ locale:
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("papers");
+  const isAr = locale === "ar";
+
+  const papers = [
+    {
+      label: isAr ? "الورقة البيضاء" : "White Paper",
+      title: t("paper1Title"),
+      desc: t("paper1Desc"),
+      url: "/papers/predaiot-whitepaper-oman-2026.pdf",
+    },
+    {
+      label: isAr ? "الملخص التنفيذي" : "Executive Summary",
+      title: isAr
+        ? "الملخص التنفيذي: الفرصة الاقتصادية الخفية"
+        : "Executive Summary: The Hidden Economic Opportunity",
+      desc: isAr
+        ? "نظرة موجزة على القيمة الاقتصادية القابلة للاسترجاع في قطاع الطاقة العُماني."
+        : "A concise overview of recoverable economic value in Oman's energy sector.",
+      url: "/papers/predaiot-executive-summary.pdf",
+    },
+    {
+      label: isAr ? "المقال العلمي" : "Scientific Article",
+      title: isAr
+        ? "مقال علمي متخصص — منهجية القرار الاقتصادي"
+        : "Specialized Scientific Article — Economic Decision Methodology",
+      desc: isAr
+        ? "الأساس المنهجي: الخسارة المالية = Σ (الأداء المتوقع − الفعلي) × سعر السوق."
+        : "The methodological basis: Financial Loss = Σ (expected − actual performance) × market price.",
+      url: "/papers/predaiot-scientific-article.pdf",
+    },
+  ];
 
   return (
     <>
@@ -30,17 +60,16 @@ export default async function PapersPage({ params }: { params: Promise<{ locale:
       </Section>
       <Section className="py-8">
         <div className="grid items-start gap-8 lg:grid-cols-2">
-          <Card>
-            <FileText className="h-7 w-7 text-[--color-secondary]" />
-            <h2 className="mt-3 font-display text-xl font-bold">{t("paper1Title")}</h2>
-            <p className="mt-2 text-sm text-[--color-ink-muted]">{t("paper1Desc")}</p>
-          </Card>
-          <GatedForm
-            type="paper"
-            ctaLabel={t("download")}
-            gateLabel={t("gate")}
-            fileUrl="/papers/predaiot-whitepaper-oman-2026.pdf"
-          />
+          <div className="space-y-4">
+            {papers.map((p) => (
+              <Card key={p.url}>
+                <FileText className="h-7 w-7 text-[--color-secondary]" />
+                <h2 className="mt-3 font-display text-xl font-bold">{p.title}</h2>
+                <p className="mt-2 text-sm text-[--color-ink-muted]">{p.desc}</p>
+              </Card>
+            ))}
+          </div>
+          <GatedForm type="paper" ctaLabel={t("download")} gateLabel={t("gate")} files={papers} />
         </div>
       </Section>
     </>
