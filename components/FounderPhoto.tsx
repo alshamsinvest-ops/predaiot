@@ -20,7 +20,7 @@ export default function FounderPhoto() {
   // eslint-disable-next-line @next/next/no-img-element
   return (
     <img
-      src="/brand/founder.jpg"
+      src="/brand/chams_photo.jfif"
       alt="Chams Eddine Madi, Founder & CEO of PREDAIOT"
       className="h-24 w-24 rounded-2xl object-cover grayscale"
       onError={() => setFailed(true)}

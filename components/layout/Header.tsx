@@ -27,7 +27,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-900/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex items-center" aria-label="PREDAIOT home">
-          <BrandLogo className="h-8 w-auto" />
+          <BrandLogo imgClassName="h-8 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">
