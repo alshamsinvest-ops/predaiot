@@ -21,3 +21,6 @@ next-env.d.ts
 *.log
 npm-debug.log*
 .firebase/
+
+# typescript build info
+*.tsbuildinfo
