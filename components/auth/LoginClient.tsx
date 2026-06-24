@@ -35,7 +35,7 @@ export default function LoginClient() {
     }
   }
 
-  const field = "w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm outline-none focus:border-[--color-secondary]";
+  const field = "w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm outline-none focus:border-secondary";
 
   // Graceful state when Firebase Auth isn't configured yet (e.g. preview env):
   // show a clear "sign-in coming online" panel instead of buttons that error.
@@ -44,14 +44,14 @@ export default function LoginClient() {
       <div className="mx-auto max-w-md">
         <div className="surface rounded-2xl p-8 text-center">
           <h1 className="font-display text-2xl font-extrabold">{t("title")}</h1>
-          <p className="mt-3 text-sm text-[--color-ink-muted]">
+          <p className="mt-3 text-sm text-ink-muted">
             Secure sign-in is being finalized. In the meantime, start your free diagnostic
             or reach us directly — we'll set up your access.
           </p>
           <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/economic-audit"
-              className="inline-flex items-center justify-center rounded-full bg-[--color-accent] px-6 py-3 text-sm font-semibold text-[#04101f]"
+              className="inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#04101f]"
             >
               {tc("startDiagnostic")}
             </Link>
@@ -65,7 +65,7 @@ export default function LoginClient() {
             </a>
             <a
               href={`mailto:${COMPANY.email}`}
-              className="inline-flex items-center justify-center gap-2 text-sm text-[--color-ink-muted] hover:text-[--color-ink]"
+              className="inline-flex items-center justify-center gap-2 text-sm text-ink-muted hover:text-ink"
             >
               <Mail className="h-4 w-4" /> {COMPANY.email}
             </a>
@@ -85,7 +85,7 @@ export default function LoginClient() {
           <GoogleSignInButton onSignedIn={() => router.push("/portal")} />
         </div>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-[--color-ink-muted]">
+        <div className="my-5 flex items-center gap-3 text-xs text-ink-muted">
           <span className="h-px flex-1 bg-white/10" /> {t("or")} <span className="h-px flex-1 bg-white/10" />
         </div>
 
@@ -97,7 +97,7 @@ export default function LoginClient() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-full bg-[--color-secondary] px-6 py-3 text-sm font-semibold text-[#04101f] disabled:opacity-60"
+            className="w-full rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-[#04101f] disabled:opacity-60"
           >
             {mode === "signin" ? t("signIn") : t("register")}
           </button>
@@ -105,7 +105,7 @@ export default function LoginClient() {
 
         <button
           onClick={() => setMode((m) => (m === "signin" ? "register" : "signin"))}
-          className="mt-4 w-full text-center text-xs text-[--color-ink-muted] hover:text-[--color-ink]"
+          className="mt-4 w-full text-center text-xs text-ink-muted hover:text-ink"
         >
           {mode === "signin" ? t("toggleRegister") : t("toggleSignIn")}
         </button>

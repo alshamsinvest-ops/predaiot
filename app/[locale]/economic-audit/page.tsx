@@ -3,6 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Check, ArrowRight } from "lucide-react";
 import { Section, Kicker, Card, LinkButton } from "@/components/ui";
 import LeakTestForm from "@/components/forms/LeakTestForm";
+import IndustrialImage from "@/components/IndustrialImage";
+import { IMAGES } from "@/lib/images";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata, serviceJsonLd } from "@/lib/seo";
 import { PRICING, PROMO_HOOK_TEXT, fmtOMR } from "@/lib/constants";
@@ -76,15 +78,20 @@ export default async function AuditPage({
         )}
       />
 
-      <Section className="pt-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <Kicker>{tl("kicker")}</Kicker>
-          <h1 className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">{tl("headline")}</h1>
-          <p className="mt-4 text-lg text-[--color-ink-muted]">{t("lead")}</p>
-        </div>
+      <div className="relative overflow-hidden">
+        <IndustrialImage img={IMAGES.solarField} locale={locale} variant="background" priority />
+        <Section className="pt-16">
+          <div className="mx-auto max-w-3xl text-center">
+            <Kicker>{tl("kicker")}</Kicker>
+            <h1 className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">{tl("headline")}</h1>
+            <p className="mt-4 text-lg text-ink-muted">{t("lead")}</p>
+          </div>
+        </Section>
+      </div>
 
+      <Section className="pt-4">
         {/* FREE DIAGNOSTIC FORM — above all paid options */}
-        <div className="mx-auto mt-10 max-w-3xl">
+        <div className="mx-auto max-w-3xl">
           <LeakTestForm />
         </div>
       </Section>
@@ -92,7 +99,7 @@ export default async function AuditPage({
       {/* PROMO HOOK */}
       <Section className="py-8">
         <div className="surface rounded-2xl p-6 text-center">
-          <p className="text-sm font-semibold text-[--color-accent]">{tl("promoTitle")}</p>
+          <p className="text-sm font-semibold text-accent">{tl("promoTitle")}</p>
           <p className="mx-auto mt-2 max-w-2xl text-lg">{PROMO_HOOK_TEXT}</p>
         </div>
       </Section>
@@ -102,23 +109,23 @@ export default async function AuditPage({
         <h2 className="font-display text-3xl font-extrabold">{t("tiersTitle")}</h2>
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {tiers.map((tier) => (
-            <Card key={tier.name} className={tier.highlight ? "border border-[--color-accent]/40" : ""}>
+            <Card key={tier.name} className={tier.highlight ? "border border-accent/40" : ""}>
               <h3 className="font-display text-lg font-bold">{tier.name}</h3>
               <div className="mt-2">
                 {tier.promo ? (
                   <div>
-                    <span className="font-display text-2xl font-extrabold text-[--color-accent]">{tier.promo}</span>
-                    <span className="ml-2 text-sm text-[--color-ink-muted] line-through">{tier.price}</span>
+                    <span className="font-display text-2xl font-extrabold text-accent">{tier.promo}</span>
+                    <span className="ml-2 text-sm text-ink-muted line-through">{tier.price}</span>
                   </div>
                 ) : (
-                  <span className="font-display text-2xl font-extrabold text-[--color-secondary]">{tier.price}</span>
+                  <span className="font-display text-2xl font-extrabold text-secondary">{tier.price}</span>
                 )}
               </div>
-              <p className="mt-2 text-sm text-[--color-ink-muted]">{tier.desc}</p>
+              <p className="mt-2 text-sm text-ink-muted">{tier.desc}</p>
               <ul className="mt-4 space-y-2">
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[--color-accent]" />
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                     <span>{f}</span>
                   </li>
                 ))}

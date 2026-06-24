@@ -30,13 +30,13 @@ export default function ContactForm() {
   if (done) {
     return (
       <div className="surface rounded-2xl p-8 text-center">
-        <CheckCircle2 className="mx-auto h-8 w-8 text-[--color-accent]" />
+        <CheckCircle2 className="mx-auto h-8 w-8 text-accent" />
         <p className="mt-2 text-sm">{t("thanks")}</p>
       </div>
     );
   }
 
-  const field = "w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm outline-none focus:border-[--color-secondary]";
+  const field = "w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm outline-none focus:border-secondary";
 
   return (
     <form onSubmit={submit} className="surface space-y-3 rounded-2xl p-6">
@@ -47,7 +47,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={busy}
-        className="inline-flex w-full items-center justify-center rounded-full bg-[--color-secondary] px-6 py-3 text-sm font-semibold text-[#04101f] disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-[#04101f] disabled:opacity-60"
       >
         {busy ? tc("loading") : t("send")}
       </button>

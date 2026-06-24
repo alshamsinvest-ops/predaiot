@@ -50,9 +50,9 @@ export default function GatedForm({
   if (done) {
     return (
       <div className="surface rounded-2xl p-6 text-center">
-        <CheckCircle2 className="mx-auto h-8 w-8 text-[--color-accent]" />
+        <CheckCircle2 className="mx-auto h-8 w-8 text-accent" />
         <p className="mt-2 text-sm">{tc("send")} ✓</p>
-        <p className="text-sm text-[--color-ink-muted]">{gateLabel}</p>
+        <p className="text-sm text-ink-muted">{gateLabel}</p>
         {downloads.length ? (
           <div className="mt-4 flex flex-col gap-2">
             {downloads.map((d) => (
@@ -62,7 +62,7 @@ export default function GatedForm({
                 target="_blank"
                 rel="noopener noreferrer"
                 download
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[--color-accent] px-6 py-3 text-sm font-semibold text-[#04101f]"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#04101f]"
               >
                 <Download className="h-4 w-4" /> {d.label}
               </a>
@@ -73,25 +73,25 @@ export default function GatedForm({
     );
   }
 
-  const field = "w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm outline-none focus:border-[--color-secondary]";
+  const field = "w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-sm outline-none focus:border-secondary";
 
   return (
     <div className="surface rounded-2xl p-6">
-      <p className="text-sm text-[--color-ink-muted]">{gateLabel}</p>
+      <p className="text-sm text-ink-muted">{gateLabel}</p>
       <form onSubmit={submit} className="mt-4 space-y-3">
         <input required placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className={field} />
         <input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
         <button
           type="submit"
           disabled={busy}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[--color-accent] px-6 py-3 text-sm font-semibold text-[#04101f] disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#04101f] disabled:opacity-60"
         >
           <Download className="h-4 w-4" /> {busy ? tc("loading") : ctaLabel}
         </button>
       </form>
       {withGoogle ? (
         <>
-          <div className="my-4 text-center text-xs text-[--color-ink-muted]">— {tc("continueGoogle")} —</div>
+          <div className="my-4 text-center text-xs text-ink-muted">— {tc("continueGoogle")} —</div>
           <GoogleSignInButton onSignedIn={() => setDone(true)} />
         </>
       ) : null}

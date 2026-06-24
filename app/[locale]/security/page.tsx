@@ -33,8 +33,8 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
         <div className="grid gap-6 sm:grid-cols-2">
           {items.map((i) => (
             <Card key={i.text}>
-              <i.icon className="h-6 w-6 text-[--color-accent]" />
-              <p className="mt-3 text-[--color-ink-muted]">{i.text}</p>
+              <i.icon className="h-6 w-6 text-accent" />
+              <p className="mt-3 text-ink-muted">{i.text}</p>
             </Card>
           ))}
         </div>

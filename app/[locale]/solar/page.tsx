@@ -35,8 +35,8 @@ export default async function SolarPage({ params }: { params: Promise<{ locale: 
       </div>
       <Section className="py-8">
         <Card>
-          <Sun className="h-7 w-7 text-[--color-accent]" />
-          <p className="mt-4 text-lg text-[--color-ink-muted]">{t("body")}</p>
+          <Sun className="h-7 w-7 text-accent" />
+          <p className="mt-4 text-lg text-ink-muted">{t("body")}</p>
           <LinkButton href="/economic-audit" variant="accent" className="mt-6">
             {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
           </LinkButton>

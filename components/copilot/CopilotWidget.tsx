@@ -60,20 +60,20 @@ export default function CopilotWidget() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[--color-secondary] text-[#04101f] shadow-lg glow-secondary transition-transform hover:scale-105"
+        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-[#04101f] shadow-lg glow-secondary transition-transform hover:scale-105"
         aria-label={t("open")}
       >
         {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
       </button>
 
       {open ? (
-        <div className="fixed bottom-24 right-5 z-40 flex h-[32rem] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[--color-primary-900] shadow-2xl">
-          <div className="flex items-center justify-between border-b border-white/10 bg-[--color-primary-50] px-4 py-3">
+        <div className="fixed bottom-24 right-5 z-40 flex h-[32rem] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-primary-900 shadow-2xl">
+          <div className="flex items-center justify-between border-b border-white/10 bg-primary-50 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[--color-accent]" />
+              <Sparkles className="h-4 w-4 text-accent" />
               <div>
                 <p className="text-sm font-semibold">{COPILOT.name}</p>
-                <p className="text-[10px] text-[--color-ink-muted]">{COPILOT.poweredBy}</p>
+                <p className="text-[10px] text-ink-muted">{COPILOT.poweredBy}</p>
               </div>
             </div>
           </div>
@@ -81,13 +81,13 @@ export default function CopilotWidget() {
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.length === 0 ? (
               <div className="space-y-3">
-                <p className="text-sm text-[--color-ink-muted]">{t("intro")}</p>
+                <p className="text-sm text-ink-muted">{t("intro")}</p>
                 <div className="flex flex-wrap gap-2">
                   {COPILOT.suggestedPrompts.map((p) => (
                     <button
                       key={p}
                       onClick={() => send(p)}
-                      className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-[--color-ink-muted] hover:bg-white/5"
+                      className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-ink-muted hover:bg-white/5"
                     >
                       {p}
                     </button>
@@ -100,15 +100,15 @@ export default function CopilotWidget() {
                   key={i}
                   className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm ${
                     m.role === "user"
-                      ? "ml-auto bg-[--color-secondary] text-[#04101f]"
-                      : "bg-white/5 text-[--color-ink]"
+                      ? "ml-auto bg-secondary text-[#04101f]"
+                      : "bg-white/5 text-ink"
                   }`}
                 >
                   {m.content}
                 </div>
               ))
             )}
-            {busy ? <p className="text-xs text-[--color-ink-muted]">…</p> : null}
+            {busy ? <p className="text-xs text-ink-muted">…</p> : null}
           </div>
 
           <form
@@ -122,12 +122,12 @@ export default function CopilotWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t("placeholder")}
-              className="flex-1 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm outline-none focus:border-[--color-secondary]"
+              className="flex-1 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm outline-none focus:border-secondary"
             />
             <button
               type="submit"
               disabled={busy}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-[--color-secondary] text-[#04101f] disabled:opacity-50"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-[#04101f] disabled:opacity-50"
               aria-label="Send"
             >
               <Send className="h-4 w-4" />

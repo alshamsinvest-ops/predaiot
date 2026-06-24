@@ -45,14 +45,14 @@ export default function Countdown({ claimed = 3 }: { claimed?: number }) {
   const cell = (value: number, label: string) => (
     <div className="flex flex-col items-center rounded-xl border border-white/10 bg-black/30 px-3 py-2">
       <span className="font-display text-2xl font-extrabold tabular-nums">{String(value).padStart(2, "0")}</span>
-      <span className="text-[10px] uppercase tracking-wide text-[--color-ink-muted]">{label}</span>
+      <span className="text-[10px] uppercase tracking-wide text-ink-muted">{label}</span>
     </div>
   );
 
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-xs uppercase tracking-widest text-[--color-ink-muted]">{t("countdownEnds")}</p>
+        <p className="text-xs uppercase tracking-widest text-ink-muted">{t("countdownEnds")}</p>
         <div className="mt-2 flex gap-2">
           {cell(d, t("days"))}
           {cell(h, t("hours"))}
@@ -61,7 +61,7 @@ export default function Countdown({ claimed = 3 }: { claimed?: number }) {
         </div>
       </div>
       <div>
-        <div className="flex items-center justify-between text-xs text-[--color-ink-muted]">
+        <div className="flex items-center justify-between text-xs text-ink-muted">
           <span>
             {claimed} {t("clientsClaimed")}
           </span>
@@ -71,7 +71,7 @@ export default function Countdown({ claimed = 3 }: { claimed?: number }) {
         </div>
         <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-white/10">
           <div
-            className="h-full rounded-full bg-[--color-accent]"
+            className="h-full rounded-full bg-accent"
             style={{ width: `${Math.min(100, (claimed / total) * 100)}%` }}
           />
         </div>

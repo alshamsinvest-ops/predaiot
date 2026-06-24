@@ -43,7 +43,7 @@ export default async function BessPage({ params }: { params: Promise<{ locale: s
       <Section className="py-8">
         <Card>
           <h2 className="font-display text-2xl font-bold">{t("p1Title")}</h2>
-          <p className="mt-3 text-[--color-ink-muted]">{t("p1Body")}</p>
+          <p className="mt-3 text-ink-muted">{t("p1Body")}</p>
         </Card>
       </Section>
       <Section>
@@ -51,7 +51,7 @@ export default async function BessPage({ params }: { params: Promise<{ locale: s
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           {levers.map((l) => (
             <Card key={l.text}>
-              <l.icon className="h-6 w-6 text-[--color-accent]" />
+              <l.icon className="h-6 w-6 text-accent" />
               <p className="mt-3">{l.text}</p>
             </Card>
           ))}
