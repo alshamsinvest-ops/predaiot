@@ -43,9 +43,9 @@ export default async function IndustriesPage({ params }: { params: Promise<{ loc
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {verticals.map((v) => (
             <Card key={v.name}>
-              <v.icon className="h-7 w-7 text-[--color-secondary]" />
+              <v.icon className="h-7 w-7 text-secondary" />
               <h3 className="mt-3 font-display text-lg font-bold">{v.name}</h3>
-              <p className="mt-2 text-sm text-[--color-ink-muted]">{v.desc}</p>
+              <p className="mt-2 text-sm text-ink-muted">{v.desc}</p>
             </Card>
           ))}
         </div>

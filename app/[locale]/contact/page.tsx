@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Calendar, MessageCircle, Mail, Phone } from "lucide-react";
 import { Section, PageHeader, Card } from "@/components/ui";
+import IndustrialImage from "@/components/IndustrialImage";
+import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import ContactForm from "@/components/forms/ContactForm";
 import { COMPANY } from "@/lib/constants";
@@ -26,18 +28,21 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
 
   return (
     <>
-      <Section className="pt-12">
-        <PageHeader title={t("title")} lead={t("lead")} />
-      </Section>
+      <div className="relative overflow-hidden">
+        <IndustrialImage img={IMAGES.controlRoom} locale={locale} variant="background" priority />
+        <Section className="pt-16">
+          <PageHeader title={t("title")} lead={t("lead")} />
+        </Section>
+      </div>
       <Section className="py-8">
         <div className="grid items-start gap-8 lg:grid-cols-2">
           <div className="space-y-6">
             <ContactForm />
             <Card className="flex flex-wrap items-center gap-4">
-              <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-2 text-sm hover:text-[--color-secondary]">
+              <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-2 text-sm hover:text-secondary">
                 <Mail className="h-4 w-4" /> {COMPANY.email}
               </a>
-              <a href={`tel:${COMPANY.phoneE164}`} className="flex items-center gap-2 text-sm hover:text-[--color-secondary]">
+              <a href={`tel:${COMPANY.phoneE164}`} className="flex items-center gap-2 text-sm hover:text-secondary">
                 <Phone className="h-4 w-4" /> {COMPANY.phoneDisplay}
               </a>
             </Card>
@@ -47,9 +52,9 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             {/* Booking */}
             <Card>
               <h2 className="flex items-center gap-2 font-display text-lg font-bold">
-                <Calendar className="h-5 w-5 text-[--color-secondary]" /> {t("book")}
+                <Calendar className="h-5 w-5 text-secondary" /> {t("book")}
               </h2>
-              <p className="mt-2 text-sm text-[--color-ink-muted]">{t("bookHint")}</p>
+              <p className="mt-2 text-sm text-ink-muted">{t("bookHint")}</p>
               {calendarUrl ? (
                 <div className="mt-4 overflow-hidden rounded-xl border border-white/10">
                   <iframe src={calendarUrl} title="Booking" className="h-[520px] w-full" loading="lazy" />
@@ -57,7 +62,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               ) : (
                 <a
                   href={`mailto:${COMPANY.email}?subject=Strategy%20Call`}
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-[--color-secondary] px-5 py-3 text-sm font-semibold text-[#04101f]"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-secondary px-5 py-3 text-sm font-semibold text-[#04101f]"
                 >
                   <Calendar className="h-4 w-4" /> {t("book")}
                 </a>

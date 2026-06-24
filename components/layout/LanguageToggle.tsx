@@ -14,7 +14,7 @@ export default function LanguageToggle() {
     <button
       type="button"
       onClick={() => router.replace(pathname, { locale: target })}
-      className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-[--color-ink] transition-colors hover:bg-white/10"
+      className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-white/10"
       aria-label="Switch language"
     >
       <Globe className="h-3.5 w-3.5" />

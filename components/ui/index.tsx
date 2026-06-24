@@ -5,15 +5,15 @@ type Variant = "primary" | "secondary" | "ghost" | "accent";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[--color-secondary] text-[#04101f] hover:brightness-110 glow-secondary",
-  accent: "bg-[--color-accent] text-[#04101f] hover:brightness-110 glow-accent",
+    "bg-secondary text-[#04101f] hover:brightness-110 glow-secondary",
+  accent: "bg-accent text-[#04101f] hover:brightness-110 glow-accent",
   secondary:
-    "bg-white/5 text-[--color-ink] border border-white/15 hover:bg-white/10",
-  ghost: "text-[--color-ink] hover:text-[--color-secondary]",
+    "bg-white/5 text-ink border border-white/15 hover:bg-white/10",
+  ghost: "text-ink hover:text-secondary",
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[--color-secondary]";
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary";
 
 export function Button({
   children,
@@ -63,7 +63,7 @@ export function Section({
 
 export function Kicker({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-block rounded-full border border-[--color-secondary]/30 bg-[--color-secondary]/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[--color-secondary]">
+    <span className="inline-block rounded-full border border-secondary/30 bg-secondary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-secondary">
       {children}
     </span>
   );
@@ -83,7 +83,7 @@ export function Card({
 
 export function Badge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[--color-accent]/30 bg-[--color-accent]/10 px-3 py-1 text-xs font-medium text-[--color-accent]">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
       {children}
     </span>
   );
@@ -92,10 +92,10 @@ export function Badge({ children }: { children: ReactNode }) {
 export function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="surface rounded-2xl p-6">
-      <div className="font-display text-3xl font-extrabold text-[--color-secondary] sm:text-4xl">
+      <div className="font-display text-3xl font-extrabold text-secondary sm:text-4xl">
         {value}
       </div>
-      <div className="mt-1 text-sm text-[--color-ink-muted]">{label}</div>
+      <div className="mt-1 text-sm text-ink-muted">{label}</div>
     </div>
   );
 }
@@ -113,7 +113,7 @@ export function PageHeader({
     <div className="mx-auto max-w-3xl text-center">
       {kicker ? <Kicker>{kicker}</Kicker> : null}
       <h1 className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">{title}</h1>
-      {lead ? <p className="mt-4 text-lg text-[--color-ink-muted]">{lead}</p> : null}
+      {lead ? <p className="mt-4 text-lg text-ink-muted">{lead}</p> : null}
     </div>
   );
 }

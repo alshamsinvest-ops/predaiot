@@ -63,9 +63,9 @@ export default async function PapersPage({ params }: { params: Promise<{ locale:
           <div className="space-y-4">
             {papers.map((p) => (
               <Card key={p.url}>
-                <FileText className="h-7 w-7 text-[--color-secondary]" />
+                <FileText className="h-7 w-7 text-secondary" />
                 <h2 className="mt-3 font-display text-xl font-bold">{p.title}</h2>
-                <p className="mt-2 text-sm text-[--color-ink-muted]">{p.desc}</p>
+                <p className="mt-2 text-sm text-ink-muted">{p.desc}</p>
               </Card>
             ))}
           </div>

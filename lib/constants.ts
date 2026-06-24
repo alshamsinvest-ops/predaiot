@@ -29,6 +29,7 @@ export const COMPANY = {
   phoneE164: "+96874114028",
   whatsappNumber: "96874114028",
   location: "Muscat, Sultanate of Oman",
+  linkedin: "https://www.linkedin.com/company/predaiot",
 } as const;
 
 /** PRIMARY economic figures — homepage hero, case study, audit defaults. */
@@ -93,7 +94,11 @@ export const REAL_TRACTION = [
     en: "Methodology published on Oman's National Open Data Portal",
     ar: "منهجية منشورة على البوابة الوطنية للبيانات المفتوحة في عُمان",
   },
-  { key: "stage", en: "Pre-revenue, pre-seed stage", ar: "مرحلة ما قبل الإيرادات وما قبل التأسيس" },
+  {
+    key: "patentmethod",
+    en: "Patented Economic Decision method (Financial-Loss engine)",
+    ar: "منهجية القرار الاقتصادي الحاصلة على براءة اختراع (محرّك الخسارة المالية)",
+  },
 ] as const;
 
 export const INDUSTRIES = [

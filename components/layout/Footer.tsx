@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Mail, Phone, MapPin, Zap } from "lucide-react";
+import { Mail, Phone, MapPin, Zap, Linkedin } from "lucide-react";
 import { COMPANY } from "@/lib/constants";
 
 export default function Footer() {
@@ -27,28 +27,37 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="border-t border-white/10 bg-[--color-primary-900]">
+    <footer className="border-t border-white/10 bg-primary-900">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-4">
         <div>
           <Link href="/" className="flex items-center gap-2 font-display text-lg font-extrabold">
-            <Zap className="h-5 w-5 text-[--color-accent]" />
+            <Zap className="h-5 w-5 text-accent" />
             PREDAIOT
           </Link>
-          <p className="mt-3 text-sm text-[--color-ink-muted]">{t("footer.tagline")}</p>
-          <ul className="mt-4 space-y-2 text-sm text-[--color-ink-muted]">
+          <p className="mt-3 text-sm text-ink-muted">{t("footer.tagline")}</p>
+          <ul className="mt-4 space-y-2 text-sm text-ink-muted">
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4" />
-              <a href={`mailto:${COMPANY.email}`} className="hover:text-[--color-ink]">{COMPANY.email}</a>
+              <a href={`mailto:${COMPANY.email}`} className="hover:text-ink">{COMPANY.email}</a>
             </li>
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4" />
-              <a href={`tel:${COMPANY.phoneE164}`} className="hover:text-[--color-ink]">{COMPANY.phoneDisplay}</a>
+              <a href={`tel:${COMPANY.phoneE164}`} className="hover:text-ink">{COMPANY.phoneDisplay}</a>
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
               {COMPANY.location}
             </li>
           </ul>
+          <a
+            href={COMPANY.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="PREDAIOT on LinkedIn"
+            className="mt-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-ink-muted transition-colors hover:border-secondary hover:text-secondary"
+          >
+            <Linkedin className="h-4 w-4" />
+          </a>
         </div>
 
         <FooterCol title={t("footer.product")} links={product} t={t} />
@@ -57,7 +66,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-5 py-5 text-xs text-[--color-ink-muted] sm:flex-row sm:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-5 py-5 text-xs text-ink-muted sm:flex-row sm:px-8">
           <span>© {new Date().getFullYear()} {COMPANY.name}. {t("footer.rights")}</span>
           <span>{t("footer.preSeed")}</span>
         </div>
@@ -77,11 +86,11 @@ function FooterCol({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-[--color-ink]">{title}</h3>
+      <h3 className="text-sm font-semibold text-ink">{title}</h3>
       <ul className="mt-3 space-y-2">
         {links.map((l) => (
           <li key={l.href}>
-            <Link href={l.href} className="text-sm text-[--color-ink-muted] hover:text-[--color-ink]">
+            <Link href={l.href} className="text-sm text-ink-muted hover:text-ink">
               {t(l.key)}
             </Link>
           </li>

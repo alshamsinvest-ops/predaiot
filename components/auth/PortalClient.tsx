@@ -53,13 +53,13 @@ export default function PortalClient() {
       <div className="mx-auto max-w-md">
         <div className="surface rounded-2xl p-8">
           <h1 className="font-display text-2xl font-extrabold">{t("title")}</h1>
-          <p className="mt-2 text-sm text-[--color-ink-muted]">{t("lead")}</p>
+          <p className="mt-2 text-sm text-ink-muted">{t("lead")}</p>
           {isFirebaseConfigured() ? (
             <div className="mt-6">
               <GoogleSignInButton onSignedIn={() => {}} />
             </div>
           ) : (
-            <p className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-[--color-ink-muted]">
+            <p className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-ink-muted">
               Secure sign-in is being finalized. Start your free diagnostic and we'll set up
               your portal access.
             </p>
@@ -73,7 +73,7 @@ export default function PortalClient() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="surface flex items-center justify-between rounded-2xl p-6">
         <div>
-          <p className="text-xs text-[--color-ink-muted]">{t("signedInAs")}</p>
+          <p className="text-xs text-ink-muted">{t("signedInAs")}</p>
           <p className="font-semibold">{user.displayName || user.email}</p>
         </div>
         <button onClick={signOut} className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm hover:bg-white/5">
@@ -84,7 +84,7 @@ export default function PortalClient() {
       <div className="surface rounded-2xl p-6">
         <h2 className="font-display text-lg font-bold">{t("uploadTitle")}</h2>
         <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-black/10 px-4 py-4 text-sm">
-          <Upload className="h-5 w-5 text-[--color-secondary]" />
+          <Upload className="h-5 w-5 text-secondary" />
           <span>CSV / Excel · max 10MB · never executed</span>
           <input
             type="file"
@@ -96,7 +96,7 @@ export default function PortalClient() {
             }}
           />
         </label>
-        {status ? <p className="mt-2 text-sm text-[--color-ink-muted]">{status}</p> : null}
+        {status ? <p className="mt-2 text-sm text-ink-muted">{status}</p> : null}
       </div>
     </div>
   );

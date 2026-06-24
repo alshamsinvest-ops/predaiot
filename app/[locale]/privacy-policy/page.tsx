@@ -44,10 +44,10 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
           {sections.map(([h, body]) => (
             <div key={h}>
               <h2 className="font-display text-xl font-bold">{h}</h2>
-              <p className="mt-2 text-[--color-ink-muted]">{body}</p>
+              <p className="mt-2 text-ink-muted">{body}</p>
             </div>
           ))}
-          <p className="text-xs text-[--color-ink-muted]">
+          <p className="text-xs text-ink-muted">
             {isAr ? "آخر تحديث: يونيو 2026" : "Last updated: June 2026"}
           </p>
         </div>
