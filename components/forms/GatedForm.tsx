@@ -15,11 +15,13 @@ export default function GatedForm({
   ctaLabel,
   gateLabel,
   withGoogle = true,
+  fileUrl,
 }: {
   type: "paper" | "investor";
   ctaLabel: string;
   gateLabel: string;
   withGoogle?: boolean;
+  fileUrl?: string;
 }) {
   const tc = useTranslations("common");
   const [email, setEmail] = useState("");
@@ -48,6 +50,17 @@ export default function GatedForm({
         <CheckCircle2 className="mx-auto h-8 w-8 text-[--color-accent]" />
         <p className="mt-2 text-sm">{tc("send")} ✓</p>
         <p className="text-sm text-[--color-ink-muted]">{gateLabel}</p>
+        {fileUrl ? (
+          <a
+            href={fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[--color-accent] px-6 py-3 text-sm font-semibold text-[#04101f]"
+          >
+            <Download className="h-4 w-4" /> {ctaLabel}
+          </a>
+        ) : null}
       </div>
     );
   }

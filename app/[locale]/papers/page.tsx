@@ -35,7 +35,12 @@ export default async function PapersPage({ params }: { params: Promise<{ locale:
             <h2 className="mt-3 font-display text-xl font-bold">{t("paper1Title")}</h2>
             <p className="mt-2 text-sm text-[--color-ink-muted]">{t("paper1Desc")}</p>
           </Card>
-          <GatedForm type="paper" ctaLabel={t("download")} gateLabel={t("gate")} />
+          <GatedForm
+            type="paper"
+            ctaLabel={t("download")}
+            gateLabel={t("gate")}
+            fileUrl="/papers/predaiot-whitepaper-oman-2026.pdf"
+          />
         </div>
       </Section>
     </>
