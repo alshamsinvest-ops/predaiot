@@ -119,6 +119,7 @@
     "freeLine": "0 OMR — with written guarantee",
     "auditName": "Economic Audit",
     "auditLine": "7-day delivery · 8,760-hour analysis",
+    "auditValue": "A complete 8,760-hour economic model of your asset against Oman's market signals — backed by our written guarantee: if we don't find at least 5% in recoverable value, you pay nothing.",
     "pilotName": "Pilot Program",
     "pilotLine": "90-day shadow-mode",
     "deployName": "Deployment",
@@ -211,6 +212,8 @@
     "founderRole": "Founder & CEO",
     "founderBio": "Chams Eddine Madi founded PREDAIOT to close the economic decision gap in energy assets — turning Oman's own published market data into recoverable value for operators across the GCC.",
     "mission": "Our mission",
+    "story": "PREDAIOT began with a simple observation: energy assets across Oman and the GCC are engineered for technical performance, yet almost none are optimized for economic dispatch against live market prices. That gap — between producing energy and producing value — is where money quietly leaks. We built a patented method to find it and recover it, with zero CAPEX.",
+    "timelineTitle": "Milestones",
     "missionBody": "Every asset produces energy. We make sure it produces value."
   },
   "contact": {

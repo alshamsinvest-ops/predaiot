@@ -14,8 +14,10 @@ export default function HeroDashboard() {
   const t = useTranslations();
   const [soc, setSoc] = useState(48);
   const [score, setScore] = useState(72);
-  const [recovered, setRecovered] = useState(0);
   const target = BENCHMARK_ESTIMATE.annualRecoveryOMR;
+  // Never render 0 — start at the real benchmark figure (count-up animates from a
+  // high base so the first paint already shows a credible number).
+  const [recovered, setRecovered] = useState(target);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -28,9 +30,10 @@ export default function HeroDashboard() {
   useEffect(() => {
     let raf: number;
     const start = performance.now();
+    const base = Math.round(target * 0.82); // animate from 82% → 100%, never from 0
     const tick = (now: number) => {
-      const p = Math.min(1, (now - start) / 1800);
-      setRecovered(Math.round(target * p));
+      const p = Math.min(1, (now - start) / 1400);
+      setRecovered(Math.round(base + (target - base) * p));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);

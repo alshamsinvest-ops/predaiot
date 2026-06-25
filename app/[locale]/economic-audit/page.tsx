@@ -7,7 +7,7 @@ import IndustrialImage from "@/components/IndustrialImage";
 import { IMAGES } from "@/lib/images";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata, serviceJsonLd } from "@/lib/seo";
-import { PRICING, PROMO_HOOK_TEXT, fmtOMR } from "@/lib/constants";
+import { PRICING, fmtOMR } from "@/lib/constants";
 
 export async function generateMetadata({
   params,
@@ -46,12 +46,11 @@ export default async function AuditPage({
     {
       name: t("auditTier"),
       price: `${fmtOMR(PRICING.audit.minOMR)}–${fmtOMR(PRICING.audit.maxOMR)} OMR`,
-      promo: `${fmtOMR(PRICING.audit.promoMinOMR)}–${fmtOMR(PRICING.audit.promoMaxOMR)} OMR`,
       desc: t("auditDesc"),
       features: [
         `${PRICING.audit.analysisHours.toLocaleString()}-hour analysis`,
         `${PRICING.audit.deliveryDays}-day delivery`,
-        t("promoNote"),
+        tl("guaranteeTitle"),
       ],
     },
     {
@@ -96,14 +95,6 @@ export default async function AuditPage({
         </div>
       </Section>
 
-      {/* PROMO HOOK */}
-      <Section className="py-8">
-        <div className="surface rounded-2xl p-6 text-center">
-          <p className="text-sm font-semibold text-accent">{tl("promoTitle")}</p>
-          <p className="mx-auto mt-2 max-w-2xl text-lg">{PROMO_HOOK_TEXT}</p>
-        </div>
-      </Section>
-
       {/* PAID TIERS */}
       <Section>
         <h2 className="font-display text-3xl font-extrabold">{t("tiersTitle")}</h2>
@@ -112,14 +103,7 @@ export default async function AuditPage({
             <Card key={tier.name} className={tier.highlight ? "border border-accent/40" : ""}>
               <h3 className="font-display text-lg font-bold">{tier.name}</h3>
               <div className="mt-2">
-                {tier.promo ? (
-                  <div>
-                    <span className="font-display text-2xl font-extrabold text-accent">{tier.promo}</span>
-                    <span className="ml-2 text-sm text-ink-muted line-through">{tier.price}</span>
-                  </div>
-                ) : (
-                  <span className="font-display text-2xl font-extrabold text-secondary">{tier.price}</span>
-                )}
+                <span className="font-display text-2xl font-extrabold text-secondary">{tier.price}</span>
               </div>
               <p className="mt-2 text-sm text-ink-muted">{tier.desc}</p>
               <ul className="mt-4 space-y-2">

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AlertTriangle, Building2 } from "lucide-react";
+import { AlertTriangle, Building2, FileText, Download } from "lucide-react";
 import { Section, PageHeader, Card, Kicker } from "@/components/ui";
 import IndustrialImage from "@/components/IndustrialImage";
 import { IMAGES } from "@/lib/images";
@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     path: "/cases",
     title: t("title"),
-    description: "Published methodology case study: 862,903 OMR recovered per 500 MW asset, and PREDAIOT's real pre-seed traction.",
+    description: "Case studies: the Sinaw solar + storage economic dispatch study and the published 862,903 OMR / 500 MW methodology.",
   });
 }
 
@@ -63,6 +63,35 @@ export default async function CasesPage({ params }: { params: Promise<{ locale: 
               opendata.gov.om
             </a>
           </p>
+        </div>
+      </Section>
+
+      {/* Sinaw case study — downloadable */}
+      <Section className="py-8">
+        <div className="surface grid items-center gap-6 rounded-2xl p-8 lg:grid-cols-[1.4fr_1fr]">
+          <div>
+            <Kicker>{isAr ? "دراسة حالة تطبيقية" : "Applied case study"}</Kicker>
+            <h2 className="mt-3 font-display text-2xl font-extrabold">
+              {isAr ? "دراسة حالة سيناو — التوزيع الاقتصادي للطاقة الشمسية + التخزين" : "Sinaw — Economic dispatch for a solar + storage asset"}
+            </h2>
+            <p className="mt-3 text-ink-muted">
+              {isAr
+                ? "تطبيق منهجية القرار الاقتصادي على أصل طاقة شمسية وبطاريات: مقارنة الجدولة الثابتة بالتوزيع الاقتصادي الذكي، وقياس القيمة القابلة للاسترجاع باستخدام بيانات السوق العُمانية."
+                : "Applying the Economic Decision method to a solar + battery asset: fixed schedule vs. economic dispatch, quantifying recoverable value against Oman market data."}
+            </p>
+            <a
+              href="/papers/predaiot-sinaw-case-study.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#04101f]"
+            >
+              <Download className="h-4 w-4" /> {isAr ? "تحميل دراسة الحالة (PDF)" : "Download the case study (PDF)"}
+            </a>
+          </div>
+          <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-black/20 p-10">
+            <FileText className="h-16 w-16 text-secondary" />
+          </div>
         </div>
       </Section>
 
