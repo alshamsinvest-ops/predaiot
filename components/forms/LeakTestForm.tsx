@@ -4,9 +4,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ShieldCheck, Share2, CheckCircle2, Upload } from "lucide-react";
 import { API_BASE, whatsappLink } from "@/lib/api";
-import { ASSET_TYPES, COMPANY, GUARANTEE_TEXT, PROMO_HOOK_TEXT, fmtOMR, omrToUsd } from "@/lib/constants";
+import { ASSET_TYPES, COMPANY, GUARANTEE_TEXT, fmtOMR, omrToUsd } from "@/lib/constants";
 import { estimateValue } from "@/lib/value";
-import Countdown from "@/components/ui/Countdown";
 
 interface ResultState {
   capacityMW: number;
@@ -226,15 +225,6 @@ export default function LeakTestForm() {
           >
             <Share2 className="h-4 w-4" /> {t("shareWhatsapp")}
           </a>
-        </div>
-
-        {/* Conversion hook with live countdown + counter */}
-        <div className="surface rounded-2xl p-8">
-          <p className="text-sm font-semibold text-accent">{t("promoTitle")}</p>
-          <p className="mt-2 text-lg">{PROMO_HOOK_TEXT}</p>
-          <div className="mt-5">
-            <Countdown claimed={3} />
-          </div>
         </div>
 
         <div className="surface flex items-start gap-3 rounded-2xl p-6">

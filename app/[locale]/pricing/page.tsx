@@ -6,7 +6,7 @@ import IndustrialImage from "@/components/IndustrialImage";
 import { IMAGES } from "@/lib/images";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata, serviceJsonLd } from "@/lib/seo";
-import { PRICING, PROMO_HOOK_TEXT, GUARANTEE_TEXT, fmtOMR, omrToUsd } from "@/lib/constants";
+import { PRICING, GUARANTEE_TEXT, fmtOMR, omrToUsd } from "@/lib/constants";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -40,8 +40,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
       name: t("auditName"),
       omr: `${fmtOMR(PRICING.audit.minOMR)}–${fmtOMR(PRICING.audit.maxOMR)} OMR`,
       usd: usd(PRICING.audit.minOMR),
-      promo: `${fmtOMR(PRICING.audit.promoMinOMR)}–${fmtOMR(PRICING.audit.promoMaxOMR)} OMR`,
-      features: [t("auditLine"), PROMO_HOOK_TEXT],
+      features: [t("auditLine"), t("auditValue")],
       cta: { href: "/economic-audit", label: tc("getStarted") },
     },
     {
@@ -82,14 +81,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
             <Card key={p.name} className={p.highlight ? "border border-accent/40" : ""}>
               <h3 className="font-display text-lg font-bold">{p.name}</h3>
               <div className="mt-2">
-                {p.promo ? (
-                  <div>
-                    <span className="font-display text-2xl font-extrabold text-accent">{p.promo}</span>
-                    <span className="ml-2 text-sm text-ink-muted line-through">{p.omr}</span>
-                  </div>
-                ) : (
-                  <span className="font-display text-2xl font-extrabold text-secondary">{p.omr}</span>
-                )}
+                <span className="font-display text-2xl font-extrabold text-secondary">{p.omr}</span>
                 {p.usd ? <p className="text-xs text-ink-muted">{p.usd}</p> : null}
               </div>
               <ul className="mt-4 space-y-2">
