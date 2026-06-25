@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight, Activity, Battery, LineChart, ShieldCheck, Zap, Building2 } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
 import IndustrialImage from "@/components/IndustrialImage";
@@ -42,12 +41,6 @@ export default async function HomePage({
   const tc = await getTranslations("common");
   const tl = await getTranslations("leak");
   const isAr = locale === "ar";
-
-  const modules = [
-    { icon: Activity, title: th("dash.score"), body: t("solutionBody") },
-    { icon: Battery, title: tc("startDiagnostic"), body: t("how1Body") },
-    { icon: LineChart, title: th("dash.recovery"), body: t("how2Body") },
-  ];
 
   return (
     <>
@@ -140,18 +133,47 @@ export default async function HomePage({
         </div>
       </Section>
 
-      {/* PRODUCT MODULES */}
+      {/* WHAT HAPPENS AFTER YOU CLICK */}
       <Section>
-        <h2 className="font-display text-3xl font-extrabold">{t("modulesTitle")}</h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {modules.map((m) => (
-            <Card key={m.title}>
-              <m.icon className="h-6 w-6 text-accent" />
-              <h3 className="mt-3 font-display text-lg font-bold">{m.title}</h3>
-              <p className="mt-2 text-sm text-ink-muted">{m.body}</p>
-            </Card>
+        <h2 className="font-display text-3xl font-extrabold">
+          {isAr ? "ماذا يحدث بعد أن تنقر" : "What happens after you click"}
+        </h2>
+        <p className="mt-2 text-ink-muted">
+          {isAr
+            ? "بدون مكالمات مبيعات. بدون نماذج طويلة. خمس خطوات — وانتهيت."
+            : "No sales calls. No long forms. Five steps — and you're done."}
+        </p>
+        <ol className="mt-8 grid gap-4 md:grid-cols-5">
+          {(
+            isAr
+              ? [
+                  ["نموذج من 5 دقائق", "أخبرنا بنوع الأصل والحجم التقريبي والموقع."],
+                  ["نتواصل خلال 24 ساعة", "شمس أو أحد أعضاء الفريق يتواصل عبر واتساب أو البريد لتأكيد التفاصيل."],
+                  ["شارك بيانات شهر", "شهر من سجلات التوزيع أو فواتير الطاقة أو البيانات التشغيلية. نتولّى التحليل."],
+                  ["تستلم النتيجة خلال 7 أيام", "تقرير واضح يُظهر فجوة القرار الاقتصادي بالريال — مع توصيات توقيت محددة."],
+                  ["أنت تقرّر", "بدون ضغط. بدون تسجيل تلقائي. إذا كانت النتيجة مهمة، نتحدث عن الخطوات التالية."],
+                ]
+              : [
+                  ["5-minute form", "Tell us your asset type, approximate size, and location."],
+                  ["We reach out in 24 hours", "Chams or a team member contacts you via WhatsApp or email to confirm details."],
+                  ["Share one month of data", "One month of dispatch logs, energy invoices, or operational data. We handle the analysis."],
+                  ["Result in 7 days", "A clear report showing your Economic Decision Gap in OMR — with specific dispatch timing recommendations."],
+                  ["You decide", "No pressure. No automatic enrollment. If the number is interesting, we talk next steps."],
+                ]
+          ).map(([title, body], i) => (
+            <li key={title} className="surface rounded-2xl p-5">
+              <span className="font-mono text-xs font-bold text-secondary">
+                {isAr ? `الخطوة ${i + 1}` : `Step ${i + 1}`}
+              </span>
+              <h3 className="mt-2 font-display text-base font-bold">{title}</h3>
+              <p className="mt-2 text-xs text-ink-muted">{body}</p>
+            </li>
           ))}
-        </div>
+        </ol>
+        <p className="mt-6 text-sm text-ink-muted">
+          {isAr ? "الضمان:" : "Guarantee:"}{" "}
+          <span className="text-ink">{GUARANTEE_TEXT}</span>
+        </p>
       </Section>
 
       {/* TRUST SIGNALS — real traction only */}
@@ -160,9 +182,12 @@ export default async function HomePage({
         <p className="mt-2 text-ink-muted">{t("trustSub")}</p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {REAL_TRACTION.map((item) => (
-            <div key={item.key} className="surface flex items-center gap-3 rounded-2xl p-5">
-              <Building2 className="h-5 w-5 shrink-0 text-secondary" />
-              <span className="text-sm">{isAr ? item.ar : item.en}</span>
+            <div key={item.key} className="surface rounded-2xl p-5">
+              <div className="flex items-center gap-2 text-secondary">
+                <span aria-hidden className="text-xl">{item.icon}</span>
+                <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
+              </div>
+              <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
             </div>
           ))}
         </div>

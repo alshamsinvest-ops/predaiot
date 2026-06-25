@@ -1,24 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand palette */
-  --color-primary: #071a2f;
-  --color-primary-50: #0b2540;
-  --color-primary-700: #061528;
-  --color-primary-900: #04101f;
-  --color-secondary: #00b2ff;
-  --color-accent: #00e676;
+  /* Brand palette (founder spec) */
+  --color-primary: #060B18;        /* navy background */
+  --color-primary-50: #0D1628;     /* navy mid (cards) */
+  --color-primary-700: #060B18;
+  --color-primary-900: #04081A;
+  --color-secondary: #00CFFF;      /* teal — primary accent / CTAs */
+  --color-accent: #FF6630;         /* orange — secondary accent / energy */
+  --color-positive: #00CC66;       /* green — charge / success */
 
-  --color-ink: #e8eef6;
-  --color-ink-muted: #93a4ba;
+  --color-ink: #F0F4FF;            /* primary text */
+  --color-ink-muted: #6B7A99;      /* secondary text */
   --color-line: rgba(255, 255, 255, 0.08);
 
+  /* Body uses Inter for readability of long-form text. DM Mono is reserved
+     for data, numbers, code, and UI chrome (widget, pseudocode, stats). */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-inter-tight), var(--font-inter), sans-serif;
+  --font-display: var(--font-syne), var(--font-inter), sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, monospace;
 
   --animate-fade-up: fade-up 0.6s ease-out forwards;
   --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
-  --animate-ticker: ticker 1s steps(1) infinite;
 }
 
 @keyframes fade-up {
@@ -30,6 +33,12 @@
   0%, 100% { opacity: 0.55; }
   50% { opacity: 1; }
 }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.pulse { animation: pulse 2s ease-in-out infinite; }
 
 :root {
   color-scheme: dark;
@@ -58,7 +67,7 @@ h1, h2, h3, h4, .font-display {
 
 /* Premium industrial-AI surfaces */
 .surface {
-  background: linear-gradient(180deg, rgba(11, 37, 64, 0.6) 0%, rgba(4, 16, 31, 0.6) 100%);
+  background: linear-gradient(180deg, rgba(13, 22, 40, 0.7) 0%, rgba(6, 11, 24, 0.6) 100%);
   border: 1px solid var(--color-line);
   backdrop-filter: blur(8px);
 }
@@ -70,20 +79,20 @@ h1, h2, h3, h4, .font-display {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(7, 26, 47, 0.72) 0%, rgba(4, 16, 31, 0.92) 100%);
+  background: linear-gradient(180deg, rgba(6, 11, 24, 0.72) 0%, rgba(4, 8, 26, 0.92) 100%);
 }
 
 .glow-secondary {
-  box-shadow: 0 0 0 1px rgba(0, 178, 255, 0.25), 0 12px 48px -12px rgba(0, 178, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(0, 207, 255, 0.25), 0 12px 48px -12px rgba(0, 207, 255, 0.45);
 }
 .glow-accent {
-  box-shadow: 0 0 0 1px rgba(0, 230, 118, 0.25), 0 12px 48px -12px rgba(0, 230, 118, 0.45);
+  box-shadow: 0 0 0 1px rgba(255, 102, 48, 0.25), 0 12px 48px -12px rgba(255, 102, 48, 0.45);
 }
 
 .grid-bg {
   background-image:
-    linear-gradient(rgba(0, 178, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 178, 255, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(0, 207, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 207, 255, 0.06) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
