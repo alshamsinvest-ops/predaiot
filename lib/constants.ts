@@ -78,26 +78,109 @@ export const PRICING = {
   deployment: { predaiotPct: 40, clientPct: 60, upfrontOMR: 0 },
 } as const;
 
-/** Exact guarantee text — do not alter wording. */
+/** Guarantee text — money-back, OMR-based threshold. */
 export const GUARANTEE_TEXT =
-  "If we don't find at least 5% in recoverable value in your free week, we'll tell you so in writing — no audit needed, no cost, ever.";
+  "If we don't identify at least 20,000 OMR in annual recoverable value — you pay nothing. In writing.";
 
-/** Exact promo hook text — do not alter wording. */
-export const PROMO_HOOK_TEXT =
-  "Lock in the full audit at 50% off — 1,250–1,500 OMR instead of 2,500–3,000 OMR — first 10 clients only, or within 14 days.";
-
-/** The ONLY trust items permitted. No fabricated logos or testimonials. */
+/** The ONLY trust items permitted — verified, recent. */
 export const REAL_TRACTION = [
-  { key: "patent", en: "Patent filed (Tunisia)", ar: "براءة اختراع مودعة (تونس)" },
   {
-    key: "opendata",
-    en: "Methodology published on Oman's National Open Data Portal",
-    ar: "منهجية منشورة على البوابة الوطنية للبيانات المفتوحة في عُمان",
+    key: "ministry",
+    icon: "🏛️",
+    en: "Ministry Recognition",
+    ar: "اعتراف من الوزارة",
+    detailEn:
+      "Methodology published on Oman National Open Data Portal — Ministry of Transport, Communications & IT — June 2026.",
+    detailAr:
+      "منهجية منشورة على البوابة الوطنية للبيانات المفتوحة — وزارة النقل والاتصالات وتقنية المعلومات — يونيو 2026.",
   },
   {
-    key: "patentmethod",
-    en: "Patented Economic Decision method (Financial-Loss engine)",
-    ar: "منهجية القرار الاقتصادي الحاصلة على براءة اختراع (محرّك الخسارة المالية)",
+    key: "oetc",
+    icon: "⚡",
+    en: "Grid Operator Engagement",
+    ar: "تواصل مع مشغّل الشبكة",
+    detailEn:
+      "Meeting with GM Load Dispatch Centre, OETC — operator of Oman's national transmission grid — June 2026.",
+    detailAr:
+      "اجتماع مع المدير العام لمركز التحكم في الأحمال OETC — مشغّل شبكة النقل الوطنية في عُمان — يونيو 2026.",
+  },
+  {
+    key: "sas",
+    icon: "🏗️",
+    en: "Government Advisory",
+    ar: "استشارة حكومية",
+    detailEn:
+      "Consultation session — SAS Center, Ministry of Transport, Communications & IT — May 2026.",
+    detailAr:
+      "جلسة استشارية — مركز SAS، وزارة النقل والاتصالات وتقنية المعلومات — مايو 2026.",
+  },
+  {
+    key: "patent",
+    icon: "📋",
+    en: "Patent Filed",
+    ar: "براءة اختراع مودعة",
+    detailEn:
+      "Economic Decision Engine method — patent application filed. Proprietary dispatch optimization technology.",
+    detailAr:
+      "طريقة محرّك القرار الاقتصادي — طلب براءة اختراع مودَع. تقنية امتلاكية لتحسين التوزيع.",
+  },
+  {
+    key: "ctoreview",
+    icon: "🔬",
+    en: "Expert Technical Review",
+    ar: "مراجعة فنية خبيرة",
+    detailEn:
+      "CTO & Director IPP/EPC Renewable Energy confirmed methodology. Technical corrections incorporated and published.",
+    detailAr:
+      "مدير تقني وCTO لمطوّر طاقة متجددة (IPP/EPC) أكّد المنهجية. التعديلات الفنية أُدمجت ونُشرت.",
+  },
+  {
+    key: "energyweek",
+    icon: "💬",
+    en: "Industry Engagement",
+    ar: "تفاعل مع القطاع",
+    detailEn:
+      "8 direct conversations at Oman Sustainability & Energy Week 2026. Active pipeline across utility-scale energy operators in Oman.",
+    detailAr:
+      "8 محادثات مباشرة في أسبوع الاستدامة والطاقة 2026. خط أنابيب نشِط مع مشغّلين على مستوى الشبكة في عُمان.",
+  },
+  {
+    key: "gcc",
+    icon: "🌍",
+    en: "GCC Commercial Discussions",
+    ar: "محادثات تجارية في الخليج",
+    detailEn:
+      "Distribution partnership discussions in progress across GCC renewable energy market.",
+    detailAr:
+      "محادثات شراكة توزيع جارية في سوق الطاقة المتجددة في دول الخليج.",
+  },
+] as const;
+
+/** Anonymous, industry-attributed quotes — safe to display. */
+export const INDUSTRY_QUOTES = [
+  {
+    key: "renewables",
+    en: "The economic inefficiency from sub-optimized dispatch is certainly within a realistic range. Points 2 and 3 — charge timing and discharge optimization — are the hardest to control in practice.",
+    ar: "عدم الكفاءة الاقتصادية الناتج عن التوزيع غير المُحسَّن يقع بالتأكيد ضمن نطاق واقعي. النقطتان 2 و3 — توقيت الشحن وتحسين التفريغ — هما الأصعب في الضبط عمليًا.",
+    role: "Lead, Renewables & Emerging Technologies — Major Oman Energy Operator",
+    roleAr: "قائد قسم المتجددات والتقنيات الناشئة — مشغّل طاقة كبير في عُمان",
+    date: "June 2026",
+  },
+  {
+    key: "monitoring",
+    en: "There is significant value in integrating operational monitoring with economic optimization. Operationally correct decisions are not necessarily the most economically efficient.",
+    ar: "هناك قيمة كبيرة في دمج المراقبة التشغيلية مع التحسين الاقتصادي. القرارات الصحيحة تشغيليًا ليست بالضرورة الأكثر كفاءة اقتصاديًا.",
+    role: "Control & Monitoring Engineer — Operational Energy Facility, Oman",
+    roleAr: "مهندس تحكم ومراقبة — منشأة طاقة تشغيلية، عُمان",
+    date: "June 2026",
+  },
+  {
+    key: "cto",
+    en: "The methodology should account for DC/AC ratio 1.25 and single-axis tracker with bifacial modules — energy yield will get a huge boost. OETC is investing in standalone BESS targeting 3GW by 2030.",
+    ar: "ينبغي أن تأخذ المنهجية بعين الاعتبار نسبة DC/AC = 1.25 وأنظمة التتبع أحادي المحور مع ألواح ثنائية الوجه — سترتفع كمية الطاقة المنتجة بشكل كبير. تستثمر OETC في بطاريات تخزين مستقلة بهدف 3 جيجاوات بحلول 2030.",
+    role: "CTO & Director IPP/EPC Renewable Energy — Senior Technical Review",
+    roleAr: "مدير تقني وCTO لمطوّر طاقة متجددة — مراجعة فنية كبيرة",
+    date: "June 2026",
   },
 ] as const;
 

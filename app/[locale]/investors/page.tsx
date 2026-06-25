@@ -30,9 +30,12 @@ export default async function InvestorsPage({ params }: { params: Promise<{ loca
         <div className="grid items-start gap-8 lg:grid-cols-2">
           <div className="grid gap-4">
             {REAL_TRACTION.map((item) => (
-              <Card key={item.key} className="flex items-center gap-3">
-                <Building2 className="h-5 w-5 shrink-0 text-secondary" />
-                <span className="text-sm">{isAr ? item.ar : item.en}</span>
+              <Card key={item.key}>
+                <div className="flex items-center gap-2 text-secondary">
+                  <span aria-hidden className="text-xl">{item.icon}</span>
+                  <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
+                </div>
+                <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
               </Card>
             ))}
           </div>

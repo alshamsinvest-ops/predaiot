@@ -1,101 +1,109 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
-import { fmtOMR } from "@/lib/constants";
-import { BENCHMARK_ESTIMATE } from "@/lib/value";
 
 /**
- * Illustrative animated dashboard for the hero. All values are clearly labeled
- * "illustrative interface" and the revenue figure traces to the published
- * 862,903 OMR / 500 MW benchmark.
+ * PREDAIOT Economic Engine — live simulation widget for the hero.
+ * Shows running CHARGE/DISCHARGE/HOLD decisions driven by simulated grid prices
+ * and battery SOC, with a session OMR-recovered counter. Clearly labeled
+ * "live simulation · official Oman market data" — never live operations.
  */
+type Decision = "CHARGE" | "DISCHARGE" | "HOLD";
+
+const decisionColor: Record<Decision, string> = {
+  CHARGE: "#00CC66",
+  DISCHARGE: "#FF6630",
+  HOLD: "#6B7A99",
+};
+
 export default function HeroDashboard() {
-  const t = useTranslations();
-  const [soc, setSoc] = useState(48);
-  const [score, setScore] = useState(72);
-  const target = BENCHMARK_ESTIMATE.annualRecoveryOMR;
-  // Never render 0 — start at the real benchmark figure (count-up animates from a
-  // high base so the first paint already shows a credible number).
-  const [recovered, setRecovered] = useState(target);
+  const [omrSaved, setOmrSaved] = useState(1847);
+  const [decision, setDecision] = useState<Decision>("CHARGE");
+  const [soc, setSoc] = useState(58);
+  const [price, setPrice] = useState(0.068);
+  const [decisions, setDecisions] = useState(203);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setSoc((s) => 40 + Math.round(40 * (0.5 + 0.5 * Math.sin(Date.now() / 2500))));
-      setScore((v) => 70 + Math.round(18 * (0.5 + 0.5 * Math.sin(Date.now() / 3200))));
-    }, 1200);
+      const newPrice = 0.052 + Math.random() * 0.085;
+      setPrice(newPrice);
+      setSoc((s) => {
+        const newSoc = Math.max(5, Math.min(98, s + (Math.random() > 0.5 ? 2 : -3)));
+        const dec: Decision =
+          newPrice < 0.07 && newSoc < 85
+            ? "CHARGE"
+            : newPrice > 0.1 && newSoc > 30
+            ? "DISCHARGE"
+            : "HOLD";
+        setDecision(dec);
+        return newSoc;
+      });
+      setOmrSaved((s) => s + Math.round(Math.random() * 45 + 10));
+      setDecisions((d) => d + 1);
+    }, 2800);
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    let raf: number;
-    const start = performance.now();
-    const base = Math.round(target * 0.82); // animate from 82% → 100%, never from 0
-    const tick = (now: number) => {
-      const p = Math.min(1, (now - start) / 1400);
-      setRecovered(Math.round(base + (target - base) * p));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target]);
+  const fils = Math.round(price * 1000);
+  const priceColor = price > 0.1 ? "#FF6630" : "#00CC66";
 
   return (
-    <div className="surface relative overflow-hidden rounded-3xl p-5">
-      <div className="grid-bg absolute inset-0 opacity-40" aria-hidden="true" />
+    <div className="surface relative overflow-hidden rounded-3xl p-5 font-mono">
+      <div className="grid-bg pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
       <div className="relative">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-widest text-secondary">
-            PREDAIOT
-          </span>
-          <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-ink-muted">
-            {t("common.illustrative")}
+        <div className="mb-4 flex items-center gap-2">
+          <span
+            className="pulse h-2 w-2 rounded-full"
+            style={{ background: "#00CC66" }}
+            aria-hidden="true"
+          />
+          <span className="text-[10px] uppercase tracking-[0.15em] text-ink-muted">
+            PREDAIOT Economic Engine · Live simulation
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {/* Battery SOC gauge */}
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-[11px] text-ink-muted">{t("hero.dash.soc")}</p>
-            <div className="mt-3 flex items-end gap-2">
-              <span className="font-display text-3xl font-extrabold">{soc}%</span>
-            </div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full bg-accent transition-all duration-1000"
-                style={{ width: `${soc}%` }}
-              />
-            </div>
+        {/* Headline OMR counter */}
+        <div className="mb-4">
+          <div className="text-[10px] uppercase tracking-wider text-ink-muted">
+            Revenue recovered (session)
           </div>
-
-          {/* Economic Efficiency Score */}
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-[11px] text-ink-muted">{t("hero.dash.score")}</p>
-            <div className="mt-3">
-              <span className="font-display text-3xl font-extrabold text-secondary">
-                {score}
-              </span>
-              <span className="text-sm text-ink-muted">/100</span>
-            </div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full bg-secondary transition-all duration-1000"
-                style={{ width: `${score}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Revenue Recovery */}
-          <div className="col-span-2 rounded-2xl border border-accent/30 bg-accent/5 p-4">
-            <p className="text-[11px] text-ink-muted">{t("hero.dash.recovery")}</p>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="font-display text-4xl font-extrabold text-accent">
-                {fmtOMR(recovered)}
-              </span>
-              <span className="text-sm text-ink-muted">OMR / {t("common.perYear")}</span>
-            </div>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="font-display text-3xl font-extrabold text-secondary sm:text-4xl">
+              {omrSaved.toLocaleString()}
+            </span>
+            <span className="text-sm text-ink-muted">OMR</span>
           </div>
         </div>
+
+        <div className="grid grid-cols-2 gap-2.5">
+          <Stat label="Engine decision" value={decision} valueColor={decisionColor[decision]} />
+          <Stat label="Grid price" value={`${fils} fils/kWh`} valueColor={priceColor} />
+          <Stat label="Battery SOC" value={`${Math.round(soc)}%`} valueColor="#00CFFF" />
+          <Stat label="Decisions today" value={decisions.toLocaleString()} valueColor="#F0F4FF" />
+        </div>
+
+        <p className="mt-4 text-center text-[10px] text-ink-muted">
+          Illustrative simulation · Based on official Oman market data
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  valueColor,
+}: {
+  label: string;
+  value: string;
+  valueColor: string;
+}) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5">
+      <div className="text-[9px] uppercase tracking-wider text-ink-muted">{label}</div>
+      <div className="mt-1 text-sm font-bold tabular-nums" style={{ color: valueColor }}>
+        {value}
       </div>
     </div>
   );

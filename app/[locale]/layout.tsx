@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { Inter, Inter_Tight } from "next/font/google";
+import { Inter, Syne, DM_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { COMPANY } from "@/lib/constants";
 import { organizationJsonLd } from "@/lib/seo";
@@ -14,10 +14,16 @@ import CopilotWidget from "@/components/copilot/CopilotWidget";
 import JsonLd from "@/components/JsonLd";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const interTight = Inter_Tight({
+const syne = Syne({
   subsets: ["latin"],
-  weight: ["700", "800"],
-  variable: "--font-inter-tight",
+  weight: ["600", "700", "800"],
+  variable: "--font-syne",
+  display: "swap",
+});
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-mono",
   display: "swap",
 });
 
@@ -52,7 +58,7 @@ export default async function LocaleLayout({
   const dir = locale === "ar" ? "rtl" : "ltr";
 
   return (
-    <html lang={locale} dir={dir} className={`${inter.variable} ${interTight.variable}`}>
+    <html lang={locale} dir={dir} className={`${inter.variable} ${syne.variable} ${dmMono.variable}`}>
       <body className="min-h-screen antialiased">
         <JsonLd data={organizationJsonLd()} />
         <NextIntlClientProvider>
