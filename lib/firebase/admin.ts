@@ -16,8 +16,13 @@ import { getFirestore } from "firebase-admin/firestore";
 let adminApp: App | null = null;
 
 export function getAdminApp(): App | null {
-  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+  // Project id + service-account email aren't secret, so they default to the
+  // prd2025 values. Only the PRIVATE KEY must be supplied (Vercel env) — and
+  // until it is, this returns null and the app degrades gracefully.
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID || "prd2025";
+  const clientEmail =
+    process.env.FIREBASE_ADMIN_CLIENT_EMAIL ||
+    "firebase-adminsdk-fbsvc@prd2025.iam.gserviceaccount.com";
   const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n");
   if (!projectId || !clientEmail || !privateKey) return null;
 
