@@ -95,7 +95,7 @@ async function writeLead(fields: Record<string, string>) {
 async function notifyWhatsApp(text: string) {
   if (!twilioClient) return;
   const from = process.env.TWILIO_WHATSAPP_NUMBER || "whatsapp:+14155238886";
-  const to = `whatsapp:${COMPANY.phoneE164}`;
+  const to = `whatsapp:${process.env.WHATSAPP_TO || COMPANY.phoneE164}`;
   try {
     await twilioClient.messages.create({ from, to, body: text });
   } catch (e) {
