@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
-import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
-import HeroDashboard from "@/components/dashboard/HeroDashboard";
-import IndustrialImage from "@/components/IndustrialImage";
-import { IMAGES } from "@/lib/images";
+import { ArrowRight, ShieldCheck } from "lucide-react";
+import { LinkButton } from "@/components/ui";
 import { buildMetadata } from "@/lib/seo";
+import { IMAGES } from "@/lib/images";
 import {
   PRIMARY,
   REAL_TRACTION,
-  fmtOMR,
-  COMPANY,
+  INDUSTRY_QUOTES,
   GUARANTEE_TEXT,
+  COMPANY,
 } from "@/lib/constants";
+
+import SiteHero from "@/components/editorial/SiteHero";
+import StatBand from "@/components/editorial/StatBand";
+import EditorialSplit from "@/components/editorial/EditorialSplit";
+import NumberedTimeline from "@/components/editorial/NumberedTimeline";
+import PullQuote from "@/components/editorial/PullQuote";
+import RevealOnScroll from "@/components/RevealOnScroll";
 
 export async function generateMetadata({
   params,
@@ -39,177 +44,206 @@ export default async function HomePage({
   const t = await getTranslations("home");
   const th = await getTranslations("hero");
   const tc = await getTranslations("common");
-  const tl = await getTranslations("leak");
   const isAr = locale === "ar";
+
+  // Headline split into two lines for the editorial scale jump
+  const fullHeadline = th("headline");
+  const halfIdx = Math.floor(fullHeadline.length / 2);
+  const breakIdx = fullHeadline.indexOf(". ", halfIdx - 10);
+  const headlineLines =
+    breakIdx > 0
+      ? [fullHeadline.slice(0, breakIdx + 1), fullHeadline.slice(breakIdx + 2).trim()]
+      : [fullHeadline];
 
   return (
     <>
-      {/* HERO */}
-      <div className="relative overflow-hidden">
-        <IndustrialImage img={IMAGES.solarField} locale={locale} variant="background" priority overlay="strong" />
-        <Section className="relative pt-12">
-          <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <Kicker>{tc("vision2040")}</Kicker>
-            <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
-              {th("headline")}
-            </h1>
-            <p className="mt-5 max-w-xl text-lg text-ink-muted">{th("subhead")}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <LinkButton href="/economic-audit" variant="accent">
-                {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
-              </LinkButton>
-              <LinkButton href="/contact" variant="secondary">
-                {tc("bookCall")}
-              </LinkButton>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-6 text-sm text-ink-muted">
-              <span className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-accent" /> {fmtOMR(PRIMARY.annualRevenueOMR)} OMR / {PRIMARY.assetMW} MW
-              </span>
-              <span className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-secondary" /> {PRIMARY.profitMin}%–{PRIMARY.profitMax}%, 0 CAPEX
-              </span>
-            </div>
-          </div>
-            <HeroDashboard />
-          </div>
-        </Section>
-      </div>
+      <SiteHero
+        locale={locale}
+        bgImage={IMAGES.solarField}
+        kicker={isAr ? "ذكاء القرار الاقتصادي · عُمان والخليج" : "Economic Decision Intelligence · Oman / GCC"}
+        headlineLines={headlineLines}
+        subhead={th("subhead")}
+        primaryCta={{ href: "/economic-audit", label: tc("startDiagnostic") }}
+        secondaryCta={{ href: "/contact", label: tc("bookCall") }}
+        anchorStat={{
+          value: `${new Intl.NumberFormat("en-US").format(PRIMARY.annualRevenueOMR)} OMR`,
+          label: isAr
+            ? `إيرادات سنوية إضافية لكل أصل بسعة ${PRIMARY.assetMW} ميجاوات — زيادة ربحية ${PRIMARY.profitMin}%–${PRIMARY.profitMax}% بدون أي إنفاق رأسمالي.`
+            : `Additional annual revenue per ${PRIMARY.assetMW} MW asset — a ${PRIMARY.profitMin}%–${PRIMARY.profitMax}% profitability lift with zero CAPEX.`,
+          source: PRIMARY.citation,
+        }}
+      />
 
-      {/* FREE LEAK TEST TEASER (prominent) */}
-      <Section className="py-10">
-        <div className="surface relative overflow-hidden rounded-3xl p-8 sm:p-12">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" aria-hidden="true" />
-          <div className="relative grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
-            <div>
-              <Kicker>{tl("kicker")}</Kicker>
-              <h2 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">{tl("headline")}</h2>
-              <p className="mt-3 max-w-xl text-ink-muted">{tl("sub")}</p>
-              <LinkButton href="/economic-audit" variant="accent" className="mt-6">
-                {tl("submit")} <ArrowRight className="h-4 w-4" />
-              </LinkButton>
-            </div>
-            <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6">
-              <ShieldCheck className="h-6 w-6 text-accent" />
-              <p className="mt-3 text-sm font-semibold">{tl("guaranteeTitle")}</p>
-              <p className="mt-1 text-sm text-ink-muted">{GUARANTEE_TEXT}</p>
-            </div>
-          </div>
-        </div>
-      </Section>
+      {/* Stat band */}
+      <StatBand
+        items={[
+          {
+            value: "862,903",
+            numeric: PRIMARY.annualRevenueOMR,
+            suffix: "OMR",
+            label: isAr
+              ? `إيرادات سنوية إضافية / ${PRIMARY.assetMW} ميجاوات`
+              : `Additional annual revenue / ${PRIMARY.assetMW} MW`,
+            source: "Nama PWP · APSR · simulation",
+          },
+          {
+            value: `${PRIMARY.profitMin}–${PRIMARY.profitMax}%`,
+            label: isAr ? "زيادة الربحية، بدون إنفاق رأسمالي" : "Profitability uplift, zero CAPEX",
+          },
+          {
+            value: `${PRIMARY.smpOMRPerMWh}`,
+            suffix: "OMR/MWh",
+            label: isAr ? "متوسط سعر السوق الحدّي (APSR 2024)" : "Average SMP, APSR 2024",
+          },
+          {
+            value: "8,760",
+            numeric: 8760,
+            suffix: "hrs",
+            label: isAr ? "ساعات تحليل لكل أصل سنويًا" : "Hours analysed per asset, per year",
+          },
+        ]}
+      />
 
-      {/* PROBLEM / SOLUTION SPLIT */}
-      <Section>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="border-l-2 border-l-red-400/40">
-            <Kicker>{t("problemKicker")}</Kicker>
-            <h3 className="mt-3 font-display text-2xl font-bold">{t("problemTitle")}</h3>
-            <p className="mt-3 text-ink-muted">{t("problemBody")}</p>
-          </Card>
-          <Card className="border-l-2 border-l-accent/50">
-            <Kicker>{COMPANY.name}</Kicker>
-            <h3 className="mt-3 font-display text-2xl font-bold">{t("solutionTitle")}</h3>
-            <p className="mt-3 text-ink-muted">{t("solutionBody")}</p>
-          </Card>
-        </div>
-      </Section>
-
-      {/* HOW IT WORKS */}
-      <Section>
-        <h2 className="font-display text-3xl font-extrabold">{t("howTitle")}</h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {[
-            { title: t("how1Title"), body: t("how1Body") },
-            { title: t("how2Title"), body: t("how2Body") },
-            { title: t("how3Title"), body: t("how3Body") },
-          ].map((s) => (
-            <Card key={s.title}>
-              <h3 className="font-display text-lg font-bold text-secondary">{s.title}</h3>
-              <p className="mt-2 text-sm text-ink-muted">{s.body}</p>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      {/* WHAT HAPPENS AFTER YOU CLICK */}
-      <Section>
-        <h2 className="font-display text-3xl font-extrabold">
-          {isAr ? "ماذا يحدث بعد أن تنقر" : "What happens after you click"}
-        </h2>
-        <p className="mt-2 text-ink-muted">
+      {/* Problem */}
+      <EditorialSplit
+        locale={locale}
+        img={IMAGES.controlRoom}
+        kicker={isAr ? "الفجوة" : "The gap"}
+        title={
+          isAr
+            ? "محسّن تقنيًا. يتسرّب اقتصاديًا."
+            : "Technically optimized. Economically leaking."
+        }
+      >
+        <p>
           {isAr
-            ? "بدون مكالمات مبيعات. بدون نماذج طويلة. خمس خطوات — وانتهيت."
-            : "No sales calls. No long forms. Five steps — and you're done."}
+            ? "أصول الطاقة في عُمان والخليج مهندَسة للأداء التقني. SCADA يقيس وقت التشغيل والأعطال وأهداف التوليد بدقة."
+            : "Energy assets across Oman and the GCC are engineered for technical performance. SCADA measures uptime, fault counts, and generation targets with precision."}
         </p>
-        <ol className="mt-8 grid gap-4 md:grid-cols-5">
-          {(
-            isAr
-              ? [
-                  ["نموذج من 5 دقائق", "أخبرنا بنوع الأصل والحجم التقريبي والموقع."],
-                  ["نتواصل خلال 24 ساعة", "شمس أو أحد أعضاء الفريق يتواصل عبر واتساب أو البريد لتأكيد التفاصيل."],
-                  ["شارك بيانات شهر", "شهر من سجلات التوزيع أو فواتير الطاقة أو البيانات التشغيلية. نتولّى التحليل."],
-                  ["تستلم النتيجة خلال 7 أيام", "تقرير واضح يُظهر فجوة القرار الاقتصادي بالريال — مع توصيات توقيت محددة."],
-                  ["أنت تقرّر", "بدون ضغط. بدون تسجيل تلقائي. إذا كانت النتيجة مهمة، نتحدث عن الخطوات التالية."],
-                ]
-              : [
-                  ["5-minute form", "Tell us your asset type, approximate size, and location."],
-                  ["We reach out in 24 hours", "Chams or a team member contacts you via WhatsApp or email to confirm details."],
-                  ["Share one month of data", "One month of dispatch logs, energy invoices, or operational data. We handle the analysis."],
-                  ["Result in 7 days", "A clear report showing your Economic Decision Gap in OMR — with specific dispatch timing recommendations."],
-                  ["You decide", "No pressure. No automatic enrollment. If the number is interesting, we talk next steps."],
-                ]
-          ).map(([title, body], i) => (
-            <li key={title} className="surface rounded-2xl p-5">
-              <span className="font-mono text-xs font-bold text-secondary">
-                {isAr ? `الخطوة ${i + 1}` : `Step ${i + 1}`}
-              </span>
-              <h3 className="mt-2 font-display text-base font-bold">{title}</h3>
-              <p className="mt-2 text-xs text-ink-muted">{body}</p>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-6 text-sm text-ink-muted">
-          {isAr ? "الضمان:" : "Guarantee:"}{" "}
-          <span className="text-ink">{GUARANTEE_TEXT}</span>
+        <p>
+          {isAr
+            ? "لكن لا أحد يقيس الجودة الاقتصادية لقرارات التوزيع. بطارية تشحن في الساعة الخطأ لا تُولّد إنذارًا — تُولّد خسارة. الخسارة غير مرئية. نسمّيها فجوة القرار الاقتصادي."
+            : "But nobody measures the economic quality of dispatch decisions. A battery charging at the wrong hour doesn't raise an alarm — it raises a loss. Silently. We call it the Economic Decision Gap."}
         </p>
-      </Section>
+      </EditorialSplit>
 
-      {/* TRUST SIGNALS — real traction only */}
-      <Section>
-        <h2 className="font-display text-3xl font-extrabold">{t("trustTitle")}</h2>
-        <p className="mt-2 text-ink-muted">{t("trustSub")}</p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {REAL_TRACTION.map((item) => (
-            <div key={item.key} className="surface rounded-2xl p-5">
-              <div className="flex items-center gap-2 text-secondary">
-                <span aria-hidden className="text-xl">{item.icon}</span>
-                <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
+      {/* Solution */}
+      <EditorialSplit
+        locale={locale}
+        img={IMAGES.industrial}
+        reverse
+        accent="accent"
+        kicker={isAr ? "الحل" : "The solution"}
+        title={
+          isAr
+            ? "محرّك اقتصادي ظلّي يعيد كل قرار توزيع — ويحوّله إلى ريالات."
+            : "A shadow economic engine that replays every dispatch decision — in OMR."
+        }
+      >
+        <p>
+          {isAr
+            ? "يقارن PREDAIOT كل ساعة تشغيل بإشارات السوق الرسمية في عُمان — SMP، تسعير الندرة، وأنماط الطلب — ويحدّد الفجوة بدقة."
+            : "PREDAIOT replays every operational hour against Oman's official market signals — System Marginal Price, scarcity pricing, demand patterns — and quantifies the gap."}
+        </p>
+        <p>
+          {isAr
+            ? "في النشر الحي، يتّخذ المحرّك القرار المربح اقتصاديًا بشكل مستقل — بدون تغيير أجهزة، وبدون إنفاق رأسمالي."
+            : "In live deployment, the engine autonomously makes the economically profitable decision — no hardware change, no CAPEX."}
+        </p>
+      </EditorialSplit>
+
+      {/* Timeline */}
+      <NumberedTimeline
+        kicker={isAr ? "ماذا يحدث بعد أن تنقر" : "After you click"}
+        title={
+          isAr
+            ? "لا مكالمات مبيعات. لا نماذج طويلة. خمس خطوات — وانتهيت."
+            : "No sales calls. No long forms. Five steps — and you're done."
+        }
+        intro={
+          isAr
+            ? "اختبار التسرّب المجاني خلال 7 أيام، مع ضمان مكتوب."
+            : "The free Leak Test runs in 7 days, with a written guarantee."
+        }
+        steps={
+          isAr
+            ? [
+                { num: "01", title: "نموذج من 5 دقائق", body: "نوع الأصل، السعة التقريبية، الموقع." },
+                { num: "02", title: "نتواصل خلال 24 ساعة", body: "شمس أو أحد أعضاء الفريق عبر واتساب أو البريد لتأكيد التفاصيل." },
+                { num: "03", title: "شارك بيانات شهر", body: "سجلات التوزيع أو فواتير الطاقة أو البيانات التشغيلية. نحن نحلل." },
+                { num: "04", title: "نتيجتك خلال 7 أيام", body: "تقرير واضح يُظهر فجوة القرار الاقتصادي بالريال، مع توصيات توقيت محددة." },
+                { num: "05", title: "أنت تقرّر", body: "بدون ضغط. بدون تسجيل تلقائي. إذا كانت النتيجة مهمة، نتحدث عن الخطوات التالية." },
+              ]
+            : [
+                { num: "01", title: "5-minute form", body: "Asset type, approximate capacity, location." },
+                { num: "02", title: "We reach out in 24 hours", body: "Chams or a team member contacts you via WhatsApp or email to confirm details." },
+                { num: "03", title: "Share one month of data", body: "Dispatch logs, energy invoices, or operational data. We handle the analysis." },
+                { num: "04", title: "Result in 7 days", body: "A clear report showing your Economic Decision Gap in OMR — with specific dispatch timing recommendations." },
+                { num: "05", title: "You decide", body: "No pressure. No automatic enrollment. If the number is interesting, we talk next steps." },
+              ]
+        }
+      />
+
+      {/* Pull quote — first industry voice */}
+      <PullQuote
+        text={isAr ? INDUSTRY_QUOTES[0].ar : INDUSTRY_QUOTES[0].en}
+        attribution={isAr ? INDUSTRY_QUOTES[0].roleAr : INDUSTRY_QUOTES[0].role}
+        date={INDUSTRY_QUOTES[0].date}
+      />
+
+      {/* Traction strip — hairline rows, not card grid */}
+      <section className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
+        <div className="max-w-3xl">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-secondary">
+            {isAr ? "إنجازات موثّقة" : "Verified milestones"}
+          </p>
+          <h2 className="mt-4 font-display text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
+            {isAr
+              ? "نعرض ما هو حقيقي فقط — لا شعارات مزيّفة، ولا توصيات مفبركة."
+              : "We only show what's real — no fake logos, no manufactured testimonials."}
+          </h2>
+        </div>
+
+        <div className="mt-14 divide-y divide-white/10 border-y border-white/10">
+          {REAL_TRACTION.map((item, i) => (
+            <RevealOnScroll key={item.key} delay={i * 50}>
+              <div className="grid grid-cols-12 items-center gap-4 py-7">
+                <span aria-hidden className="col-span-2 text-3xl sm:col-span-1">
+                  {item.icon}
+                </span>
+                <h3 className="col-span-10 font-display text-base font-bold sm:col-span-4">
+                  {isAr ? item.ar : item.en}
+                </h3>
+                <p className="col-span-12 text-sm leading-relaxed text-ink-muted sm:col-span-7">
+                  {isAr ? item.detailAr : item.detailEn}
+                </p>
               </div>
-              <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
-            </div>
+            </RevealOnScroll>
           ))}
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <Stat value={`${fmtOMR(PRIMARY.annualRevenueOMR)}`} label={`OMR / ${PRIMARY.assetMW} MW · ${tc("perYear")}`} />
-          <Stat value={`${PRIMARY.profitMin}%–${PRIMARY.profitMax}%`} label="Profitability uplift, 0 CAPEX" />
-          <Stat value={`${PRIMARY.smpOMRPerMWh}`} label="SMP 2024 (OMR/MWh)" />
-        </div>
-        <p className="mt-4 text-xs text-ink-muted">
-          {PRIMARY.citation}.{" "}
-          <a href={PRIMARY.citationLink} target="_blank" rel="noopener noreferrer" className="underline">
-            opendata.gov.om
-          </a>
-        </p>
-      </Section>
+      </section>
 
-      {/* FINAL CTA */}
-      <Section>
-        <div className="surface rounded-3xl p-10 text-center">
-          <h2 className="font-display text-3xl font-extrabold sm:text-4xl">{t("ctaTitle")}</h2>
-          <p className="mt-3 text-ink-muted">{t("ctaBody")}</p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+      {/* Final CTA — full-bleed */}
+      <section className="relative isolate overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(80% 60% at 50% 0%, rgba(0,207,255,0.18) 0%, rgba(6,11,24,0) 70%)",
+          }}
+          aria-hidden="true"
+        />
+        <RevealOnScroll className="mx-auto max-w-5xl px-5 py-24 text-center sm:px-8 sm:py-32">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
+            {isAr ? "اختبار التسرّب المجاني" : "Free Leak Test"}
+          </p>
+          <h2 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+            {isAr
+              ? "اكتشف ما يتركه أصلك على الطاولة. سبعة أيام. بدون مقابل."
+              : "Find out what your asset is leaving on the table. Seven days. No cost."}
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-ink-muted">{GUARANTEE_TEXT}</p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
             <LinkButton href="/economic-audit" variant="accent">
               {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
             </LinkButton>
@@ -217,8 +251,15 @@ export default async function HomePage({
               {tc("learnMore")}
             </LinkButton>
           </div>
-        </div>
-      </Section>
+          <p className="mt-8 flex items-center justify-center gap-2 text-xs text-ink-muted">
+            <ShieldCheck className="h-4 w-4 text-accent" />
+            {PRIMARY.citation}
+          </p>
+        </RevealOnScroll>
+      </section>
+
+      {/* unused-var suppression for next-intl scope discovery */}
+      <span hidden>{t("trustTitle")}</span>
     </>
   );
 }
