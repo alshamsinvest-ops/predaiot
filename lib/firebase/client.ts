@@ -25,13 +25,16 @@ function readConfig() {
       /* fall through to individual vars */
     }
   }
+  // Firebase web config is public by design (it ships to the browser); security
+  // is enforced by Authorized Domains + Firestore/Storage rules. These defaults
+  // let auth work out of the box; any NEXT_PUBLIC_FIREBASE_* env var overrides.
   return {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "AIzaSyBpFUxAyPMheQ1ZoaxTUNbaA-USLRfWEyM",
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "prd2025.firebaseapp.com",
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "prd2025",
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "prd2025.firebasestorage.app",
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "699586976270",
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "1:699586976270:web:6ef3f9ff0a0c7911433a5f",
   };
 }
 
