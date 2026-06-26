@@ -39,8 +39,10 @@ export async function writeLead(fields: Record<string, string>) {
 export async function notifyWhatsApp(text: string) {
   if (!twilioClient) return;
   const from = process.env.TWILIO_WHATSAPP_NUMBER || "whatsapp:+14155238886";
+  // Recipient for lead notifications — override with WHATSAPP_TO (E.164).
+  const toNumber = process.env.WHATSAPP_TO || COMPANY.phoneE164;
   try {
-    await twilioClient.messages.create({ from, to: `whatsapp:${COMPANY.phoneE164}`, body: text });
+    await twilioClient.messages.create({ from, to: `whatsapp:${toNumber}`, body: text });
   } catch (e) {
     console.warn("[predaiot] WhatsApp notify failed:", (e as Error).message);
   }
