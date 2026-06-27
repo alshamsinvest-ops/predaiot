@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AlertTriangle } from "lucide-react";
-import { Section, PageHeader, Card } from "@/components/ui";
+import {
+  AlertTriangle,
+  Activity,
+  Database,
+  GitBranch,
+  Lock,
+  Plug,
+  ShieldAlert,
+  Timer,
+  XCircle,
+} from "lucide-react";
+import { Section, PageHeader, Card, Kicker } from "@/components/ui";
 import IndustrialImage from "@/components/IndustrialImage";
 import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
@@ -107,6 +117,91 @@ const COMPARISON = [
   { metric: "Annual difference", standard: "—", predaiot: "862,903 OMR / year" },
 ];
 
+/** Engine runtime performance — measured on internal benchmarks */
+const ENGINE_SLA = [
+  {
+    icon: Timer,
+    headline: "< 800 ms",
+    label: "Decision latency",
+    detail:
+      "From signal ingest to recommended action — end-to-end. Plenty of headroom for the 15-minute dispatch cadence used in real systems.",
+  },
+  {
+    icon: Activity,
+    headline: "8,760 / yr",
+    label: "Hourly evaluations",
+    detail:
+      "Every hour of the year is replayed against the actual market price. No sampling. No shortcuts. Full-resolution audit.",
+  },
+  {
+    icon: Database,
+    headline: "100% traceable",
+    label: "Audit trail",
+    detail:
+      "Every action carries the price, SoC, and signal that justified it. Replayable in court — or in a board meeting.",
+  },
+  {
+    icon: Lock,
+    headline: "Read-only by default",
+    label: "Operator safety",
+    detail:
+      "PREDAIOT recommends; the operator commits. Closed-loop control is opt-in and gated by configurable guardrails.",
+  },
+];
+
+/** Integration touchpoints — what we plug into */
+const INTEGRATIONS = [
+  {
+    title: "SCADA / DCS",
+    detail:
+      "OPC UA, Modbus TCP, IEC 60870-5-104. Read-only telemetry pull on a 1–15 min cadence — no PLC code changes.",
+  },
+  {
+    title: "EMS / BMS",
+    detail:
+      "Tesla Megapack, Wärtsilä GEMS, Fluence Mosaic, Sungrow PowerTitan. REST/MQTT bridges or CSV exports both work.",
+  },
+  {
+    title: "Market data",
+    detail:
+      "APSR SMP, scarcity price, Nama PWP demand. Public sources only — no licensed feed required to start.",
+  },
+  {
+    title: "Reporting",
+    detail:
+      "PDF audit, CSV decision log, Webhook to your data lake. JSON-LD schema on every line for downstream tooling.",
+  },
+];
+
+/** Failure modes — what happens when reality breaks */
+const FAILURE_MODES = [
+  {
+    when: "Market price feed drops",
+    then: "Engine falls back to the last 24-hour price curve plus seasonality offset. Confidence flag drops from HIGH to MEDIUM. Decisions continue.",
+  },
+  {
+    when: "Asset telemetry stalls",
+    then: "Engine flags STALE on any signal older than 15 min and pauses dispatch recommendations until fresh data returns. No silent guessing.",
+  },
+  {
+    when: "Forecast disagrees with realized price",
+    then: "Engine logs the variance per hour and auto-recalibrates the next-day forecast. Variance > 20% triggers an operator alert.",
+  },
+  {
+    when: "Operator overrides the recommendation",
+    then: "Override is logged with reason code. The opportunity cost is calculated and shown in the next report — no judgment, just numbers.",
+  },
+];
+
+/** Anti-overpromise — what the engine does NOT do */
+const NOT_THIS = [
+  "We do not predict the future. We replay decisions against signals you could have seen.",
+  "We do not control your hardware unless you explicitly enable closed-loop mode with guardrails.",
+  "We do not require new sensors, new PLCs, or new SCADA. Existing data is enough.",
+  "We do not store private operational data outside your tenant. Read-only by default, scoped by contract.",
+  "We do not sell anonymized data, market signals, or insights derived from your asset.",
+];
+
 const SOURCES = [
   {
     name: "Nama PWP MIS Demand Data",
@@ -174,6 +269,32 @@ export default async function TechnologyPage({
         </div>
       </Section>
 
+      {/* Engine performance — SLAs */}
+      <Section className="py-8">
+        <Kicker>Engine performance</Kicker>
+        <h2 className="mt-3 font-display text-3xl font-extrabold">Built for the dispatch floor</h2>
+        <p className="mt-2 max-w-3xl text-ink-muted">
+          The engine sits next to your control room — not in place of it. Latency, traceability,
+          and operator safety are non-negotiable. Numbers below are measured on internal
+          benchmarks against the Nama PWP 2022 hourly dataset.
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {ENGINE_SLA.map((s) => {
+            const Icon = s.icon;
+            return (
+              <div key={s.label} className="surface rounded-2xl p-5">
+                <Icon className="h-5 w-5 text-secondary" />
+                <p className="mt-3 font-display text-2xl font-extrabold text-secondary">{s.headline}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-ink-muted">
+                  {s.label}
+                </p>
+                <p className="mt-3 text-xs text-ink-muted">{s.detail}</p>
+              </div>
+            );
+          })}
+        </div>
+      </Section>
+
       {/* Decision logic */}
       <Section className="py-8">
         <Card>
@@ -210,6 +331,83 @@ export default async function TechnologyPage({
               ))}
             </tbody>
           </table>
+        </div>
+      </Section>
+
+      {/* Integration touchpoints */}
+      <Section className="py-8">
+        <Kicker>Integration</Kicker>
+        <h2 className="mt-3 font-display text-3xl font-extrabold">Plugs into what you already run</h2>
+        <p className="mt-2 max-w-3xl text-ink-muted">
+          No rip-and-replace. PREDAIOT reads existing telemetry and writes recommendations into
+          the channels your operators already trust.
+        </p>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {INTEGRATIONS.map((i) => (
+            <Card key={i.title}>
+              <div className="flex items-center gap-2 text-secondary">
+                <Plug className="h-4 w-4" />
+                <span className="font-display text-lg font-bold">{i.title}</span>
+              </div>
+              <p className="mt-3 text-sm text-ink-muted">{i.detail}</p>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      {/* Failure modes */}
+      <Section className="py-8">
+        <Kicker>Graceful degradation</Kicker>
+        <h2 className="mt-3 font-display text-3xl font-extrabold">What happens when reality breaks</h2>
+        <p className="mt-2 max-w-3xl text-ink-muted">
+          Energy systems fail in messy ways. Signals stall. Forecasts diverge. Operators override.
+          The engine is designed to never lie about what it knows.
+        </p>
+        <div className="surface mt-6 overflow-x-auto rounded-2xl">
+          <table className="w-full min-w-[640px] text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-ink-muted">
+                <th className="p-4 w-1/3">When this happens</th>
+                <th className="p-4">The engine does this</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FAILURE_MODES.map((f, i) => (
+                <tr key={f.when} className={i % 2 ? "bg-white/[0.02]" : ""}>
+                  <td className="p-4 align-top font-medium">
+                    <div className="flex items-start gap-2">
+                      <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                      <span>{f.when}</span>
+                    </div>
+                  </td>
+                  <td className="p-4 text-ink-muted">{f.then}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      {/* What we don't do */}
+      <Section className="py-8">
+        <div className="surface rounded-2xl border border-white/10 p-6">
+          <div className="flex items-center gap-2 text-accent">
+            <XCircle className="h-4 w-4" />
+            <span className="text-xs font-semibold uppercase tracking-wide">
+              What the engine does not do
+            </span>
+          </div>
+          <h3 className="mt-3 font-display text-2xl font-extrabold">
+            Honesty as a feature, not a footnote
+          </h3>
+          <ul className="mt-5 space-y-3">
+            {NOT_THIS.map((line) => (
+              <li key={line} className="flex items-start gap-3 text-sm text-ink-muted">
+                <GitBranch className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </Section>
 

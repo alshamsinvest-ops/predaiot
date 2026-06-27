@@ -9,6 +9,9 @@
   --color-secondary: #00CFFF;      /* teal — primary accent / CTAs */
   --color-accent: #FF6630;         /* orange — secondary accent / energy */
   --color-positive: #00CC66;       /* green — charge / success */
+  --color-negative: #FF4455;       /* red — loss / critical */
+  --color-gold: #FFB800;           /* gold — EEI excellence / confidence */
+  --color-forecast: #8B5CF6;       /* purple — forecast / uncertainty */
 
   --color-ink: #F0F4FF;            /* primary text */
   --color-ink-muted: #6B7A99;      /* secondary text */
