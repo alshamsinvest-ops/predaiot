@@ -9,6 +9,7 @@ import BrandLogo from "@/components/BrandLogo";
 import { LinkButton } from "@/components/ui";
 
 const NAV = [
+  { href: "/live", key: "live" as const },
   { href: "/economic-audit", key: "audit" as const },
   { href: "/bess", key: "bess" as const },
   { href: "/solar", key: "solar" as const },

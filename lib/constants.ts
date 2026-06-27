@@ -226,6 +226,30 @@ export const ASSET_TYPES = [
   "Other",
 ] as const;
 
+/** Validated benchmarks — Sinaw-class 500 MW IPP, official Oman data 2022-2024. */
+export const PREDAIOT_BENCHMARKS = {
+  SCENARIO_A_REVENUE: 7_375_230,
+  SCENARIO_B_REVENUE: 8_962_012,
+  SCENARIO_C_REVENUE: 9_921_262,
+  ECONOMIC_DECISION_GAP: 2_546_032,
+  INTELLIGENCE_PREMIUM: 959_250,
+  EEI_BASELINE: 0.743,
+  EEI_EMS: 0.903,
+  EEI_PREDAIOT: 1.0,
+  CURTAILMENT_BASELINE: 42_750,
+  CURTAILMENT_EMS: 27_360,
+  CURTAILMENT_PREDAIOT: 8_208,
+  DECISIONS_PER_DAY: 287,
+  ARBITRAGE_CAPTURE_EMS: 0.623,
+  ARBITRAGE_CAPTURE_PREDAIOT: 1.0,
+  DATA_SOURCE_DEMAND: "Nama PWP MIS 2022 Hourly Demand Data",
+  DATA_SOURCE_PRICING: "APSR Annual Report 2024",
+  DATA_SOURCE_PORTAL:
+    "opendata.gov.om/ar/use-cases/1d4a8d55-1b2a-4b72-baba-e1a3763e842f",
+  SIMULATION_DISCLAIMER:
+    "Simulation on official Oman government data. Not a live client measurement.",
+} as const;
+
 /** Format helpers */
 export const fmtOMR = (n: number) =>
   new Intl.NumberFormat("en-US").format(Math.round(n));
