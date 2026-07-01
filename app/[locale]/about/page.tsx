@@ -132,6 +132,38 @@ export default async function AboutPage({
                 </a>
               </li>
             </ul>
+
+            <div className="mt-6 border-t border-white/10 pt-4">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-ink-muted">
+                {isAr ? "الإنجازات" : "Achievements"}
+              </p>
+              <ul className="mt-3 space-y-3 text-sm">
+                <li className="flex items-start gap-3">
+                  <span className="font-mono text-xs font-bold text-secondary">01</span>
+                  <span className="text-ink-muted">
+                    {isAr
+                      ? "طلب براءة اختراع مودَع — طريقة محرّك القرار الاقتصادي"
+                      : "Patent application filed — economic decision engine method"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="font-mono text-xs font-bold text-secondary">02</span>
+                  <span className="text-ink-muted">
+                    {isAr
+                      ? "المنهجية منشورة — البوابة الوطنية للبيانات المفتوحة، يونيو 2026"
+                      : "Methodology published — Oman National Open Data Portal, June 2026"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="font-mono text-xs font-bold text-secondary">03</span>
+                  <span className="text-ink-muted">
+                    {isAr
+                      ? "اجتماع مع المدير العام لمركز التحكم في الأحمال — OETC، يونيو 2026"
+                      : "Meeting with GM Load Dispatch Centre — OETC, June 2026"}
+                  </span>
+                </li>
+              </ul>
+            </div>
           </Card>
 
           <div>
@@ -139,6 +171,11 @@ export default async function AboutPage({
               {isAr ? "المؤسّس" : "The founder"}
             </h2>
             <div className="mt-3 space-y-3 text-ink-muted">
+              <p className="text-ink">
+                {isAr
+                  ? "قضيت سنوات أشاهد أصولًا ممتازة تقنيًا تخسر المال كل ساعة — بدون أن يلاحظ أحد. بنيتُ PREDAIOT لأن الطبقة التي تصنع الفرق لم تكن موجودة."
+                  : "I spent years watching technically excellent assets lose money every hour — with nobody noticing. I built PREDAIOT because the layer that makes the difference simply did not exist."}
+              </p>
               <p>
                 {isAr
                   ? "أسّس شمس الدين ماضي PREDAIOT لحل مشكلة لاحظها على تقاطع تشغيل الطاقة والأداء المالي في دول الخليج: أصول ممتازة تقنيًا تنتج نتائج مالية دون المستوى الأمثل — ليس بسبب ضعف الهندسة، بل لأن طبقة القرار الاقتصادي بين الأجهزة والسوق لم تكن موجودة."
@@ -188,6 +225,17 @@ export default async function AboutPage({
               <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
             </Card>
           ))}
+        </div>
+      </Section>
+
+      {/* GCC scaling vision */}
+      <Section className="py-6">
+        <div className="rounded-2xl border border-secondary/30 bg-secondary/5 p-6 text-center">
+          <p className="font-display text-lg text-secondary sm:text-xl">
+            {isAr
+              ? "نبدأ من عُمان. فجوة القرار الاقتصادي موجودة في كل سوق طاقة خليجي — وهناك حيث نتوسّع."
+              : "We start in Oman. The Economic Decision Gap exists in every GCC energy market — that is where we scale."}
+          </p>
         </div>
       </Section>
 

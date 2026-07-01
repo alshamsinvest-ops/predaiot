@@ -7,17 +7,49 @@ import { Menu, X } from "lucide-react";
 import LanguageToggle from "./LanguageToggle";
 import BrandLogo from "@/components/BrandLogo";
 import { LinkButton } from "@/components/ui";
+import Dropdown from "@/components/ui/Dropdown";
 
-const NAV = [
-  { href: "/live", key: "live" as const },
-  { href: "/economic-audit", key: "audit" as const },
-  { href: "/bess", key: "bess" as const },
-  { href: "/solar", key: "solar" as const },
-  { href: "/technology", key: "technology" as const },
-  { href: "/industries", key: "industries" as const },
-  { href: "/pricing", key: "pricing" as const },
-  { href: "/cases", key: "cases" as const },
-  { href: "/about", key: "about" as const },
+type NavKey =
+  | "live"
+  | "audit"
+  | "bess"
+  | "solar"
+  | "technology"
+  | "industries"
+  | "pricing"
+  | "cases"
+  | "about"
+  | "contact"
+  | "portal"
+  | "login"
+  | "solutions";
+
+type NavItem =
+  | { kind: "link"; href: string; key: NavKey }
+  | { kind: "dropdown"; key: NavKey; children: { href: string; key: NavKey }[] };
+
+const NAV: NavItem[] = [
+  { kind: "link", href: "/live", key: "live" },
+  {
+    kind: "dropdown",
+    key: "solutions",
+    children: [
+      { href: "/bess", key: "bess" },
+      { href: "/solar", key: "solar" },
+      { href: "/industries", key: "industries" },
+      { href: "/cases", key: "cases" },
+    ],
+  },
+  { kind: "link", href: "/technology", key: "technology" },
+  { kind: "link", href: "/pricing", key: "pricing" },
+  { kind: "link", href: "/about", key: "about" },
+];
+
+const MOBILE_SOLUTIONS: { href: string; key: NavKey }[] = [
+  { href: "/bess", key: "bess" },
+  { href: "/solar", key: "solar" },
+  { href: "/industries", key: "industries" },
+  { href: "/cases", key: "cases" },
 ];
 
 export default function Header() {
@@ -32,15 +64,29 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm text-ink-muted transition-colors hover:text-ink"
-            >
-              {t(item.key)}
-            </Link>
-          ))}
+          {NAV.map((item) =>
+            item.kind === "link" ? (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm text-ink-muted transition-colors hover:text-ink"
+              >
+                {t(item.key)}
+              </Link>
+            ) : (
+              <Dropdown key={item.key} label={t(item.key)}>
+                {item.children.map((child) => (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    className="block px-4 py-2 text-sm text-ink-muted hover:bg-white/5 hover:text-ink"
+                  >
+                    {t(child.key)}
+                  </Link>
+                ))}
+              </Dropdown>
+            ),
+          )}
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
@@ -67,18 +113,41 @@ export default function Header() {
       {open ? (
         <div className="border-t border-white/10 bg-primary-900 px-5 py-4 lg:hidden">
           <div className="grid grid-cols-2 gap-3">
-            {[...NAV, { href: "/contact", key: "contact" as const }, { href: "/portal", key: "portal" as const }].map(
-              (item) => (
+            <Link href="/live" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-white/5">
+              {t("live")}
+            </Link>
+            <Link href="/technology" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-white/5">
+              {t("technology")}
+            </Link>
+            <Link href="/pricing" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-white/5">
+              {t("pricing")}
+            </Link>
+            <Link href="/about" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-white/5">
+              {t("about")}
+            </Link>
+            <Link href="/contact" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-white/5">
+              {t("contact")}
+            </Link>
+            <Link href="/portal" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-white/5">
+              {t("portal")}
+            </Link>
+          </div>
+          <div className="mt-4 border-t border-white/10 pt-3">
+            <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-muted">
+              {t("solutions")}
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {MOBILE_SOLUTIONS.map((s) => (
                 <Link
-                  key={item.href}
-                  href={item.href}
+                  key={s.href}
+                  href={s.href}
                   onClick={() => setOpen(false)}
                   className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-white/5"
                 >
-                  {t(item.key)}
+                  {t(s.key)}
                 </Link>
-              )
-            )}
+              ))}
+            </div>
           </div>
           <div className="mt-4 flex items-center justify-between">
             <LanguageToggle />

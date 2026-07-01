@@ -193,6 +193,34 @@ const FAILURE_MODES = [
   },
 ];
 
+/** Where the numbers come from — data provenance */
+const DATA_SOURCES = [
+  {
+    source: "APSR — System Marginal Price + scarcity price",
+    cadence: "Daily (2024 archive)",
+    format: "CSV / HTML from opendata.gov.om",
+    use: "Calibrates the price forecaster and the arbitrage thresholds",
+  },
+  {
+    source: "Nama PWP — MIS hourly demand",
+    cadence: "Hourly (2022 archive — 8,760 points)",
+    format: "CSV from omanpwp.om",
+    use: "Calibrates the 24-hour price profile used by the replay engine",
+  },
+  {
+    source: "Ministry of Energy & Minerals — renewable capacity register",
+    cadence: "Quarterly",
+    format: "PDF / OGD portal",
+    use: "Sizes the asset population and validates penetration scenarios",
+  },
+  {
+    source: "Client SCADA / EMS telemetry",
+    cadence: "1–15 min live poll",
+    format: "OPC UA · Modbus TCP · IEC 60870-5-104 · CSV export",
+    use: "Feeds the AssetTelemetry stream in production",
+  },
+];
+
 /** Anti-overpromise — what the engine does NOT do */
 const NOT_THIS = [
   "We do not predict the future. We replay decisions against signals you could have seen.",
@@ -408,6 +436,83 @@ export default async function TechnologyPage({
               </li>
             ))}
           </ul>
+        </div>
+      </Section>
+
+      {/* Data provenance */}
+      <Section className="py-8">
+        <Kicker>Data provenance</Kicker>
+        <h2 className="mt-3 font-display text-3xl font-extrabold">Where the numbers come from</h2>
+        <p className="mt-2 max-w-3xl text-ink-muted">
+          Every published PREDAIOT figure ties back to one of four sources. Public sources
+          are cited on the page they appear; client telemetry never leaves the tenant.
+        </p>
+        <div className="surface mt-6 overflow-x-auto rounded-2xl">
+          <table className="w-full min-w-[720px] text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-ink-muted">
+                <th className="p-4">Source</th>
+                <th className="p-4">Cadence</th>
+                <th className="p-4">Format</th>
+                <th className="p-4 text-secondary">How we use it</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DATA_SOURCES.map((row, i) => (
+                <tr key={row.source} className={i % 2 ? "bg-white/[0.02]" : ""}>
+                  <td className="p-4 align-top font-medium">{row.source}</td>
+                  <td className="p-4 align-top text-ink-muted">{row.cadence}</td>
+                  <td className="p-4 align-top font-mono text-xs text-ink-muted">{row.format}</td>
+                  <td className="p-4 align-top text-ink">{row.use}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      {/* Replay algorithm */}
+      <Section className="py-8">
+        <Kicker>Under the hood</Kicker>
+        <h2 className="mt-3 font-display text-3xl font-extrabold">How the replay actually works</h2>
+        <div className="mt-4 grid gap-6 lg:grid-cols-2">
+          <Card>
+            <h3 className="font-display text-lg font-bold text-secondary">Algorithm class</h3>
+            <p className="mt-3 text-sm text-ink-muted">
+              A <span className="text-ink font-semibold">priority-hierarchy heuristic</span> with a
+              value-of-action calculation per hour. Safety limits first, then curtailment
+              absorption, then arbitrage windows (charge / discharge above configurable spread
+              thresholds), then hold. Each branch is a closed-form expression on published SMP,
+              round-trip efficiency, and cycle-life degradation — no black-box ML.
+            </p>
+            <p className="mt-3 text-sm text-ink-muted">
+              Every decision carries a reason string, a citation-ready price, and the exact
+              equation branch that produced it. That is by design — regulated buyers cannot
+              underwrite a model they cannot audit line-by-line.
+            </p>
+          </Card>
+          <Card>
+            <h3 className="font-display text-lg font-bold text-secondary">Validation</h3>
+            <p className="mt-3 text-sm text-ink-muted">
+              Back-tested on the full <span className="text-ink font-semibold">2022 Nama PWP
+              hourly dataset</span> — 8,760 points, no sampling. Every output number is
+              independently reproducible from the methodology published on{" "}
+              <a
+                href="https://opendata.gov.om/ar/use-cases/1d4a8d55-1b2a-4b72-baba-e1a3763e842f"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary underline"
+              >
+                opendata.gov.om
+              </a>
+              .
+            </p>
+            <p className="mt-3 text-sm text-ink-muted">
+              Senior technical review by a renewables IPP CTO in Oman (June 2026). Corrections
+              — DC/AC ratio handling, bifacial + SAT gain factors, standalone BESS trajectory
+              to 3 GW by 2030 — were incorporated and published.
+            </p>
+          </Card>
         </div>
       </Section>
 
