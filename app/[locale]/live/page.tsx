@@ -5,7 +5,7 @@ import IndustrialImage from "@/components/IndustrialImage";
 import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import { COMPANY } from "@/lib/constants";
-import LivePlatform from "@/components/live/LivePlatform";
+import LivePlatformClient from "@/components/live/LivePlatformClient";
 
 export async function generateMetadata({
   params,
@@ -59,11 +59,16 @@ export default async function LivePage({
             }
           />
           <p className="mt-4 max-w-3xl font-mono text-xs text-ink-muted">
-            BESS-01 · 200 MW / 800 MWh · MIS zone · demo signal · tick 2.6 s
+            {isAr
+              ? "عرض توضيحي عام يعمل على بيانات السوق الرسمية لعُمان (APSR 2024 + Nama PWP 2022). عمليات نشر العملاء تعمل على إشارات محدودة النطاق للمستأجر."
+              : "Public demo running on official Oman market data (APSR 2024 + Nama PWP 2022). Live client deployments run on tenant-scoped signals."}
+          </p>
+          <p className="mt-1 max-w-3xl font-mono text-[11px] text-ink-muted">
+            BESS-01 · 200 MW / 800 MWh · MIS zone · tick 2.6 s
           </p>
         </Section>
       </div>
-      <LivePlatform locale={locale} />
+      <LivePlatformClient locale={locale} />
     </>
   );
 }

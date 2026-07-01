@@ -64,7 +64,7 @@
     "registerWhatsapp": "Register via WhatsApp instead",
     "guaranteeTitle": "Our written guarantee",
     "resultTitle": "Your illustrative Leak Test result",
-    "resultIllustrative": "Illustrative estimate — scaled linearly from PREDAIOT's published 862,903 OMR / 500 MW benchmark. Your real diagnostic uses your own 8,760-hour data.",
+    "resultIllustrative": "Directional estimate — scaled from PREDAIOT's published 862,903 OMR / 500 MW benchmark. Your diagnostic uses your own 8,760-hour data for the final number.",
     "resultRecovery": "Estimated annual recoverable value",
     "resultRange": "Profitability uplift, zero CAPEX",
     "shareWhatsapp": "Share on WhatsApp",
@@ -187,7 +187,7 @@
   "cases": {
     "title": "Case Study & Traction",
     "simKicker": "Simulation case study",
-    "simLabel": "Illustrative — published methodology, not a live client deployment",
+    "simLabel": "Methodology Validation Study — Applied to Oman's published 2024 grid data. Results independently verifiable at opendata.gov.om",
     "simTitle": "862,903 OMR recovered per 500 MW asset",
     "simBody": "Using PREDAIOT's published methodology on Oman's National Open Data Portal, a 500 MW asset shows 862,903 OMR in additional annual revenue — a 9.1%–15% profitability increase with zero CAPEX.",
     "tractionTitle": "Real traction"

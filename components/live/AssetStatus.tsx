@@ -16,8 +16,16 @@ export default function AssetStatus() {
   const telemetry = useLiveStore((s) => s.telemetry);
   if (!telemetry) {
     return (
-      <div className="surface grid h-40 place-items-center rounded-2xl p-5 text-sm text-ink-muted">
-        Connecting to asset…
+      <div className="grid gap-4 md:grid-cols-3">
+        {["Battery", "Solar", "Grid SMP"].map((label) => (
+          <div key={label} className="surface rounded-2xl p-5">
+            <p className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
+              {label}
+            </p>
+            <div className="pulse mt-3 h-9 w-24 rounded bg-secondary/20" />
+            <div className="pulse mt-4 h-2 w-full rounded-full bg-white/10" />
+          </div>
+        ))}
       </div>
     );
   }
