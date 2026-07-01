@@ -1,5 +1,6 @@
 import type { ReactNode, HTMLAttributes } from "react";
 import { Link } from "@/i18n/navigation";
+import CountUp from "@/components/kinetic/CountUp";
 
 type Variant = "primary" | "secondary" | "ghost" | "accent";
 
@@ -89,11 +90,36 @@ export function Badge({ children }: { children: ReactNode }) {
   );
 }
 
-export function Stat({ value, label }: { value: string; label: string }) {
+export function Stat({
+  value,
+  label,
+  numeric,
+}: {
+  value: string;
+  label: string;
+  /** Opt-in: animate a numeric counter (0 → to) once scrolled into view. */
+  numeric?: {
+    to: number;
+    decimals?: number;
+    grouping?: boolean;
+    prefix?: string;
+    suffix?: string;
+  };
+}) {
   return (
     <div className="surface rounded-2xl p-6">
       <div className="font-display text-3xl font-extrabold text-secondary sm:text-4xl">
-        {value}
+        {numeric ? (
+          <CountUp
+            to={numeric.to}
+            decimals={numeric.decimals}
+            grouping={numeric.grouping}
+            prefix={numeric.prefix}
+            suffix={numeric.suffix}
+          />
+        ) : (
+          value
+        )}
       </div>
       <div className="mt-1 text-sm text-ink-muted">{label}</div>
     </div>

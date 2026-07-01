@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Menu, X } from "lucide-react";
@@ -8,6 +8,7 @@ import LanguageToggle from "./LanguageToggle";
 import BrandLogo from "@/components/BrandLogo";
 import { LinkButton } from "@/components/ui";
 import Dropdown from "@/components/ui/Dropdown";
+import MotionToggle from "@/components/kinetic/MotionToggle";
 
 type NavKey =
   | "live"
@@ -52,12 +53,26 @@ const MOBILE_SOLUTIONS: { href: string; key: NavKey }[] = [
   { href: "/cases", key: "cases" },
 ];
 
-export default function Header() {
+export default function Header({ locale = "en" }: { locale?: string }) {
   const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-900/85 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-40 border-b transition-all duration-300 ${
+        scrolled
+          ? "border-white/15 bg-primary-900/85 backdrop-blur-xl"
+          : "border-white/5 bg-primary-900/55 backdrop-blur-md"
+      }`}
+    >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex items-center" aria-label="PREDAIOT home">
           <BrandLogo imgClassName="h-8 w-auto" />
@@ -90,6 +105,7 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <MotionToggle locale={locale} />
           <LanguageToggle />
           <Link href="/login" className="text-sm font-semibold text-ink-muted hover:text-ink">
             {t("login")}

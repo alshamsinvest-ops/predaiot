@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
 import { Section, PageHeader, Card } from "@/components/ui";
 import IndustrialImage from "@/components/IndustrialImage";
 import FounderPhoto from "@/components/FounderPhoto";
+import EconomicWaveform from "@/components/kinetic/EconomicWaveform";
 import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import { COMPANY, REAL_TRACTION } from "@/lib/constants";
@@ -36,6 +37,7 @@ export default async function AboutPage({
     <>
       <div className="relative overflow-hidden">
         <IndustrialImage img={IMAGES.windSolar} locale={locale} variant="background" priority />
+        <EconomicWaveform height={260} opacity={0.4} />
         <Section className="pt-16">
           <PageHeader
             title={isAr ? "عن PREDAIOT" : "About PREDAIOT"}

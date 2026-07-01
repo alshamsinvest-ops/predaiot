@@ -103,3 +103,50 @@ h1, h2, h3, h4, .font-display {
   background: var(--color-accent);
   color: var(--color-primary-900);
 }
+
+/* Grain overlay — kills the flat "template" feel without being visible */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' /></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* Cursor-aware surface: cards paint a soft radial highlight under the pointer.
+   The .cursor-surface class enables it; --cursor-x/y are written by JS. */
+.cursor-surface {
+  --cursor-x: 50%;
+  --cursor-y: 50%;
+  position: relative;
+  isolation: isolate;
+}
+.cursor-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    420px circle at var(--cursor-x) var(--cursor-y),
+    rgba(0, 207, 255, 0.10),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 220ms ease-out;
+  pointer-events: none;
+}
+.cursor-surface:hover::before { opacity: 1; }
+
+/* Reduced-motion contract — respected by every animation on the site */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
