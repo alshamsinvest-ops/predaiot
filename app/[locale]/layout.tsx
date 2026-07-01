@@ -12,6 +12,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import CopilotWidget from "@/components/copilot/CopilotWidget";
 import JsonLd from "@/components/JsonLd";
+import { MotionProvider } from "@/components/kinetic/MotionProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const syne = Syne({
@@ -62,11 +63,13 @@ export default async function LocaleLayout({
       <body className="min-h-screen antialiased">
         <JsonLd data={organizationJsonLd()} />
         <NextIntlClientProvider>
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
-          <WhatsAppFloat />
-          <CopilotWidget />
+          <MotionProvider>
+            <Header locale={locale} />
+            <main id="main">{children}</main>
+            <Footer />
+            <WhatsAppFloat />
+            <CopilotWidget />
+          </MotionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

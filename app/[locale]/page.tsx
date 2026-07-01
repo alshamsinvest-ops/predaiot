@@ -4,6 +4,10 @@ import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
 import IndustrialImage from "@/components/IndustrialImage";
+import EconomicWaveform from "@/components/kinetic/EconomicWaveform";
+import KineticTitle from "@/components/kinetic/KineticTitle";
+import MagneticButton from "@/components/kinetic/MagneticButton";
+import CursorSurface from "@/components/kinetic/CursorSurface";
 import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import {
@@ -47,19 +51,25 @@ export default async function HomePage({
       {/* HERO */}
       <div className="relative overflow-hidden">
         <IndustrialImage img={IMAGES.solarField} locale={locale} variant="background" priority overlay="strong" />
+        <EconomicWaveform height={340} />
         <Section className="relative pt-12">
           <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
           <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
             <Kicker>{tc("vision2040")}</Kicker>
-            <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
-              {th("headline")}
-            </h1>
+            <KineticTitle
+              text={th("headline")}
+              as="h1"
+              locale={locale}
+              className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl"
+            />
             <p className="mt-5 max-w-xl text-lg text-ink-muted">{th("subhead")}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <LinkButton href="/economic-audit" variant="accent">
-                {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
-              </LinkButton>
+              <MagneticButton>
+                <LinkButton href="/economic-audit" variant="accent">
+                  {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
+                </LinkButton>
+              </MagneticButton>
               <LinkButton href="/contact" variant="secondary">
                 {tc("bookCall")}
               </LinkButton>
@@ -182,19 +192,30 @@ export default async function HomePage({
         <p className="mt-2 text-ink-muted">{t("trustSub")}</p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {REAL_TRACTION.map((item) => (
-            <div key={item.key} className="surface rounded-2xl p-5">
+            <CursorSurface key={item.key} className="surface rounded-2xl p-5">
               <div className="flex items-center gap-2 text-secondary">
                 <span aria-hidden className="text-xl">{item.icon}</span>
                 <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
               </div>
               <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
-            </div>
+            </CursorSurface>
           ))}
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <Stat value={`${fmtOMR(PRIMARY.annualRevenueOMR)}`} label={`OMR / ${PRIMARY.assetMW} MW · ${tc("perYear")}`} />
-          <Stat value={`${PRIMARY.profitMin}%–${PRIMARY.profitMax}%`} label="Profitability uplift, 0 CAPEX" />
-          <Stat value={`${PRIMARY.smpOMRPerMWh}`} label="SMP 2024 (OMR/MWh)" />
+          <Stat
+            value={`${fmtOMR(PRIMARY.annualRevenueOMR)}`}
+            label={`OMR / ${PRIMARY.assetMW} MW · ${tc("perYear")}`}
+            numeric={{ to: PRIMARY.annualRevenueOMR }}
+          />
+          <Stat
+            value={`${PRIMARY.profitMin}%–${PRIMARY.profitMax}%`}
+            label="Profitability uplift, 0 CAPEX"
+          />
+          <Stat
+            value={`${PRIMARY.smpOMRPerMWh}`}
+            label="SMP 2024 (OMR/MWh)"
+            numeric={{ to: PRIMARY.smpOMRPerMWh, decimals: 2 }}
+          />
         </div>
         <p className="mt-4 text-xs text-ink-muted">
           {PRIMARY.citation}.{" "}
