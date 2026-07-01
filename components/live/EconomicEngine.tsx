@@ -40,8 +40,15 @@ export default function EconomicEngine() {
   const decision = useLiveStore((s) => s.currentDecision);
   if (!decision) {
     return (
-      <div className="surface grid h-60 place-items-center rounded-2xl p-6 text-sm text-ink-muted">
-        Engine warming up…
+      <div className="surface rounded-2xl p-6">
+        <div className="pulse h-3 w-40 rounded bg-white/10" />
+        <div className="pulse mt-4 h-14 w-48 rounded bg-secondary/20" />
+        <div className="pulse mt-3 h-3 w-3/4 rounded bg-white/10" />
+        <div className="mt-6 space-y-3">
+          <div className="pulse h-2 w-full rounded-full bg-white/10" />
+          <div className="pulse h-2 w-full rounded-full bg-white/10" />
+          <div className="pulse h-2 w-full rounded-full bg-white/10" />
+        </div>
       </div>
     );
   }

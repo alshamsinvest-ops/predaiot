@@ -39,7 +39,26 @@ export default async function InvestorsPage({ params }: { params: Promise<{ loca
               </Card>
             ))}
           </div>
-          <GatedForm type="investor" ctaLabel={t("contact")} gateLabel={t("gate")} />
+          <GatedForm
+            type="investor"
+            ctaLabel={t("contact")}
+            gateLabel={t("gate")}
+            withGoogle={false}
+            files={[
+              {
+                label: isAr ? "الملخص التنفيذي (PDF)" : "Executive Summary (PDF)",
+                url: "/papers/predaiot-executive-summary.pdf",
+              },
+              {
+                label: isAr ? "المقال العلمي (PDF)" : "Scientific Article (PDF)",
+                url: "/papers/predaiot-scientific-article.pdf",
+              },
+              {
+                label: isAr ? "الورقة البيضاء (PDF)" : "White Paper — Oman 2026 (PDF)",
+                url: "/papers/predaiot-whitepaper-oman-2026.pdf",
+              },
+            ]}
+          />
         </div>
       </Section>
     </>

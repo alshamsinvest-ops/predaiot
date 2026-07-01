@@ -58,10 +58,11 @@ export default function LivePlatform({ locale }: { locale: string }) {
     let currentSoC = 62;
     let avgChargePricePaid = 6.2;
 
-    const tick = () => {
-      const now = new Date();
-      const h = now.getHours();
-      const m = now.getMinutes();
+    // Build a telemetry + decision snapshot for a given point in time. Shared
+    // by the seed pass and the live tick so both produce identical shapes.
+    const step = (at: Date) => {
+      const h = at.getHours();
+      const m = at.getMinutes();
       const price = getRealtimePrice(h, m);
       const solar = calcSolarOutput(h, config);
       const { forecast } = getPriceForecast(h);
@@ -69,7 +70,7 @@ export default function LivePlatform({ locale }: { locale: string }) {
       const telemetry = {
         asset_id: "BESS-01",
         client_id: "demo",
-        timestamp: now.toISOString(),
+        timestamp: at.toISOString(),
         soc_percent: currentSoC,
         soc_mwh: (currentSoC / 100) * config.energy_capacity_mwh,
         charge_rate_mw: 0,
@@ -82,8 +83,6 @@ export default function LivePlatform({ locale }: { locale: string }) {
           h >= 11 && h <= 14 && solar > 400 && Math.random() > 0.6,
       };
 
-      updateTelemetry(telemetry);
-
       const decision = makeEconomicDecision(
         telemetry,
         config,
@@ -92,7 +91,6 @@ export default function LivePlatform({ locale }: { locale: string }) {
         autonomyLevel,
         avgChargePricePaid,
       );
-      addDecision(decision);
 
       if (decision.action === "CHARGE" || decision.action === "ABSORB") {
         currentSoC = Math.min(config.max_soc_percent, currentSoC + 2.5);
@@ -100,6 +98,25 @@ export default function LivePlatform({ locale }: { locale: string }) {
       } else if (decision.action === "DISCHARGE") {
         currentSoC = Math.max(config.min_soc_percent, currentSoC - 3.5);
       }
+
+      return { telemetry, decision };
+    };
+
+    // Seed ~12 decisions of synthetic history so the DecisionLog + engine
+    // never render an empty state after hydration.
+    const SEED_COUNT = 12;
+    const now = Date.now();
+    for (let i = SEED_COUNT; i >= 1; i--) {
+      const at = new Date(now - i * 2600);
+      const { telemetry, decision } = step(at);
+      updateTelemetry(telemetry);
+      addDecision(decision);
+    }
+
+    const tick = () => {
+      const { telemetry, decision } = step(new Date());
+      updateTelemetry(telemetry);
+      addDecision(decision);
     };
 
     tick();
