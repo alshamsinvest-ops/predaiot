@@ -8,6 +8,9 @@ import EconomicWaveform from "@/components/kinetic/EconomicWaveform";
 import KineticTitle from "@/components/kinetic/KineticTitle";
 import MagneticButton from "@/components/kinetic/MagneticButton";
 import CursorSurface from "@/components/kinetic/CursorSurface";
+import Parallax from "@/components/kinetic/Parallax";
+import LeakRecoveryVisual from "@/components/kinetic/LeakRecoveryVisual";
+import { Reveal, RevealGroup, RevealItem } from "@/components/kinetic/Reveal";
 import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import {
@@ -50,7 +53,9 @@ export default async function HomePage({
     <>
       {/* HERO */}
       <div className="relative overflow-hidden">
-        <IndustrialImage img={IMAGES.solarField} locale={locale} variant="background" priority overlay="strong" />
+        <Parallax className="absolute inset-0 -z-10">
+          <IndustrialImage img={IMAGES.solarField} locale={locale} variant="background" priority overlay="strong" />
+        </Parallax>
         <EconomicWaveform height={340} />
         <Section className="relative pt-12">
           <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
@@ -66,7 +71,7 @@ export default async function HomePage({
             <p className="mt-5 max-w-xl text-lg text-ink-muted">{th("subhead")}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <MagneticButton>
-                <LinkButton href="/economic-audit" variant="accent">
+                <LinkButton href="/economic-audit" variant="accent" className="cta-shine cta-pulse">
                   {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
                 </LinkButton>
               </MagneticButton>
@@ -90,6 +95,7 @@ export default async function HomePage({
 
       {/* FREE LEAK TEST TEASER (prominent) */}
       <Section className="py-10">
+        <Reveal>
         <div className="surface relative overflow-hidden rounded-3xl p-8 sm:p-12">
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" aria-hidden="true" />
           <div className="relative grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
@@ -108,39 +114,64 @@ export default async function HomePage({
             </div>
           </div>
         </div>
+        </Reveal>
       </Section>
 
-      {/* PROBLEM / SOLUTION SPLIT */}
+      {/* PROBLEM / SOLUTION SPLIT — the bleeding vs. the recovery */}
       <Section>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="border-l-2 border-l-red-400/40">
-            <Kicker>{t("problemKicker")}</Kicker>
-            <h3 className="mt-3 font-display text-2xl font-bold">{t("problemTitle")}</h3>
-            <p className="mt-3 text-ink-muted">{t("problemBody")}</p>
-          </Card>
-          <Card className="border-l-2 border-l-accent/50">
-            <Kicker>{COMPANY.name}</Kicker>
-            <h3 className="mt-3 font-display text-2xl font-bold">{t("solutionTitle")}</h3>
-            <p className="mt-3 text-ink-muted">{t("solutionBody")}</p>
-          </Card>
-        </div>
+        <RevealGroup className="grid gap-6 md:grid-cols-2">
+          <RevealItem className="h-full">
+            <Card className="h-full border-l-2 border-l-red-400/40">
+              <Kicker>{t("problemKicker")}</Kicker>
+              <h3 className="mt-3 font-display text-2xl font-bold">{t("problemTitle")}</h3>
+              <p className="mt-3 text-ink-muted">{t("problemBody")}</p>
+              <LeakRecoveryVisual
+                mode="leak"
+                labelLeak={
+                  isAr
+                    ? "قيمة تتسرّب · مشتقة من المعيار المنشور"
+                    : "value leaking · derived from published benchmark"
+                }
+              />
+            </Card>
+          </RevealItem>
+          <RevealItem className="h-full">
+            <Card className="h-full border-l-2 border-l-positive/50">
+              <Kicker>{COMPANY.name}</Kicker>
+              <h3 className="mt-3 font-display text-2xl font-bold">{t("solutionTitle")}</h3>
+              <p className="mt-3 text-ink-muted">{t("solutionBody")}</p>
+              <LeakRecoveryVisual
+                mode="recover"
+                labelRecover={
+                  isAr
+                    ? "قيمة مستردَّة · مشتقة من المعيار المنشور"
+                    : "value recovered · derived from published benchmark"
+                }
+              />
+            </Card>
+          </RevealItem>
+        </RevealGroup>
       </Section>
 
       {/* HOW IT WORKS */}
       <Section>
-        <h2 className="font-display text-3xl font-extrabold">{t("howTitle")}</h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <Reveal>
+          <h2 className="font-display text-3xl font-extrabold">{t("howTitle")}</h2>
+        </Reveal>
+        <RevealGroup className="mt-8 grid gap-6 md:grid-cols-3">
           {[
             { title: t("how1Title"), body: t("how1Body") },
             { title: t("how2Title"), body: t("how2Body") },
             { title: t("how3Title"), body: t("how3Body") },
           ].map((s) => (
-            <Card key={s.title}>
-              <h3 className="font-display text-lg font-bold text-secondary">{s.title}</h3>
-              <p className="mt-2 text-sm text-ink-muted">{s.body}</p>
-            </Card>
+            <RevealItem key={s.title} className="h-full">
+              <CursorSurface className="surface h-full rounded-2xl p-6">
+                <h3 className="font-display text-lg font-bold text-secondary">{s.title}</h3>
+                <p className="mt-2 text-sm text-ink-muted">{s.body}</p>
+              </CursorSurface>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </Section>
 
       {/* WHAT HAPPENS AFTER YOU CLICK */}
@@ -153,7 +184,7 @@ export default async function HomePage({
             ? "بدون مكالمات مبيعات. بدون نماذج طويلة. خمس خطوات — وانتهيت."
             : "No sales calls. No long forms. Five steps — and you're done."}
         </p>
-        <ol className="mt-8 grid gap-4 md:grid-cols-5">
+        <RevealGroup className="mt-8 grid gap-4 md:grid-cols-5" stagger={0.08}>
           {(
             isAr
               ? [
@@ -171,15 +202,17 @@ export default async function HomePage({
                   ["You decide", "No pressure. No automatic enrollment. If the number is interesting, we talk next steps."],
                 ]
           ).map(([title, body], i) => (
-            <li key={title} className="surface rounded-2xl p-5">
-              <span className="font-mono text-xs font-bold text-secondary">
-                {isAr ? `الخطوة ${i + 1}` : `Step ${i + 1}`}
-              </span>
-              <h3 className="mt-2 font-display text-base font-bold">{title}</h3>
-              <p className="mt-2 text-xs text-ink-muted">{body}</p>
-            </li>
+            <RevealItem key={title} className="h-full">
+              <CursorSurface className="surface h-full rounded-2xl p-5">
+                <span className="font-mono text-xs font-bold text-secondary">
+                  {isAr ? `الخطوة ${i + 1}` : `Step ${i + 1}`}
+                </span>
+                <h3 className="mt-2 font-display text-base font-bold">{title}</h3>
+                <p className="mt-2 text-xs text-ink-muted">{body}</p>
+              </CursorSurface>
+            </RevealItem>
           ))}
-        </ol>
+        </RevealGroup>
         <p className="mt-6 text-sm text-ink-muted">
           {isAr ? "الضمان:" : "Guarantee:"}{" "}
           <span className="text-ink">{GUARANTEE_TEXT}</span>
@@ -188,19 +221,23 @@ export default async function HomePage({
 
       {/* TRUST SIGNALS — real traction only */}
       <Section>
-        <h2 className="font-display text-3xl font-extrabold">{t("trustTitle")}</h2>
-        <p className="mt-2 text-ink-muted">{t("trustSub")}</p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal>
+          <h2 className="font-display text-3xl font-extrabold">{t("trustTitle")}</h2>
+          <p className="mt-2 text-ink-muted">{t("trustSub")}</p>
+        </Reveal>
+        <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {REAL_TRACTION.map((item) => (
-            <CursorSurface key={item.key} className="surface rounded-2xl p-5">
-              <div className="flex items-center gap-2 text-secondary">
-                <span aria-hidden className="text-xl">{item.icon}</span>
-                <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
-              </div>
-              <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
-            </CursorSurface>
+            <RevealItem key={item.key} className="h-full">
+              <CursorSurface className="surface h-full rounded-2xl p-5">
+                <div className="flex items-center gap-2 text-secondary">
+                  <span aria-hidden className="text-xl">{item.icon}</span>
+                  <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
+                </div>
+                <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
+              </CursorSurface>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           <Stat
             value={`${fmtOMR(PRIMARY.annualRevenueOMR)}`}
@@ -227,18 +264,20 @@ export default async function HomePage({
 
       {/* FINAL CTA */}
       <Section>
-        <div className="surface rounded-3xl p-10 text-center">
-          <h2 className="font-display text-3xl font-extrabold sm:text-4xl">{t("ctaTitle")}</h2>
-          <p className="mt-3 text-ink-muted">{t("ctaBody")}</p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <LinkButton href="/economic-audit" variant="accent">
-              {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
-            </LinkButton>
-            <LinkButton href="/pricing" variant="secondary">
-              {tc("learnMore")}
-            </LinkButton>
+        <Reveal>
+          <div className="surface rounded-3xl p-10 text-center">
+            <h2 className="font-display text-3xl font-extrabold sm:text-4xl">{t("ctaTitle")}</h2>
+            <p className="mt-3 text-ink-muted">{t("ctaBody")}</p>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <LinkButton href="/economic-audit" variant="accent" className="cta-shine">
+                {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
+              </LinkButton>
+              <LinkButton href="/pricing" variant="secondary">
+                {tc("learnMore")}
+              </LinkButton>
+            </div>
           </div>
-        </div>
+        </Reveal>
       </Section>
     </>
   );
