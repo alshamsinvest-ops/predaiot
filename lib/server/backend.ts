@@ -62,30 +62,81 @@ export async function sendEmail(to: string, subject: string, html: string) {
   }
 }
 
+/** NVIDIA NIM — OpenAI-compatible chat completions. Used when configured. */
+const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
+
+async function nvidiaReply(
+  system: string,
+  messages: { role: string; content: string }[],
+  maxTokens: number
+): Promise<string> {
+  const resp = await fetch(NVIDIA_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: process.env.NVIDIA_MODEL || COPILOT.nvidiaModel,
+      max_tokens: maxTokens,
+      temperature: 0.4,
+      messages: [
+        { role: "system", content: system },
+        ...messages.map((m) => ({
+          role: m.role === "assistant" ? "assistant" : "user",
+          content: m.content,
+        })),
+      ],
+    }),
+  });
+  if (!resp.ok) {
+    throw new Error(`NVIDIA API ${resp.status}: ${await resp.text().catch(() => "")}`);
+  }
+  const data = (await resp.json()) as {
+    choices?: { message?: { content?: string } }[];
+  };
+  return data.choices?.[0]?.message?.content?.trim() || "";
+}
+
 export async function copilotReply(
   messages: { role: string; content: string }[],
   whatsapp = false
 ): Promise<string> {
-  if (!anthropic) {
-    return "I'm in offline mode right now. PREDAIOT finds recoverable economic value in energy assets — scaled from Oman's published 862,903 OMR / 500 MW benchmark. Start a free 7-day diagnostic and we'll quantify your asset's potential.";
+  const system =
+    COPILOT_SYSTEM_PROMPT +
+    (whatsapp
+      ? "\n\nYou are replying over WhatsApp. Keep it very short and mobile-friendly. Reply in Arabic if the user writes Arabic."
+      : "");
+  const maxTokens = whatsapp ? 400 : 700;
+
+  // Provider order: Anthropic when configured, NVIDIA NIM as fallback,
+  // then NVIDIA as rescue if Anthropic errors at runtime.
+  if (anthropic) {
+    try {
+      const resp = await anthropic.messages.create({
+        model: COPILOT.model,
+        max_tokens: maxTokens,
+        system,
+        messages: messages.map((m) => ({
+          role: m.role === "assistant" ? ("assistant" as const) : ("user" as const),
+          content: m.content,
+        })),
+      });
+      return resp.content
+        .filter((b) => b.type === "text")
+        .map((b) => (b as { text: string }).text)
+        .join("\n");
+    } catch (e) {
+      console.warn("[predaiot] Anthropic failed, trying NVIDIA:", (e as Error).message);
+      if (!process.env.NVIDIA_API_KEY) throw e;
+    }
   }
-  const resp = await anthropic.messages.create({
-    model: COPILOT.model,
-    max_tokens: whatsapp ? 400 : 700,
-    system:
-      COPILOT_SYSTEM_PROMPT +
-      (whatsapp
-        ? "\n\nYou are replying over WhatsApp. Keep it very short and mobile-friendly. Reply in Arabic if the user writes Arabic."
-        : ""),
-    messages: messages.map((m) => ({
-      role: m.role === "assistant" ? ("assistant" as const) : ("user" as const),
-      content: m.content,
-    })),
-  });
-  return resp.content
-    .filter((b) => b.type === "text")
-    .map((b) => (b as { text: string }).text)
-    .join("\n");
+
+  if (process.env.NVIDIA_API_KEY) {
+    return nvidiaReply(system, messages, maxTokens);
+  }
+
+  return "I'm in offline mode right now. PREDAIOT finds recoverable economic value in energy assets — scaled from Oman's published 862,903 OMR / 500 MW benchmark. Start a free 7-day diagnostic and we'll quantify your asset's potential.";
 }
 
 /** Rate limit: 1 diagnostic / email / 30 days. In-memory (per serverless
