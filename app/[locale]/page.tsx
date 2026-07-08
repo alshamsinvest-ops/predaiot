@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, ShieldCheck, Zap, ScrollText, Atom, Boxes } from "lucide-react";
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
 import IndustrialImage from "@/components/IndustrialImage";
+import SectorGrid from "@/components/SectorGrid";
 import EconomicWaveform from "@/components/kinetic/EconomicWaveform";
 import KineticTitle from "@/components/kinetic/KineticTitle";
 import MagneticButton from "@/components/kinetic/MagneticButton";
@@ -19,6 +20,7 @@ import {
   fmtOMR,
   COMPANY,
   GUARANTEE_TEXT,
+  POSITIONING,
 } from "@/lib/constants";
 
 export async function generateMetadata({
@@ -93,6 +95,34 @@ export default async function HomePage({
         </Section>
       </div>
 
+      {/* INDUSTRIES WE SERVE — the whole energy value chain */}
+      <Section className="py-12">
+        <Reveal>
+          <Kicker>{isAr ? "قطاع الطاقة بأكمله" : "Across the entire energy sector"}</Kicker>
+          <h2 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">
+            {isAr
+              ? "محرّك قرار اقتصادي واحد. خمسة عشر قطاعًا."
+              : "One economic decision engine. Fifteen sectors."}
+          </h2>
+          <p className="mt-3 max-w-3xl text-ink-muted">
+            {isAr ? POSITIONING.crossSector : POSITIONING.crossSector}
+          </p>
+        </Reveal>
+        <div className="mt-8">
+          <SectorGrid locale={locale} variant="compact" />
+        </div>
+        <Reveal delay={0.1}>
+          <p className="mt-6 text-sm text-ink-muted">
+            {isAr
+              ? "البطاريات والطاقة الشمسية مثالان من خمسة عشر — لا هوية الشركة."
+              : "Battery storage and solar are two examples of fifteen — not the company's identity."}{" "}
+            <LinkButton href="/industries" variant="ghost" className="mt-3 inline-flex">
+              {isAr ? "استكشف كل القطاعات" : "Explore every sector"} <ArrowRight className="h-4 w-4" />
+            </LinkButton>
+          </p>
+        </Reveal>
+      </Section>
+
       {/* FREE LEAK TEST TEASER (prominent) */}
       <Section className="py-10">
         <Reveal>
@@ -150,6 +180,49 @@ export default async function HomePage({
               />
             </Card>
           </RevealItem>
+        </RevealGroup>
+      </Section>
+
+      {/* ENTERPRISE PILLARS — why a mature energy operator trusts this */}
+      <Section>
+        <Reveal>
+          <Kicker>{isAr ? "لماذا المؤسسات" : "Built for the enterprise"}</Kicker>
+          <h2 className="mt-3 font-display text-3xl font-extrabold">
+            {isAr ? "قرارات يمكن للمنظّم أن يوقّعها" : "Decisions a regulator can sign off on"}
+          </h2>
+        </Reveal>
+        <RevealGroup className="mt-8 grid gap-6 md:grid-cols-3">
+          {[
+            {
+              icon: ScrollText,
+              title: isAr ? "شفّاف وقابل للتدقيق" : "Transparent & auditable",
+              body: isAr
+                ? "كل قرار يحمل السعر والإشارة والمعادلة التي بررته. قابل للتكرار — في مجلس الإدارة أو أمام الجهة التنظيمية."
+                : "Every decision carries the price, the signal and the calculation that justified it. Replayable — in a boardroom or in front of a regulator.",
+            },
+            {
+              icon: Atom,
+              title: isAr ? "أساس علمي" : "Scientific foundation",
+              body: isAr
+                ? "منهجية منشورة ومُتحقَّق منها على بيانات سوق رسمية. لا صندوق أسود، ولا نتائج ملفّقة."
+                : "A published methodology, validated on official market data. No black box, no fabricated results.",
+            },
+            {
+              icon: Boxes,
+              title: isAr ? "عبر القطاعات" : "Cross-sector by design",
+              body: isAr
+                ? "محرّك واحد يمتد من النفط والغاز إلى الشبكات والهيدروجين — لا أداة نقطية لتقنية واحدة."
+                : "One engine spanning oil & gas to grids and hydrogen — not a point tool for a single technology.",
+            },
+          ].map((p) => (
+            <RevealItem key={p.title} className="h-full">
+              <CursorSurface className="surface h-full rounded-2xl p-6">
+                <p.icon className="h-7 w-7 text-secondary" />
+                <h3 className="mt-3 font-display text-lg font-bold">{p.title}</h3>
+                <p className="mt-2 text-sm text-ink-muted">{p.body}</p>
+              </CursorSurface>
+            </RevealItem>
+          ))}
         </RevealGroup>
       </Section>
 

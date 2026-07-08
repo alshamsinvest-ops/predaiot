@@ -8,15 +8,14 @@ export default function Footer() {
   const t = useTranslations();
 
   const product = [
-    { href: "/economic-audit", key: "nav.audit" },
-    { href: "/bess", key: "nav.bess" },
-    { href: "/solar", key: "nav.solar" },
+    { href: "/industries", key: "nav.industries" },
+    { href: "/live", key: "nav.live" },
     { href: "/technology", key: "nav.technology" },
+    { href: "/economic-audit", key: "nav.audit" },
     { href: "/pricing", key: "nav.pricing" },
   ];
   const company = [
     { href: "/about", key: "nav.about" },
-    { href: "/industries", key: "nav.industries" },
     { href: "/cases", key: "nav.cases" },
     { href: "/papers", key: "nav.papers" },
     { href: "/investors", key: "nav.investors" },
