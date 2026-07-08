@@ -4,6 +4,7 @@ import { ArrowRight, ShieldCheck, Zap, ScrollText, Atom, Boxes } from "lucide-re
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
 import SectorGrid from "@/components/SectorGrid";
+import SectorShowcase from "@/components/SectorShowcase";
 import CursorSurface from "@/components/kinetic/CursorSurface";
 import LeakRecoveryVisual from "@/components/kinetic/LeakRecoveryVisual";
 import { Reveal, RevealGroup, RevealItem } from "@/components/kinetic/Reveal";
@@ -87,6 +88,9 @@ export default async function HomePage({
           </div>
         </Section>
       </div>
+
+      {/* SECTOR SHOWCASE — cinematic slideshow across the energy value chain */}
+      <SectorShowcase locale={locale} />
 
       {/* INDUSTRIES WE SERVE — the whole energy value chain */}
       <Section className="py-12">
