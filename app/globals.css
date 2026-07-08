@@ -1,27 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand palette (founder spec) */
-  --color-primary: #060B18;        /* navy background */
-  --color-primary-50: #0D1628;     /* navy mid (cards) */
-  --color-primary-700: #060B18;
-  --color-primary-900: #04081A;
-  --color-secondary: #00CFFF;      /* teal — primary accent / CTAs */
-  --color-accent: #FF6630;         /* orange — secondary accent / energy */
-  --color-positive: #00CC66;       /* green — charge / success */
-  --color-negative: #FF4455;       /* red — loss / critical */
-  --color-gold: #FFB800;           /* gold — EEI excellence / confidence */
-  --color-forecast: #8B5CF6;       /* purple — forecast / uncertainty */
+  /* ── Industrial Economic Intelligence palette (founder spec, exact) ──
+     One accent (signal), one critical, gold reserved for financial numbers.
+     Class names (text-secondary, bg-accent, …) are remapped onto these so
+     the whole site shifts to the industrial identity at once. */
+  --color-primary: #0B0D0F;        /* warm black — page background */
+  --color-primary-50: #14171A;     /* surface — card fill */
+  --color-primary-700: #1C2024;    /* elevated — modals / active */
+  --color-primary-900: #0B0D0F;    /* deepest = same warm black */
 
-  --color-ink: #F0F4FF;            /* primary text */
-  --color-ink-muted: #6B7A99;      /* secondary text */
-  --color-line: rgba(255, 255, 255, 0.08);
+  --color-secondary: #4A9B8E;      /* accent-signal — the ONE accent (teal-green) */
+  --color-accent: #4A9B8E;         /* remapped to signal — no second accent */
+  --color-positive: #4A9B8E;       /* gain = signal */
+  --color-negative: #C4634A;       /* accent-critical — brick red, warnings/loss only */
+  --color-gold: #C9A961;           /* accent-data — neutral gold, financial/OMR numbers only */
+  --color-forecast: #8B9198;       /* neutralized (was purple) — no extra accent */
 
-  /* Body uses Inter for readability of long-form text. DM Mono is reserved
-     for data, numbers, code, and UI chrome (widget, pseudocode, stats). */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-syne), var(--font-inter), sans-serif;
-  --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, monospace;
+  --color-ink: #F5F3EE;            /* warm white */
+  --color-ink-muted: #8B9198;      /* secondary text / labels */
+  --color-line: #2A2E33;           /* hairline — 1px dividers only */
+
+  /* Display + body: IBM Plex Sans (industrial geometric sans, no luxury serif).
+     Data/numbers: IBM Plex Mono — reads like a precision instrument. */
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
 
   --animate-fade-up: fade-up 0.6s ease-out forwards;
   --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
@@ -37,9 +41,10 @@
   50% { opacity: 1; }
 }
 
+/* Live indicator — opacity only, no scale (founder spec). */
 @keyframes pulse {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.2); }
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
 }
 .pulse { animation: pulse 2s ease-in-out infinite; }
 
@@ -68,127 +73,58 @@ h1, h2, h3, h4, .font-display {
   letter-spacing: -0.02em;
 }
 
-/* Premium industrial-AI surfaces — glassmorphism with a hairline top highlight */
+/* ── Industrial surfaces: flat fill, single 1px hairline, sharp corners ──
+   No decorative gradients, no glow. Cards read as instrument panels. */
 .surface {
   position: relative;
-  background: linear-gradient(180deg, rgba(13, 22, 40, 0.72) 0%, rgba(6, 11, 24, 0.62) 100%);
-  border: 1px solid var(--color-line);
-  backdrop-filter: blur(10px) saturate(120%);
-  -webkit-backdrop-filter: blur(10px) saturate(120%);
-}
-/* Fine gradient hairline along the top edge — the "expensive" tell */
-.surface::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding-top: 1px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent 40%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+  background: var(--color-primary-50);      /* #14171A flat surface */
+  border: 1px solid var(--color-line);       /* #2A2E33 hairline */
+  border-radius: 0;                          /* sharp edges (overrides rounded-* utilities) */
 }
 
-/* Frosted glass — for elevated cards, overlays, hero content */
+/* Elevated surface (was frosted glass) — flat, one tone up, still sharp. */
 .glass {
   position: relative;
-  background: linear-gradient(180deg, rgba(20, 32, 56, 0.55) 0%, rgba(8, 14, 30, 0.42) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(22px) saturate(135%);
-  -webkit-backdrop-filter: blur(22px) saturate(135%);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
-    0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  background: var(--color-primary-700);      /* #1C2024 elevated */
+  border: 1px solid var(--color-line);
+  border-radius: 0;
 }
 .glass-teal {
-  border-color: rgba(0, 207, 255, 0.22);
-  box-shadow:
-    0 1px 0 0 rgba(0, 207, 255, 0.12) inset,
-    0 24px 60px -24px rgba(0, 207, 255, 0.28);
+  border-color: color-mix(in srgb, var(--color-secondary) 45%, transparent);
 }
 
-/* Aurora / mesh backgrounds — cinematic depth behind hero + section bands */
-.aurora {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.aurora::before,
-.aurora::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.5;
-  will-change: transform;
-}
-.aurora::before {
-  width: 55vw;
-  height: 55vw;
-  top: -18%;
-  inset-inline-start: -10%;
-  background: radial-gradient(circle, rgba(0, 207, 255, 0.35), transparent 62%);
-  animation: aurora-drift-a 22s ease-in-out infinite alternate;
-}
-.aurora::after {
-  width: 48vw;
-  height: 48vw;
-  top: 8%;
-  inset-inline-end: -12%;
-  background: radial-gradient(circle, rgba(255, 102, 48, 0.24), transparent 62%);
-  animation: aurora-drift-b 26s ease-in-out infinite alternate;
-}
-@keyframes aurora-drift-a {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  100% { transform: translate3d(6%, 8%, 0) scale(1.12); }
-}
-@keyframes aurora-drift-b {
-  0% { transform: translate3d(0, 0, 0) scale(1.05); }
-  100% { transform: translate3d(-7%, 5%, 0) scale(0.95); }
-}
+/* Aurora removed — no decorative background gradients (founder spec). */
+.aurora { display: none !important; }
 
-/* Energy-flow — dashes travel along network edges (GPU: stroke-dashoffset) */
+/* Energy-flow network — retained but on a single accent, no glow. */
 @keyframes energy-flow {
   to { stroke-dashoffset: -120; }
 }
 @keyframes energy-node-pulse {
-  0%, 100% { opacity: 0.35; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.35); }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
 }
 .en-animate .en-edge {
-  stroke-dasharray: 5 12;
-  animation: energy-flow 2.2s linear infinite;
+  stroke-dasharray: 4 14;
+  animation: energy-flow 3.4s linear infinite;
 }
 .en-animate .en-pulse {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: energy-node-pulse 3s ease-in-out infinite;
+  animation: energy-node-pulse 3s ease-in-out infinite;   /* opacity only, no scale */
 }
 
-.navy-overlay {
-  position: relative;
-}
-.navy-overlay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(6, 11, 24, 0.72) 0%, rgba(4, 8, 26, 0.92) 100%);
-}
-
-.glow-secondary {
-  box-shadow: 0 0 0 1px rgba(0, 207, 255, 0.25), 0 12px 48px -12px rgba(0, 207, 255, 0.45);
-}
+/* Glows neutralized — a hairline ring at most, no colored bloom. */
+.glow-secondary,
 .glow-accent {
-  box-shadow: 0 0 0 1px rgba(255, 102, 48, 0.25), 0 12px 48px -12px rgba(255, 102, 48, 0.45);
+  box-shadow: none;
 }
 
+/* Faint engineering grid — recolored to hairline, very subtle. */
 .grid-bg {
   background-image:
-    linear-gradient(rgba(0, 207, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 207, 255, 0.06) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.4;
 }
 
 ::selection {
@@ -216,62 +152,26 @@ body::before {
   position: relative;
   isolation: isolate;
 }
+/* Cursor spotlight — quiet hairline-teal wash, no colored bloom. */
 .cursor-surface::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: inherit;
   background: radial-gradient(
-    420px circle at var(--cursor-x) var(--cursor-y),
-    rgba(0, 207, 255, 0.10),
-    transparent 55%
+    380px circle at var(--cursor-x) var(--cursor-y),
+    color-mix(in srgb, var(--color-secondary) 8%, transparent),
+    transparent 60%
   );
   opacity: 0;
-  transition: opacity 220ms ease-out;
+  transition: opacity 200ms ease-out;
   pointer-events: none;
 }
 .cursor-surface:hover::before { opacity: 1; }
 
-/* CTA shine sweep — a light band crosses the button on hover */
-.cta-shine {
-  position: relative;
-  overflow: hidden;
-}
-.cta-shine::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40%;
-  inset-inline-start: -60%;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 100%
-  );
-  transform: skewX(-18deg);
-  pointer-events: none;
-  transition: inset-inline-start 0.65s ease;
-}
-.cta-shine:hover::after {
-  inset-inline-start: 120%;
-}
-
-/* CTA attention pulse — a soft ring breathes outward on a slow loop */
-@keyframes cta-pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(255, 102, 48, 0.45); }
-  70%  { box-shadow: 0 0 0 14px rgba(255, 102, 48, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 102, 48, 0); }
-}
-.cta-pulse {
-  animation: cta-pulse-ring 2.8s cubic-bezier(0.33, 0, 0.35, 1) infinite;
-}
-.cta-pulse:hover,
-.cta-pulse:focus-visible {
-  animation-play-state: paused;
-}
+/* Decorative CTA motion removed (founder spec: reduce motion, no shine/pulse). */
+.cta-shine::after { display: none; }
+.cta-pulse { animation: none; }
 
 /* Reduced-motion contract — respected by every animation on the site */
 @media (prefers-reduced-motion: reduce) {
