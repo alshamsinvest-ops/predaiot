@@ -3,16 +3,14 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, ShieldCheck, Zap, ScrollText, Atom, Boxes } from "lucide-react";
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
-import IndustrialImage from "@/components/IndustrialImage";
 import SectorGrid from "@/components/SectorGrid";
 import EconomicWaveform from "@/components/kinetic/EconomicWaveform";
+import EnergyNetwork from "@/components/kinetic/EnergyNetwork";
 import KineticTitle from "@/components/kinetic/KineticTitle";
 import MagneticButton from "@/components/kinetic/MagneticButton";
 import CursorSurface from "@/components/kinetic/CursorSurface";
-import Parallax from "@/components/kinetic/Parallax";
 import LeakRecoveryVisual from "@/components/kinetic/LeakRecoveryVisual";
 import { Reveal, RevealGroup, RevealItem } from "@/components/kinetic/Reveal";
-import { IMAGES } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 import {
   PRIMARY,
@@ -53,44 +51,48 @@ export default async function HomePage({
 
   return (
     <>
-      {/* HERO */}
-      <div className="relative overflow-hidden">
-        <Parallax className="absolute inset-0 -z-10">
-          <IndustrialImage img={IMAGES.solarField} locale={locale} variant="background" priority overlay="strong" />
-        </Parallax>
-        <EconomicWaveform height={340} />
-        <Section className="relative pt-12">
-          <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
+      {/* HERO — cinematic cross-sector energy network, not a single technology */}
+      <div className="relative overflow-hidden bg-primary-900">
+        <div className="aurora -z-10" />
+        <EnergyNetwork className="absolute inset-0 -z-10 opacity-70 [mask-image:radial-gradient(115%_100%_at_50%_0%,#000_35%,transparent_78%)]" />
+        <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-20" aria-hidden="true" />
+        <EconomicWaveform height={300} />
+        <Section className="relative pt-14 pb-4">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <Kicker>{tc("vision2040")}</Kicker>
-            <KineticTitle
-              text={th("headline")}
-              as="h1"
-              locale={locale}
-              className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl"
-            />
-            <p className="mt-5 max-w-xl text-lg text-ink-muted">{th("subhead")}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <MagneticButton>
-                <LinkButton href="/economic-audit" variant="accent" className="cta-shine cta-pulse">
-                  {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
+            <div>
+              <Kicker>{isAr ? "ذكاء اقتصادي للقرار · قطاع الطاقة" : "Economic Decision Intelligence · Energy Sector"}</Kicker>
+              <KineticTitle
+                text={th("headline")}
+                as="h1"
+                locale={locale}
+                className="mt-4 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl"
+              />
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">{th("subhead")}</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <MagneticButton>
+                  <LinkButton href="/economic-audit" variant="accent" className="cta-shine cta-pulse">
+                    {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
+                  </LinkButton>
+                </MagneticButton>
+                <LinkButton href="/contact" variant="secondary">
+                  {tc("bookCall")}
                 </LinkButton>
-              </MagneticButton>
-              <LinkButton href="/contact" variant="secondary">
-                {tc("bookCall")}
-              </LinkButton>
+              </div>
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-ink-muted">
+                <span className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-accent" /> {fmtOMR(PRIMARY.annualRevenueOMR)} OMR / {PRIMARY.assetMW} MW
+                </span>
+                <span className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-secondary" /> {PRIMARY.profitMin}%–{PRIMARY.profitMax}%, 0 CAPEX
+                </span>
+                <span className="flex items-center gap-2">
+                  <Boxes className="h-4 w-4 text-secondary" /> {isAr ? "15 قطاعًا" : "15 sectors"}
+                </span>
+              </div>
             </div>
-            <div className="mt-8 flex flex-wrap gap-6 text-sm text-ink-muted">
-              <span className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-accent" /> {fmtOMR(PRIMARY.annualRevenueOMR)} OMR / {PRIMARY.assetMW} MW
-              </span>
-              <span className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-secondary" /> {PRIMARY.profitMin}%–{PRIMARY.profitMax}%, 0 CAPEX
-              </span>
+            <div className="glass glass-teal rounded-3xl p-2">
+              <HeroDashboard />
             </div>
-          </div>
-            <HeroDashboard />
           </div>
         </Section>
       </div>
@@ -338,7 +340,8 @@ export default async function HomePage({
       {/* FINAL CTA */}
       <Section>
         <Reveal>
-          <div className="surface rounded-3xl p-10 text-center">
+          <div className="glass glass-teal relative overflow-hidden rounded-3xl p-10 text-center">
+            <div className="aurora -z-10 opacity-60" />
             <h2 className="font-display text-3xl font-extrabold sm:text-4xl">{t("ctaTitle")}</h2>
             <p className="mt-3 text-ink-muted">{t("ctaBody")}</p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
