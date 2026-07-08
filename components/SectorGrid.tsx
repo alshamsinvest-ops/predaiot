@@ -17,8 +17,16 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { SECTORS } from "@/lib/constants";
+import { Link } from "@/i18n/navigation";
 import CursorSurface from "@/components/kinetic/CursorSurface";
 import { RevealGroup, RevealItem } from "@/components/kinetic/Reveal";
+
+/** Example sectors deep-link to their dedicated pages; the rest to /industries/[sector]. */
+function sectorHref(key: string): string {
+  if (key === "bess") return "/bess";
+  if (key === "solar") return "/solar";
+  return `/industries/${key}`;
+}
 
 const ICONS: Record<string, LucideIcon> = {
   Fuel,
@@ -69,34 +77,36 @@ export default function SectorGrid({
         const isExample = "example" in s && s.example;
         return (
           <RevealItem key={s.key} className="h-full">
-            <CursorSurface
-              className={`surface group h-full rounded-2xl ${detail ? "p-5" : "p-4"}`}
-            >
-              <div className="flex items-center justify-between">
-                <Icon
-                  className={`text-secondary transition-transform duration-300 group-hover:scale-110 ${
-                    detail ? "h-7 w-7" : "h-6 w-6"
-                  }`}
-                />
-                {isExample ? (
-                  <span className="rounded-full border border-secondary/30 bg-secondary/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-secondary">
-                    {isAr ? "مثال" : "Example"}
-                  </span>
-                ) : null}
-              </div>
-              <h3
-                className={`mt-3 font-display font-bold ${
-                  detail ? "text-lg" : "text-sm"
-                }`}
+            <Link href={sectorHref(s.key)} className="block h-full">
+              <CursorSurface
+                className={`surface group h-full rounded-2xl transition-colors hover:border-secondary/40 ${detail ? "p-5" : "p-4"}`}
               >
-                {isAr ? s.ar : s.en}
-              </h3>
-              {detail ? (
-                <p className="mt-2 text-sm text-ink-muted">
-                  {isAr ? s.detailAr : s.detailEn}
-                </p>
-              ) : null}
-            </CursorSurface>
+                <div className="flex items-center justify-between">
+                  <Icon
+                    className={`text-secondary transition-transform duration-300 group-hover:scale-110 ${
+                      detail ? "h-7 w-7" : "h-6 w-6"
+                    }`}
+                  />
+                  {isExample ? (
+                    <span className="rounded-full border border-secondary/30 bg-secondary/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-secondary">
+                      {isAr ? "مثال" : "Example"}
+                    </span>
+                  ) : null}
+                </div>
+                <h3
+                  className={`mt-3 font-display font-bold ${
+                    detail ? "text-lg" : "text-sm"
+                  }`}
+                >
+                  {isAr ? s.ar : s.en}
+                </h3>
+                {detail ? (
+                  <p className="mt-2 text-sm text-ink-muted">
+                    {isAr ? s.detailAr : s.detailEn}
+                  </p>
+                ) : null}
+              </CursorSurface>
+            </Link>
           </RevealItem>
         );
       })}
