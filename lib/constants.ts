@@ -19,7 +19,7 @@
 
 export const COMPANY = {
   name: "PREDAIOT",
-  legalTagline: "Economic Decision Intelligence for Energy Assets",
+  legalTagline: "Economic Decision Intelligence for the Energy Sector",
   domain: "preda-iot.com",
   url: "https://preda-iot.com",
   founder: "Chams Eddine Madi",
@@ -30,6 +30,21 @@ export const COMPANY = {
   whatsappNumber: "96874114028",
   location: "Muscat, Sultanate of Oman",
   linkedin: "https://www.linkedin.com/in/chams-eddine-madi-74b407379/",
+} as const;
+
+/**
+ * POSITIONING — the enterprise, cross-sector framing used across the site.
+ * PREDAIOT is an economic-decision-intelligence layer for the whole energy
+ * value chain, validated first on Oman's published market data.
+ */
+export const POSITIONING = {
+  category: "Economic Decision Intelligence",
+  oneLiner:
+    "An enterprise AI decision layer that quantifies — and recovers — the economic value lost between how energy assets operate and how they could earn.",
+  crossSector:
+    "One economic decision engine, applied across the entire energy value chain — from oil & gas and power generation to renewables, storage, grids and hydrogen.",
+  scientific:
+    "Every decision is a transparent, auditable calculation against published market prices. No black box. No fabricated results.",
 } as const;
 
 /** PRIMARY economic figures — homepage hero, case study, audit defaults. */
@@ -191,6 +206,170 @@ export const INDUSTRIES = [
   "industrial",
   "oilgas",
   "infrastructure",
+] as const;
+
+/**
+ * SECTORS — the full addressable energy value chain (single source of truth).
+ * PREDAIOT is Economic Decision Intelligence for the entire energy sector;
+ * BESS and Solar are two examples among fifteen, never the identity.
+ *
+ * `icon` is a lucide-react component name resolved at render time.
+ * `example: true` flags the sectors we lead with in product deep-dives — they
+ * are illustrations of the platform, not its boundary.
+ */
+export const SECTORS = [
+  {
+    key: "oilgas",
+    icon: "Fuel",
+    en: "Oil & Gas",
+    ar: "النفط والغاز",
+    detailEn:
+      "Optimize the economic dispatch of self-generation, cogeneration and grid import across upstream, midstream and downstream operations.",
+    detailAr:
+      "تحسين التوزيع الاقتصادي للتوليد الذاتي والمشترك واستيراد الشبكة عبر عمليات المنبع والوسط والمصب.",
+  },
+  {
+    key: "power",
+    icon: "Zap",
+    en: "Power Generation",
+    ar: "توليد الطاقة",
+    detailEn:
+      "Turn every generating unit into an economically-timed decision against live marginal prices — not a fixed schedule.",
+    detailAr:
+      "حوّل كل وحدة توليد إلى قرار موقوت اقتصاديًا مقابل الأسعار الحدّية الحية — لا جدول ثابت.",
+  },
+  {
+    key: "utilities",
+    icon: "Building2",
+    en: "Utilities",
+    ar: "المرافق",
+    detailEn:
+      "Grid-scale dispatch economics and portfolio optimization across a diverse generation and storage fleet.",
+    detailAr:
+      "اقتصاديات التوزيع على مستوى الشبكة وتحسين المحافظ عبر أسطول توليد وتخزين متنوّع.",
+  },
+  {
+    key: "renewables",
+    icon: "Leaf",
+    en: "Renewable Energy",
+    ar: "الطاقة المتجددة",
+    detailEn:
+      "Quantify and recover the value lost between what a renewable asset generates and what it earns.",
+    detailAr:
+      "قياس واسترجاع القيمة الضائعة بين ما يولّده الأصل المتجدد وما يكسبه فعليًا.",
+  },
+  {
+    key: "solar",
+    icon: "Sun",
+    en: "Solar",
+    ar: "الطاقة الشمسية",
+    detailEn:
+      "Curtailment recovery and price-aware generation on utility-scale PV. (One example of the platform in action.)",
+    detailAr:
+      "استرجاع التقليص والتوليد الواعي بالسعر على المحطات الشمسية. (مثال واحد على المنصة أثناء العمل.)",
+    example: true,
+  },
+  {
+    key: "wind",
+    icon: "Wind",
+    en: "Wind",
+    ar: "طاقة الرياح",
+    detailEn:
+      "Align variable wind output with the highest-value dispatch windows and curtailment economics.",
+    detailAr:
+      "مواءمة إنتاج الرياح المتغيّر مع أعلى نوافذ التوزيع قيمةً واقتصاديات التقليص.",
+  },
+  {
+    key: "bess",
+    icon: "BatteryCharging",
+    en: "Battery Storage",
+    ar: "تخزين البطاريات",
+    detailEn:
+      "Degradation-aware arbitrage that charges and discharges on price, not on the clock. (One example of the platform in action.)",
+    detailAr:
+      "مراجحة واعية بالتدهور تشحن وتفرّغ حسب السعر لا حسب الساعة. (مثال واحد على المنصة أثناء العمل.)",
+    example: true,
+  },
+  {
+    key: "tnd",
+    icon: "Cable",
+    en: "Transmission & Distribution",
+    ar: "النقل والتوزيع",
+    detailEn:
+      "Economic decision support for congestion, losses and dispatch across the wires business.",
+    detailAr:
+      "دعم القرار الاقتصادي للازدحام والفواقد والتوزيع عبر شبكة النقل.",
+  },
+  {
+    key: "smartgrid",
+    icon: "Waypoints",
+    en: "Smart Grid",
+    ar: "الشبكة الذكية",
+    detailEn:
+      "Turn grid telemetry into hourly economic decisions with a full, auditable rationale per action.",
+    detailAr:
+      "حوّل قياسات الشبكة إلى قرارات اقتصادية بالساعة مع مبرّر كامل قابل للتدقيق لكل إجراء.",
+  },
+  {
+    key: "industrial",
+    icon: "Factory",
+    en: "Industrial Energy",
+    ar: "الطاقة الصناعية",
+    detailEn:
+      "Load-shifting, on-site generation and demand economics for energy-intensive plants.",
+    detailAr:
+      "تحويل الأحمال والتوليد الموقعي واقتصاديات الطلب للمصانع كثيفة الاستهلاك.",
+  },
+  {
+    key: "water",
+    icon: "Droplets",
+    en: "Water & Energy Infrastructure",
+    ar: "البنية التحتية للمياه والطاقة",
+    detailEn:
+      "Co-optimize desalination, pumping and treatment loads against energy prices and grid signals.",
+    detailAr:
+      "التحسين المشترك لأحمال التحلية والضخ والمعالجة مقابل أسعار الطاقة وإشارات الشبكة.",
+  },
+  {
+    key: "hydrogen",
+    icon: "Atom",
+    en: "Hydrogen",
+    ar: "الهيدروجين",
+    detailEn:
+      "Schedule electrolysis to the cheapest, cleanest hours — the single largest lever on green-hydrogen cost.",
+    detailAr:
+      "جدولة التحليل الكهربائي في أرخص الساعات وأنظفها — أكبر رافعة منفردة على تكلفة الهيدروجين الأخضر.",
+  },
+  {
+    key: "datacenters",
+    icon: "Server",
+    en: "Data Centers",
+    ar: "مراكز البيانات",
+    detailEn:
+      "Economic optimization of on-site generation, storage and grid procurement for AI-scale power demand.",
+    detailAr:
+      "التحسين الاقتصادي للتوليد الموقعي والتخزين وشراء الطاقة لطلب الحوسبة بحجم الذكاء الاصطناعي.",
+  },
+  {
+    key: "microgrids",
+    icon: "Grid3x3",
+    en: "Microgrids",
+    ar: "الشبكات المصغّرة",
+    detailEn:
+      "Least-cost dispatch across generation, storage and load in islanded and grid-tied microgrids.",
+    detailAr:
+      "توزيع بأقل تكلفة عبر التوليد والتخزين والحمل في الشبكات المصغّرة المعزولة والمرتبطة بالشبكة.",
+  },
+  {
+    key: "vpp",
+    icon: "Boxes",
+    en: "Virtual Power Plants",
+    ar: "محطات الطاقة الافتراضية",
+    detailEn:
+      "Aggregate distributed assets and dispatch them as one economically-optimal fleet.",
+    detailAr:
+      "تجميع الأصول الموزّعة وتشغيلها كأسطول واحد أمثل اقتصاديًا.",
+  },
 ] as const;
 
 /** Airtable destination for all leads (web + WhatsApp = one pipeline). */

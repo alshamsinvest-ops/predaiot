@@ -3,6 +3,7 @@
     "home": "Home",
     "live": "Live Platform",
     "solutions": "Solutions",
+    "allSectors": "All 15 sectors",
     "audit": "Economic Audit",
     "bess": "BESS",
     "solar": "Solar + Storage",
@@ -40,7 +41,7 @@
   },
   "hero": {
     "headline": "Every Asset Produces Energy. PREDAIOT Ensures It Produces Value.",
-    "subhead": "Identify hidden economic losses, optimize dispatch decisions, and recover untapped value across solar, battery, and industrial energy assets — built on Oman's own market data.",
+    "subhead": "The economic decision intelligence layer for the entire energy value chain — oil & gas, power generation, utilities, renewables, storage, grids and hydrogen. We quantify the value lost between how assets operate and how they could earn, and recover it. Validated on published market data.",
     "dash": {
       "soc": "Battery SOC",
       "score": "Economic Efficiency Score",
@@ -154,8 +155,8 @@
     "secondaryLabel": "Peak-case internal simulation — smaller asset class"
   },
   "industries": {
-    "title": "Industries we serve",
-    "lead": "Six verticals where economic dispatch decisions move real money.",
+    "title": "The energy sector, end to end",
+    "lead": "One economic decision engine, applied across fifteen sectors of the energy value chain — wherever a dispatch or procurement decision moves real money.",
     "utilities": "Utilities",
     "utilitiesDesc": "Grid-scale dispatch economics and portfolio optimization.",
     "solar": "Solar",

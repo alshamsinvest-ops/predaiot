@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { COMPANY } from "./constants";
+import { COMPANY, POSITIONING, SECTORS } from "./constants";
 import { locales } from "@/i18n/routing";
 
 const BASE = COMPANY.url;
@@ -65,8 +65,9 @@ export function organizationJsonLd() {
       addressLocality: "Muscat",
       addressCountry: "OM",
     },
-    description: COMPANY.legalTagline,
+    description: `${COMPANY.legalTagline}. ${POSITIONING.oneLiner}`,
     areaServed: ["OM", "GCC"],
+    knowsAbout: SECTORS.map((s) => s.en),
   };
 }
 

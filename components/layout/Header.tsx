@@ -23,7 +23,8 @@ type NavKey =
   | "contact"
   | "portal"
   | "login"
-  | "solutions";
+  | "solutions"
+  | "allSectors";
 
 type NavItem =
   | { kind: "link"; href: string; key: NavKey }
@@ -33,11 +34,11 @@ const NAV: NavItem[] = [
   { kind: "link", href: "/live", key: "live" },
   {
     kind: "dropdown",
-    key: "solutions",
+    key: "industries",
     children: [
+      { href: "/industries", key: "allSectors" },
       { href: "/bess", key: "bess" },
       { href: "/solar", key: "solar" },
-      { href: "/industries", key: "industries" },
       { href: "/cases", key: "cases" },
     ],
   },
@@ -47,9 +48,9 @@ const NAV: NavItem[] = [
 ];
 
 const MOBILE_SOLUTIONS: { href: string; key: NavKey }[] = [
+  { href: "/industries", key: "allSectors" },
   { href: "/bess", key: "bess" },
   { href: "/solar", key: "solar" },
-  { href: "/industries", key: "industries" },
   { href: "/cases", key: "cases" },
 ];
 
@@ -150,7 +151,7 @@ export default function Header({ locale = "en" }: { locale?: string }) {
           </div>
           <div className="mt-4 border-t border-white/10 pt-3">
             <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-muted">
-              {t("solutions")}
+              {t("industries")}
             </p>
             <div className="grid grid-cols-2 gap-2">
               {MOBILE_SOLUTIONS.map((s) => (
