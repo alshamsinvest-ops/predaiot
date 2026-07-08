@@ -4,10 +4,6 @@ import { ArrowRight, ShieldCheck, Zap, ScrollText, Atom, Boxes } from "lucide-re
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
 import SectorGrid from "@/components/SectorGrid";
-import EconomicWaveform from "@/components/kinetic/EconomicWaveform";
-import EnergyNetwork from "@/components/kinetic/EnergyNetwork";
-import KineticTitle from "@/components/kinetic/KineticTitle";
-import MagneticButton from "@/components/kinetic/MagneticButton";
 import CursorSurface from "@/components/kinetic/CursorSurface";
 import LeakRecoveryVisual from "@/components/kinetic/LeakRecoveryVisual";
 import { Reveal, RevealGroup, RevealItem } from "@/components/kinetic/Reveal";
@@ -51,48 +47,43 @@ export default async function HomePage({
 
   return (
     <>
-      {/* HERO — cinematic cross-sector energy network, not a single technology */}
-      <div className="relative overflow-hidden bg-primary-900">
-        <div className="aurora -z-10" />
-        <EnergyNetwork className="absolute inset-0 -z-10 opacity-70 [mask-image:radial-gradient(115%_100%_at_50%_0%,#000_35%,transparent_78%)]" />
-        <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-20" aria-hidden="true" />
-        <EconomicWaveform height={300} />
-        <Section className="relative pt-14 pb-4">
+      {/* HERO — industrial restraint: calm ground, sharp data, one accent */}
+      <div className="relative overflow-hidden border-b border-line bg-primary-900">
+        <div className="grid-bg pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
+        <Section className="relative pt-16 pb-10">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
-              <Kicker>{isAr ? "ذكاء اقتصادي للقرار · قطاع الطاقة" : "Economic Decision Intelligence · Energy Sector"}</Kicker>
-              <KineticTitle
-                text={th("headline")}
-                as="h1"
-                locale={locale}
-                className="mt-4 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl"
-              />
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">{th("subhead")}</p>
+              <Kicker>
+                {isAr ? "ذكاء اقتصادي للقرار · قطاع الطاقة" : "Economic Decision Intelligence"}
+              </Kicker>
+              <h1 className="mt-5 font-display text-4xl font-bold leading-[1.06] tracking-tight sm:text-5xl lg:text-[3.5rem]">
+                {th("headline")}
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
+                {th("subhead")}
+              </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <MagneticButton>
-                  <LinkButton href="/economic-audit" variant="accent" className="cta-shine cta-pulse">
-                    {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
-                  </LinkButton>
-                </MagneticButton>
+                <LinkButton href="/economic-audit" variant="accent">
+                  {tc("startDiagnostic")} <ArrowRight className="h-4 w-4" />
+                </LinkButton>
                 <LinkButton href="/contact" variant="secondary">
                   {tc("bookCall")}
                 </LinkButton>
               </div>
-              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-ink-muted">
-                <span className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-accent" /> {fmtOMR(PRIMARY.annualRevenueOMR)} OMR / {PRIMARY.assetMW} MW
+              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs text-ink-muted">
+                <span>
+                  <span className="text-[color:var(--color-gold)]">
+                    {fmtOMR(PRIMARY.annualRevenueOMR)}
+                  </span>{" "}
+                  OMR / {PRIMARY.assetMW} MW
                 </span>
-                <span className="flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-secondary" /> {PRIMARY.profitMin}%–{PRIMARY.profitMax}%, 0 CAPEX
-                </span>
-                <span className="flex items-center gap-2">
-                  <Boxes className="h-4 w-4 text-secondary" /> {isAr ? "15 قطاعًا" : "15 sectors"}
-                </span>
+                <span aria-hidden className="h-3 w-px bg-line" />
+                <span>{PRIMARY.profitMin}%–{PRIMARY.profitMax}% · 0 CAPEX</span>
+                <span aria-hidden className="h-3 w-px bg-line" />
+                <span>{isAr ? "15 قطاعًا" : "15 sectors"}</span>
               </div>
             </div>
-            <div className="glass glass-teal rounded-3xl p-2">
-              <HeroDashboard />
-            </div>
+            <HeroDashboard />
           </div>
         </Section>
       </div>

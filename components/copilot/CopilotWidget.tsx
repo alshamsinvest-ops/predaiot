@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Bot, X, Send, Sparkles } from "lucide-react";
+import { X, Send } from "lucide-react";
 import { API_BASE } from "@/lib/api";
 import { COPILOT } from "@/lib/constants";
 
@@ -13,6 +13,7 @@ interface Msg {
 
 export default function CopilotWidget() {
   const t = useTranslations("copilot");
+  const tc = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -60,17 +61,24 @@ export default function CopilotWidget() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-[#04101f] shadow-lg glow-secondary transition-transform hover:scale-105"
-        aria-label={t("open")}
+        className="fixed bottom-5 end-5 z-40 inline-flex items-center gap-2 rounded-[2px] bg-secondary px-4 py-3 text-sm font-semibold text-[#0B0D0F] transition-colors hover:brightness-105"
+        aria-label={tc("talkExpert")}
       >
-        {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
+        {open ? (
+          <X className="h-4 w-4" />
+        ) : (
+          <>
+            <span aria-hidden className="inline-block h-2 w-2 rounded-full bg-[#0B0D0F]" />
+            {tc("talkExpert")}
+          </>
+        )}
       </button>
 
       {open ? (
-        <div className="fixed bottom-24 right-5 z-40 flex h-[32rem] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-primary-900 shadow-2xl">
-          <div className="flex items-center justify-between border-b border-white/10 bg-primary-50 px-4 py-3">
+        <div className="fixed bottom-20 end-5 z-40 flex h-[32rem] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-[2px] border border-line bg-primary-900 shadow-2xl">
+          <div className="flex items-center justify-between border-b border-line bg-primary-50 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-accent" />
+              <span aria-hidden className="inline-block h-2 w-2 rounded-full bg-secondary" />
               <div>
                 <p className="text-sm font-semibold">{COPILOT.name}</p>
                 <p className="text-[10px] text-ink-muted">{COPILOT.poweredBy}</p>

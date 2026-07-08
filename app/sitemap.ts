@@ -1,6 +1,11 @@
 import type { MetadataRoute } from "next";
-import { COMPANY } from "@/lib/constants";
+import { COMPANY, SECTORS } from "@/lib/constants";
 import { locales } from "@/i18n/routing";
+
+// Per-sector landing routes (bess/solar keep their dedicated pages).
+const SECTOR_ROUTES = SECTORS.filter(
+  (s) => s.key !== "bess" && s.key !== "solar",
+).map((s) => `/industries/${s.key}`);
 
 const ROUTES = [
   "",
@@ -9,6 +14,7 @@ const ROUTES = [
   "/solar",
   "/technology",
   "/industries",
+  ...SECTOR_ROUTES,
   "/security",
   "/privacy-policy",
   "/cases",

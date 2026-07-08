@@ -1,0 +1,275 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
+import {
+  ArrowRight,
+  Clock,
+  PauseCircle,
+  EyeOff,
+  Database,
+  GitCompareArrows,
+  Sigma,
+  ScrollText,
+  Fuel,
+  Zap,
+  Building2,
+  Leaf,
+  Sun,
+  Wind,
+  BatteryCharging,
+  Cable,
+  Waypoints,
+  Factory,
+  Droplets,
+  Atom,
+  Server,
+  Grid3x3,
+  Boxes,
+  type LucideIcon,
+} from "lucide-react";
+import { Section, PageHeader, Card, Kicker, LinkButton } from "@/components/ui";
+import EnergyNetwork from "@/components/kinetic/EnergyNetwork";
+import { Reveal, RevealGroup, RevealItem } from "@/components/kinetic/Reveal";
+import CursorSurface from "@/components/kinetic/CursorSurface";
+import JsonLd from "@/components/JsonLd";
+import { buildMetadata, serviceJsonLd } from "@/lib/seo";
+import { SECTORS, COMPANY, POSITIONING } from "@/lib/constants";
+
+const ICONS: Record<string, LucideIcon> = {
+  Fuel,
+  Zap,
+  Building2,
+  Leaf,
+  Sun,
+  Wind,
+  BatteryCharging,
+  Cable,
+  Waypoints,
+  Factory,
+  Droplets,
+  Atom,
+  Server,
+  Grid3x3,
+  Boxes,
+};
+
+/** Example sectors (bess, solar) keep their dedicated deep-dive pages. */
+const DEDICATED = new Set(["bess", "solar"]);
+const LANDING_SECTORS = SECTORS.filter((s) => !DEDICATED.has(s.key));
+
+export function generateStaticParams() {
+  return LANDING_SECTORS.map((s) => ({ sector: s.key }));
+}
+
+function getSector(key: string) {
+  return LANDING_SECTORS.find((s) => s.key === key);
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; sector: string }>;
+}): Promise<Metadata> {
+  const { locale, sector } = await params;
+  const s = getSector(sector);
+  if (!s) return {};
+  const name = locale === "ar" ? s.ar : s.en;
+  return buildMetadata({
+    locale,
+    path: `/industries/${sector}`,
+    title: `${name} — Economic Decision Intelligence · ${COMPANY.name}`,
+    description: `${s.detailEn} PREDAIOT quantifies the economic decision gap for ${s.en.toLowerCase()} against published market prices — transparent, auditable, cross-sector.`,
+  });
+}
+
+export default async function SectorPage({
+  params,
+}: {
+  params: Promise<{ locale: string; sector: string }>;
+}) {
+  const { locale, sector } = await params;
+  const s = getSector(sector);
+  if (!s) notFound();
+  setRequestLocale(locale);
+  const isAr = locale === "ar";
+  const name = isAr ? s.ar : s.en;
+  const detail = isAr ? s.detailAr : s.detailEn;
+  const Icon = ICONS[s.icon] ?? Boxes;
+
+  // Universal decision archetypes — honest and applicable to any sector.
+  const leaks = [
+    {
+      icon: Clock,
+      title: isAr ? "قرارات موقوتة بالساعة لا بالسعر" : "Decisions timed by the clock, not the price",
+      body: isAr
+        ? `تُتّخذ قرارات التوزيع والشراء في ${name} على جداول ثابتة بينما تتحرّك أسعار السوق كل ساعة. الفجوة بينهما قيمة قابلة للاسترجاع.`
+        : `Dispatch and procurement decisions in ${name.toLowerCase()} run on fixed schedules while market prices move every hour. The gap between them is recoverable value.`,
+    },
+    {
+      icon: PauseCircle,
+      title: isAr ? "مرونة معطّلة" : "Flexibility left idle",
+      body: isAr
+        ? "الأصول المرنة تقف ساكنة في لحظات كان بإمكانها أن تكسب فيها — لأن لا أحد يقيس تكلفة الفرصة الاقتصادية لحظةً بلحظة."
+        : "Flexible assets sit still in the exact hours they could earn — because no one is measuring the hour-by-hour economic opportunity cost.",
+    },
+    {
+      icon: EyeOff,
+      title: isAr ? "قرارات بلا حلقة تغذية اقتصادية" : "Decisions with no economic feedback loop",
+      body: isAr
+        ? "الأنظمة الحالية تقيس الأداء التقني — التوافر ووقت التشغيل — لا الجودة الاقتصادية للقرار. ما لا يُقاس لا يُحسَّن."
+        : "Existing systems measure technical performance — availability, uptime — not the economic quality of the decision. What isn't measured can't be improved.",
+    },
+  ];
+
+  const method = [
+    {
+      icon: Database,
+      title: isAr ? "استيعاب" : "Ingest",
+      body: isAr
+        ? "قياسات الأصل الحالية عبر SCADA/EMS أو رفع ملف — دون استبدال أي جهاز."
+        : "Existing asset telemetry via SCADA/EMS or a file upload — no hardware to replace.",
+    },
+    {
+      icon: GitCompareArrows,
+      title: isAr ? "مواءمة" : "Align",
+      body: isAr
+        ? "مقابل إشارات السوق المنشورة — السعر الحدّي والندرة والطلب."
+        : "Against published market signals — marginal price, scarcity, demand.",
+    },
+    {
+      icon: ScrollText,
+      title: isAr ? "إعادة تشغيل" : "Replay",
+      body: isAr
+        ? "يُعاد تشغيل كل قرار مقابل ما كان القرار الأمثل اقتصاديًا في تلك الساعة."
+        : "Every decision is replayed against what the economically optimal one would have been that hour.",
+    },
+    {
+      icon: Sigma,
+      title: isAr ? "قياس" : "Quantify",
+      body: isAr
+        ? "الفجوة الاقتصادية بعملتك — مُستشهَدة بمصادر رسمية وقابلة للتحقق باستقلالية."
+        : "The economic decision gap in your currency — cited to official sources, independently verifiable.",
+    },
+  ];
+
+  return (
+    <>
+      <JsonLd
+        data={serviceJsonLd(
+          `Economic Decision Intelligence for ${s.en}`,
+          s.detailEn,
+          `/${locale}/industries/${sector}`,
+        )}
+      />
+
+      {/* HERO */}
+      <div className="relative overflow-hidden bg-primary-900">
+        <div className="aurora -z-10" />
+        <EnergyNetwork className="absolute inset-0 -z-10 opacity-40 [mask-image:radial-gradient(120%_100%_at_50%_0%,#000_30%,transparent_75%)]" />
+        <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-15" aria-hidden="true" />
+        <Section className="relative pt-16">
+          <div className="glass inline-flex items-center gap-2 rounded-full px-3 py-1">
+            <Icon className="h-4 w-4 text-secondary" />
+            <span className="font-mono text-[11px] uppercase tracking-wider text-secondary">
+              {isAr ? "قطاع" : "Sector"}
+            </span>
+          </div>
+          <PageHeader
+            title={`${name}`}
+            lead={detail}
+          />
+          <p className="mt-4 max-w-3xl text-ink-muted">
+            {isAr ? POSITIONING.crossSector : POSITIONING.crossSector}
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <LinkButton href="/economic-audit" variant="accent" className="cta-shine">
+              {isAr ? "ابدأ التشخيص المجاني" : "Start a free diagnostic"} <ArrowRight className="h-4 w-4" />
+            </LinkButton>
+            <LinkButton href="/technology" variant="secondary">
+              {isAr ? "كيف يعمل المحرّك" : "How the engine works"}
+            </LinkButton>
+          </div>
+        </Section>
+      </div>
+
+      {/* WHERE VALUE LEAKS */}
+      <Section className="py-10">
+        <Reveal>
+          <Kicker>{isAr ? "أين تتسرّب القيمة" : "Where value leaks"}</Kicker>
+          <h2 className="mt-3 font-display text-3xl font-extrabold">
+            {isAr
+              ? `ثلاثة أنماط من فجوة القرار في ${name}`
+              : `Three decision-gap patterns in ${name.toLowerCase()}`}
+          </h2>
+        </Reveal>
+        <RevealGroup className="mt-8 grid gap-6 md:grid-cols-3">
+          {leaks.map((l) => (
+            <RevealItem key={l.title} className="h-full">
+              <CursorSurface className="surface h-full rounded-2xl p-6">
+                <l.icon className="h-7 w-7 text-accent" />
+                <h3 className="mt-3 font-display text-lg font-bold">{l.title}</h3>
+                <p className="mt-2 text-sm text-ink-muted">{l.body}</p>
+              </CursorSurface>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </Section>
+
+      {/* HOW PREDAIOT APPLIES */}
+      <Section className="py-10">
+        <Reveal>
+          <Kicker>{isAr ? "كيف تنطبق PREDAIOT" : "How PREDAIOT applies"}</Kicker>
+          <h2 className="mt-3 font-display text-3xl font-extrabold">
+            {isAr ? "المحرّك نفسه. قطاعك." : "The same engine. Your sector."}
+          </h2>
+          <p className="mt-3 max-w-3xl text-ink-muted">
+            {isAr ? POSITIONING.scientific : POSITIONING.scientific}
+          </p>
+        </Reveal>
+        <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {method.map((m, i) => (
+            <RevealItem key={m.title} className="h-full">
+              <CursorSurface className="surface h-full rounded-2xl p-5">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs font-bold text-secondary">
+                    0{i + 1}
+                  </span>
+                  <m.icon className="h-5 w-5 text-secondary" />
+                </div>
+                <h3 className="mt-3 font-display text-base font-bold">{m.title}</h3>
+                <p className="mt-2 text-sm text-ink-muted">{m.body}</p>
+              </CursorSurface>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </Section>
+
+      {/* CTA */}
+      <Section className="py-10">
+        <Reveal>
+          <div className="glass glass-teal relative overflow-hidden rounded-3xl p-10 text-center">
+            <div className="aurora -z-10 opacity-60" />
+            <h2 className="font-display text-3xl font-extrabold sm:text-4xl">
+              {isAr
+                ? `كم تترك أصول ${name} على الطاولة؟`
+                : `How much is your ${name.toLowerCase()} leaving on the table?`}
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-ink-muted">
+              {isAr
+                ? "تشخيص مجاني لمدة 7 أيام، مع ضمان مكتوب. لا يتطلّب استبدال أي جهاز."
+                : "A free 7-day diagnostic, with a written guarantee. No hardware to replace."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <LinkButton href="/economic-audit" variant="accent" className="cta-shine">
+                {isAr ? "ابدأ التشخيص المجاني" : "Start a free diagnostic"} <ArrowRight className="h-4 w-4" />
+              </LinkButton>
+              <LinkButton href="/industries" variant="secondary">
+                {isAr ? "كل القطاعات" : "All sectors"}
+              </LinkButton>
+            </div>
+          </div>
+        </Reveal>
+      </Section>
+    </>
+  );
+}

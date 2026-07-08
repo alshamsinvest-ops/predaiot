@@ -6,24 +6,17 @@ import { OMAN_PRICE_PROFILE_24H } from "@/lib/price-model";
 import { useMotion } from "@/components/kinetic/MotionProvider";
 
 /**
- * PREDAIOT Economic Engine — live simulation widget for the hero.
- * On load the OMR counter counts up from zero and the price sparkline
- * draws itself; both then keep ticking with simulated grid prices and
- * battery SOC. Clearly labeled "live simulation · official Oman market
- * data" — never live operations.
+ * PREDAIOT Economic Engine — one connected instrument panel (not a grid of
+ * cards). Revenue Recovered dominates in mono/gold; the supporting metrics
+ * read as a single hairline-divided instrument row beneath it. The only
+ * motion is the number count-up and the live-dot opacity pulse.
  */
 type Decision = "CHARGE" | "DISCHARGE" | "HOLD";
 
-const decisionColor: Record<Decision, string> = {
-  CHARGE: "#00CC66",
-  DISCHARGE: "#FF6630",
-  HOLD: "#6B7A99",
-};
-
 const OMR_START = 1847;
-const SPARK_W = 260;
-const SPARK_H = 56;
-const SPARK_POINTS = 24;
+const SPARK_W = 320;
+const SPARK_H = 46;
+const SPARK_POINTS = 28;
 
 function sparkPath(values: number[]): string {
   const min = Math.min(...values);
@@ -32,7 +25,7 @@ function sparkPath(values: number[]): string {
   return values
     .map((v, i) => {
       const x = (i / (values.length - 1)) * SPARK_W;
-      const y = SPARK_H - 6 - ((v - min) / span) * (SPARK_H - 12);
+      const y = SPARK_H - 4 - ((v - min) / span) * (SPARK_H - 8);
       return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(" ");
@@ -46,7 +39,6 @@ export default function HeroDashboard() {
   const [price, setPrice] = useState(0.068);
   const [decisions, setDecisions] = useState(203);
   const [prices, setPrices] = useState<number[]>(() => {
-    // Seed the sparkline from the real Oman 24h profile, scaled to fils range.
     const hour = new Date().getHours();
     return Array.from({ length: SPARK_POINTS }, (_, i) => {
       const h = (hour - (SPARK_POINTS - 1 - i) + 24) % 24;
@@ -55,7 +47,6 @@ export default function HeroDashboard() {
   });
   const countedUp = useRef(false);
 
-  // Count-up from 0 on first mount, then hand over to the tick loop.
   useEffect(() => {
     if (countedUp.current) return;
     countedUp.current = true;
@@ -64,7 +55,7 @@ export default function HeroDashboard() {
       return;
     }
     const controls = animate(0, OMR_START, {
-      duration: 1.6,
+      duration: 1.4,
       ease: [0.16, 0.84, 0.28, 0.99],
       onUpdate: (v) => setOmrSaved(Math.round(v)),
     });
@@ -95,110 +86,92 @@ export default function HeroDashboard() {
   }, []);
 
   const fils = Math.round(price * 1000);
-  const priceColor = price > 0.1 ? "#FF6630" : "#00CC66";
   const path = useMemo(() => sparkPath(prices), [prices]);
 
+  const metrics: { label: string; value: string; critical?: boolean }[] = [
+    { label: "Engine decision", value: decision, critical: decision === "DISCHARGE" },
+    { label: "Grid price", value: `${fils} fils/kWh` },
+    { label: "Battery SoC", value: `${Math.round(soc)}%` },
+    { label: "Decisions today", value: decisions.toLocaleString() },
+  ];
+
   return (
-    <div className="surface relative overflow-hidden rounded-3xl p-5 font-mono">
-      <div className="grid-bg pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
-      <div className="relative">
-        <div className="mb-4 flex items-center gap-2">
+    <div className="surface p-6 font-mono">
+      {/* Header row */}
+      <div className="flex items-center justify-between border-b border-line pb-4">
+        <span className="text-[10px] uppercase tracking-[0.2em] text-ink-muted">
+          PREDAIOT Economic Engine
+        </span>
+        <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-secondary">
           <span
-            className="pulse h-2 w-2 rounded-full"
-            style={{ background: "#00CC66" }}
+            className="pulse inline-block h-1.5 w-1.5 rounded-full"
+            style={{ background: "var(--color-secondary)" }}
             aria-hidden="true"
           />
-          <span className="text-[10px] uppercase tracking-[0.15em] text-ink-muted">
-            PREDAIOT Economic Engine · Live simulation
-          </span>
-        </div>
+          Live · simulation
+        </span>
+      </div>
 
-        {/* Headline OMR counter */}
-        <div className="mb-3">
-          <div className="text-[10px] uppercase tracking-wider text-ink-muted">
-            Revenue recovered (session)
-          </div>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className="font-display text-3xl font-extrabold text-secondary sm:text-4xl">
-              {omrSaved.toLocaleString()}
-            </span>
-            <span className="text-sm text-ink-muted">OMR</span>
-          </div>
+      {/* Dominant metric — Revenue Recovered */}
+      <div className="pt-6">
+        <div className="text-[10px] uppercase tracking-[0.2em] text-ink-muted">
+          Revenue recovered · session
         </div>
-
-        {/* Self-drawing price sparkline */}
-        <div className="mb-4 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] uppercase tracking-wider text-ink-muted">
-              Grid price · 24h
-            </span>
-            <span className="text-[9px] tabular-nums" style={{ color: priceColor }}>
-              {fils} fils/kWh
-            </span>
-          </div>
-          <svg
-            viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
-            className="mt-1 h-14 w-full"
-            preserveAspectRatio="none"
-            aria-hidden="true"
+        <div className="mt-2 flex items-baseline gap-2">
+          <span
+            className="text-5xl font-semibold tabular-nums sm:text-6xl"
+            style={{ color: "var(--color-gold)" }}
           >
-            <defs>
-              <linearGradient id="spark-fade" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00CFFF" stopOpacity="0.28" />
-                <stop offset="100%" stopColor="#00CFFF" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <motion.path
-              d={`${path} L${SPARK_W},${SPARK_H} L0,${SPARK_H} Z`}
-              fill="url(#spark-fade)"
-              stroke="none"
-              initial={shouldAnimate ? { opacity: 0 } : false}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.4, duration: 0.6 }}
-            />
-            <motion.path
-              d={path}
-              fill="none"
-              stroke="#00CFFF"
-              strokeWidth={1.75}
-              strokeLinecap="round"
-              initial={shouldAnimate ? { pathLength: 0 } : false}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.8, ease: "easeInOut" }}
-            />
-          </svg>
+            {omrSaved.toLocaleString()}
+          </span>
+          <span className="text-sm text-ink-muted">OMR</span>
         </div>
-
-        <div className="grid grid-cols-2 gap-2.5">
-          <Stat label="Engine decision" value={decision} valueColor={decisionColor[decision]} />
-          <Stat label="Grid price" value={`${fils} fils/kWh`} valueColor={priceColor} />
-          <Stat label="Battery SOC" value={`${Math.round(soc)}%`} valueColor="#00CFFF" />
-          <Stat label="Decisions today" value={decisions.toLocaleString()} valueColor="#F0F4FF" />
-        </div>
-
-        <p className="mt-4 text-center text-[10px] text-ink-muted">
-          Illustrative simulation · Based on official Oman market data
-        </p>
       </div>
-    </div>
-  );
-}
 
-function Stat({
-  label,
-  value,
-  valueColor,
-}: {
-  label: string;
-  value: string;
-  valueColor: string;
-}) {
-  return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5">
-      <div className="text-[9px] uppercase tracking-wider text-ink-muted">{label}</div>
-      <div className="mt-1 text-sm font-bold tabular-nums" style={{ color: valueColor }}>
-        {value}
+      {/* Thin price line — no fill, no glow */}
+      <svg
+        viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
+        className="mt-5 h-12 w-full"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <motion.path
+          d={path}
+          fill="none"
+          stroke="var(--color-secondary)"
+          strokeWidth={1.25}
+          strokeLinecap="round"
+          initial={shouldAnimate ? { pathLength: 0 } : false}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.6, ease: "easeInOut" }}
+        />
+      </svg>
+
+      {/* Supporting metrics — one hairline-divided instrument row */}
+      <div className="mt-5 grid grid-cols-2 border-t border-line sm:grid-cols-4">
+        {metrics.map((m, i) => (
+          <div
+            key={m.label}
+            className={`px-3 py-3 ${i > 0 ? "border-line sm:border-s" : ""} ${
+              i >= 2 ? "border-t border-line sm:border-t-0" : ""
+            }`}
+          >
+            <div className="text-[9px] uppercase tracking-[0.15em] text-ink-muted">
+              {m.label}
+            </div>
+            <div
+              className="mt-1 text-sm font-semibold tabular-nums"
+              style={{ color: m.critical ? "var(--color-negative)" : "var(--color-ink)" }}
+            >
+              {m.value}
+            </div>
+          </div>
+        ))}
       </div>
+
+      <p className="mt-4 text-[10px] text-ink-muted">
+        Illustrative simulation · official Oman market data
+      </p>
     </div>
   );
 }

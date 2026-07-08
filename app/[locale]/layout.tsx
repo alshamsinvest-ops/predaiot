@@ -3,28 +3,28 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { Inter, Syne, DM_Mono } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { COMPANY } from "@/lib/constants";
 import { organizationJsonLd } from "@/lib/seo";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import CopilotWidget from "@/components/copilot/CopilotWidget";
 import JsonLd from "@/components/JsonLd";
 import { MotionProvider } from "@/components/kinetic/MotionProvider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const syne = Syne({
+// IBM Plex Sans — display + body. Industrial geometric sans, no luxury serif.
+const plex = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-syne",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-plex",
   display: "swap",
 });
-const dmMono = DM_Mono({
+// IBM Plex Mono — economic numbers, IDs, chrome. Precision-instrument feel.
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dm-mono",
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 
@@ -59,7 +59,7 @@ export default async function LocaleLayout({
   const dir = locale === "ar" ? "rtl" : "ltr";
 
   return (
-    <html lang={locale} dir={dir} className={`${inter.variable} ${syne.variable} ${dmMono.variable}`}>
+    <html lang={locale} dir={dir} className={`${plex.variable} ${plexMono.variable}`}>
       <body className="min-h-screen antialiased">
         <JsonLd data={organizationJsonLd()} />
         <NextIntlClientProvider>
@@ -67,7 +67,6 @@ export default async function LocaleLayout({
             <Header locale={locale} />
             <main id="main">{children}</main>
             <Footer />
-            <WhatsAppFloat />
             <CopilotWidget />
           </MotionProvider>
         </NextIntlClientProvider>
