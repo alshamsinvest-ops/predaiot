@@ -171,7 +171,7 @@ export default async function HomePage({
                 mode="recover"
                 labelRecover={
                   isAr
-                    ? "قيمة مستردَّة · مشتقة من المعيار المنشور"
+                    ? "قيمة مستردّة · مشتقة من المعيار المنشور"
                     : "value recovered · derived from published benchmark"
                 }
               />
@@ -201,7 +201,7 @@ export default async function HomePage({
               icon: Atom,
               title: isAr ? "أساس علمي" : "Scientific foundation",
               body: isAr
-                ? "منهجية منشورة ومُتحقَّق منها على بيانات سوق رسمية. لا صندوق أسود، ولا نتائج ملفّقة."
+                ? "منهجية منشورة ومُتحقّق منها على بيانات سوق رسمية. لا صندوق أسود، ولا نتائج ملفّقة."
                 : "A published methodology, validated on official market data. No black box, no fabricated results.",
             },
             {
@@ -262,7 +262,7 @@ export default async function HomePage({
                   ["نتواصل خلال 24 ساعة", "شمس أو أحد أعضاء الفريق يتواصل عبر واتساب أو البريد لتأكيد التفاصيل."],
                   ["شارك بيانات شهر", "شهر من سجلات التوزيع أو فواتير الطاقة أو البيانات التشغيلية. نتولّى التحليل."],
                   ["تستلم النتيجة خلال 7 أيام", "تقرير واضح يُظهر فجوة القرار الاقتصادي بالريال — مع توصيات توقيت محددة."],
-                  ["أنت تقرّر", "بدون ضغط. بدون تسجيل تلقائي. إذا كانت النتيجة مهمة، نتحدث عن الخطوات التالية."],
+                  ["أنت تقرّر", "بدون ضغط. بدون تسجيل تلقائي. إذا كانت النتيجة مهمة، نتحدّث عن الخطوات التالية."],
                 ]
               : [
                   ["5-minute form", "Tell us your asset type, approximate size, and location."],
@@ -296,12 +296,14 @@ export default async function HomePage({
           <p className="mt-2 text-ink-muted">{t("trustSub")}</p>
         </Reveal>
         <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {REAL_TRACTION.map((item) => (
+          {REAL_TRACTION.map((item, i) => (
             <RevealItem key={item.key} className="h-full">
               <CursorSurface className="surface h-full rounded-2xl p-5">
-                <div className="flex items-center gap-2 text-secondary">
-                  <span aria-hidden className="text-xl">{item.icon}</span>
-                  <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
+                <div className="flex items-center gap-3">
+                  <span aria-hidden className="font-mono text-xs text-ink-muted">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-sm font-semibold text-secondary">{isAr ? item.ar : item.en}</span>
                 </div>
                 <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
               </CursorSurface>

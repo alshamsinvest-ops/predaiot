@@ -48,7 +48,7 @@ export default function LeakRecoveryVisual({
   const { shouldAnimate } = useMotion();
   const [elapsed, setElapsed] = useState(0);
 
-  const color = mode === "leak" ? "#FF4455" : "#00CC66";
+  const color = mode === "leak" ? "var(--color-negative)" : "var(--color-secondary)";
   const path = useMemo(() => curvePath(mode), [mode]);
 
   // Tick a live-feeling hourly counter once visible.
@@ -63,16 +63,16 @@ export default function LeakRecoveryVisual({
   const label = mode === "leak" ? labelLeak : labelRecover;
 
   return (
-    <div ref={ref} className="mt-5 rounded-xl border border-white/10 bg-black/30 p-4">
+    <div ref={ref} className="mt-5 border-t border-line pt-4">
       <div className="flex items-baseline justify-between gap-3">
         <span
-          className="font-mono text-xl font-bold tabular-nums sm:text-2xl"
+          className="font-mono text-xl font-semibold tabular-nums sm:text-2xl"
           style={{ color }}
         >
           {sign}
           {omr} OMR
         </span>
-        <span className="font-mono text-[10px] tabular-nums" style={{ color }}>
+        <span className="font-mono text-[10px] tabular-nums text-ink-muted">
           {sign}98.5 OMR/h
         </span>
       </div>
@@ -82,25 +82,12 @@ export default function LeakRecoveryVisual({
         preserveAspectRatio="none"
         aria-hidden="true"
       >
-        <defs>
-          <linearGradient id={`lr-fade-${mode}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.22" />
-            <stop offset="100%" stopColor={color} stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <motion.path
-          d={`${path} L${W},${H} L0,${H} Z`}
-          fill={`url(#lr-fade-${mode})`}
-          stroke="none"
-          initial={shouldAnimate ? { opacity: 0 } : false}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.1, duration: 0.5 }}
-        />
+        {/* Thin line only — no fill, no glow (industrial spec). */}
         <motion.path
           d={path}
           fill="none"
           stroke={color}
-          strokeWidth={2}
+          strokeWidth={1.25}
           strokeLinecap="round"
           initial={shouldAnimate ? { pathLength: 0 } : false}
           animate={inView ? { pathLength: 1 } : {}}

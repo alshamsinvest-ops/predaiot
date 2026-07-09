@@ -199,7 +199,7 @@ export default async function AboutPage({
             <div className="mt-3 space-y-3 text-ink-muted">
               <p>
                 {isAr
-                  ? "تعمل PREDAIOT بفريق مُركَّز من اقتصاديي الطاقة، ومهندسي البرمجيات، والمتخصصين في المجال. يجمع فريقنا الخبرة في هندسة أنظمة الطاقة، ونمذجة التوزيع الاقتصادي، وتطوير البرمجيات، وعمليات سوق الخليج."
+                  ? "تعمل PREDAIOT بفريق مُركّز من اقتصاديي الطاقة، ومهندسي البرمجيات، والمتخصصين في المجال. يجمع فريقنا الخبرة في هندسة أنظمة الطاقة، ونمذجة التوزيع الاقتصادي، وتطوير البرمجيات، وعمليات سوق الخليج."
                   : "PREDAIOT operates with a focused team of energy economists, software engineers, and domain specialists. Our team brings combined expertise in energy systems engineering, economic dispatch modelling, software development, and GCC market operations."}
               </p>
               <p>
@@ -218,11 +218,13 @@ export default async function AboutPage({
           {isAr ? "التحقّق المؤسّسي" : "Institutional validation"}
         </h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {REAL_TRACTION.map((item) => (
+          {REAL_TRACTION.map((item, i) => (
             <Card key={item.key}>
-              <div className="flex items-center gap-2 text-secondary">
-                <span aria-hidden className="text-xl">{item.icon}</span>
-                <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
+              <div className="flex items-center gap-3">
+                <span aria-hidden className="font-mono text-xs text-ink-muted">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="text-sm font-semibold text-secondary">{isAr ? item.ar : item.en}</span>
               </div>
               <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
             </Card>
