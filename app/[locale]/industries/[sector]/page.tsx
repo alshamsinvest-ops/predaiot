@@ -10,6 +10,10 @@ import {
   GitCompareArrows,
   Sigma,
   ScrollText,
+  TrendingUp,
+  Gauge,
+  Scale,
+  Timer,
   Fuel,
   Zap,
   Building2,
@@ -34,6 +38,11 @@ import CursorSurface from "@/components/kinetic/CursorSurface";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata, serviceJsonLd } from "@/lib/seo";
 import { SECTORS, COMPANY, POSITIONING } from "@/lib/constants";
+import { SECTOR_CONTENT } from "@/lib/sector-content";
+
+/** Fixed icon sets so bespoke per-sector content stays visual without extra config. */
+const LEAK_ICONS = [Clock, PauseCircle, EyeOff] as const;
+const LEVER_ICONS = [TrendingUp, Gauge, Scale, Timer] as const;
 
 const ICONS: Record<string, LucideIcon> = {
   Fuel,
@@ -96,30 +105,50 @@ export default async function SectorPage({
   const detail = isAr ? s.detailAr : s.detailEn;
   const Icon = ICONS[s.icon] ?? Boxes;
 
-  // Universal decision archetypes — honest and applicable to any sector.
-  const leaks = [
-    {
-      icon: Clock,
-      title: isAr ? "قرارات موقوتة بالساعة لا بالسعر" : "Decisions timed by the clock, not the price",
-      body: isAr
-        ? `تُتّخذ قرارات التوزيع والشراء في ${name} على جداول ثابتة بينما تتحرّك أسعار السوق كل ساعة. الفجوة بينهما قيمة قابلة للاسترجاع.`
-        : `Dispatch and procurement decisions in ${name.toLowerCase()} run on fixed schedules while market prices move every hour. The gap between them is recoverable value.`,
-    },
-    {
-      icon: PauseCircle,
-      title: isAr ? "مرونة معطّلة" : "Flexibility left idle",
-      body: isAr
-        ? "الأصول المرنة تقف ساكنة في لحظات كان بإمكانها أن تكسب فيها — لأن لا أحد يقيس تكلفة الفرصة الاقتصادية لحظةً بلحظة."
-        : "Flexible assets sit still in the exact hours they could earn — because no one is measuring the hour-by-hour economic opportunity cost.",
-    },
-    {
-      icon: EyeOff,
-      title: isAr ? "قرارات بلا حلقة تغذية اقتصادية" : "Decisions with no economic feedback loop",
-      body: isAr
-        ? "الأنظمة الحالية تقيس الأداء التقني — التوافر ووقت التشغيل — لا الجودة الاقتصادية للقرار. ما لا يُقاس لا يُحسّن."
-        : "Existing systems measure technical performance — availability, uptime — not the economic quality of the decision. What isn't measured can't be improved.",
-    },
-  ];
+  // Bespoke per-sector content (hero, leaks, levers, FAQ). Falls back to the
+  // universal archetypes below if a sector has no tailored entry yet.
+  const content = SECTOR_CONTENT[sector];
+  const heroTitle = content ? (isAr ? content.headline.ar : content.headline.en) : name;
+  const heroLead = content ? (isAr ? content.lead.ar : content.lead.en) : detail;
+
+  const leaks = content
+    ? content.leaks.map((l, i) => ({
+        icon: LEAK_ICONS[i % LEAK_ICONS.length],
+        title: isAr ? l.title.ar : l.title.en,
+        body: isAr ? l.body.ar : l.body.en,
+      }))
+    : [
+        {
+          icon: Clock,
+          title: isAr ? "قرارات موقوتة بالساعة لا بالسعر" : "Decisions timed by the clock, not the price",
+          body: isAr
+            ? `تُتّخذ قرارات التوزيع والشراء في ${name} على جداول ثابتة بينما تتحرّك أسعار السوق كل ساعة. الفجوة بينهما قيمة قابلة للاسترجاع.`
+            : `Dispatch and procurement decisions in ${name.toLowerCase()} run on fixed schedules while market prices move every hour. The gap between them is recoverable value.`,
+        },
+        {
+          icon: PauseCircle,
+          title: isAr ? "مرونة معطّلة" : "Flexibility left idle",
+          body: isAr
+            ? "الأصول المرنة تقف ساكنة في لحظات كان بإمكانها أن تكسب فيها — لأن لا أحد يقيس تكلفة الفرصة الاقتصادية لحظةً بلحظة."
+            : "Flexible assets sit still in the exact hours they could earn — because no one is measuring the hour-by-hour economic opportunity cost.",
+        },
+        {
+          icon: EyeOff,
+          title: isAr ? "قرارات بلا حلقة تغذية اقتصادية" : "Decisions with no economic feedback loop",
+          body: isAr
+            ? "الأنظمة الحالية تقيس الأداء التقني — التوافر ووقت التشغيل — لا الجودة الاقتصادية للقرار. ما لا يُقاس لا يُحسّن."
+            : "Existing systems measure technical performance — availability, uptime — not the economic quality of the decision. What isn't measured can't be improved.",
+        },
+      ];
+
+  // Sector-specific economic levers (rendered only when tailored content exists).
+  const levers = content
+    ? content.levers.map((l, i) => ({
+        icon: LEVER_ICONS[i % LEVER_ICONS.length],
+        name: isAr ? l.name.ar : l.name.en,
+        body: isAr ? l.body.ar : l.body.en,
+      }))
+    : [];
 
   const method = [
     {
@@ -184,7 +213,9 @@ export default async function SectorPage({
         "Recovery roadmap — what captures each leak, with no software lock-in implied.",
       ];
 
-  const faqs = isAr
+  const faqs = content
+    ? content.faqs.map((f) => ({ q: isAr ? f.q.ar : f.q.en, a: isAr ? f.a.ar : f.a.en }))
+    : isAr
     ? [
         {
           q: `هل ينطبق هذا فعلًا على ${name}؟`,
@@ -249,12 +280,12 @@ export default async function SectorPage({
           <div className="glass inline-flex items-center gap-2 rounded-full px-3 py-1">
             <Icon className="h-4 w-4 text-secondary" />
             <span className="font-mono text-[11px] uppercase tracking-wider text-secondary">
-              {isAr ? "قطاع" : "Sector"}
+              {name}
             </span>
           </div>
           <PageHeader
-            title={`${name}`}
-            lead={detail}
+            title={heroTitle}
+            lead={heroLead}
           />
           <p className="mt-4 max-w-3xl text-ink-muted">
             {isAr ? POSITIONING.crossSector : POSITIONING.crossSector}
@@ -335,6 +366,31 @@ export default async function SectorPage({
           ))}
         </RevealGroup>
       </Section>
+
+      {/* THE LEVERS WE PULL — bespoke per sector */}
+      {levers.length > 0 ? (
+        <Section className="py-10">
+          <Reveal>
+            <Kicker>{isAr ? "الروافع التي نحرّكها" : "The levers we pull"}</Kicker>
+            <h2 className="mt-3 font-display text-3xl font-extrabold">
+              {isAr
+                ? `القرارات الاقتصادية الخاصة بـ${name}`
+                : `The economic decisions specific to ${name.toLowerCase()}`}
+            </h2>
+          </Reveal>
+          <RevealGroup className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {levers.map((l) => (
+              <RevealItem key={l.name} className="h-full">
+                <CursorSurface className="surface h-full rounded-2xl p-5">
+                  <l.icon className="h-6 w-6 text-secondary" />
+                  <h3 className="mt-3 font-display text-base font-bold">{l.name}</h3>
+                  <p className="mt-2 text-sm text-ink-muted">{l.body}</p>
+                </CursorSurface>
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </Section>
+      ) : null}
 
       {/* WHAT THE DIAGNOSTIC DELIVERS */}
       <Section className="py-10">
