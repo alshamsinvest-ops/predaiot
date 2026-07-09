@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, ShieldCheck, Zap, ScrollText, Atom, Boxes } from "lucide-react";
 import { Section, Kicker, Card, LinkButton, Stat } from "@/components/ui";
 import HeroDashboard from "@/components/dashboard/HeroDashboard";
+import HeroVideo from "@/components/HeroVideo";
 import SectorGrid from "@/components/SectorGrid";
 import SectorShowcase from "@/components/SectorShowcase";
 import CursorSurface from "@/components/kinetic/CursorSurface";
@@ -48,9 +49,10 @@ export default async function HomePage({
 
   return (
     <>
-      {/* HERO — industrial restraint: calm ground, sharp data, one accent */}
+      {/* HERO — cinematic energy-engine video behind sharp data + one accent */}
       <div className="relative overflow-hidden border-b border-line bg-primary-900">
-        <div className="grid-bg pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
+        <HeroVideo />
+        <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
         <Section className="relative pt-16 pb-10">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
