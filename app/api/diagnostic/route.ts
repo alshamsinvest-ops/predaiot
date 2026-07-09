@@ -43,6 +43,22 @@ export async function POST(req: NextRequest) {
     `<p>Hi ${fullName},</p><p>Thanks for requesting your free 7-Day Leak Test. Based on a ${mw} MW asset, the illustrative recoverable value is ~${estimate.annualRecoveryOMR.toLocaleString()} OMR/year (scaled from our published ${PRIMARY.annualRevenueOMR.toLocaleString()} OMR / ${PRIMARY.assetMW} MW benchmark).</p><p>We'll be in touch within 7 days.</p><p>— ${COMPANY.founder}, ${COMPANY.name}</p>`
   );
 
+  // Notify the founder of every new diagnostic request.
+  await sendEmail(
+    process.env.LEAD_NOTIFY_EMAIL || COMPANY.email,
+    `New Leak Test — ${fullName} (${company})`,
+    `<h2>New 7-Day Leak Test request</h2>
+     <table cellpadding="6" style="border-collapse:collapse">
+       <tr><td><b>Name</b></td><td>${fullName}</td></tr>
+       <tr><td><b>Company</b></td><td>${company}</td></tr>
+       <tr><td><b>Email</b></td><td><a href="mailto:${email}">${email}</a></td></tr>
+       <tr><td><b>Phone</b></td><td>${phone}</td></tr>
+       <tr><td><b>Asset type</b></td><td>${assetType || "—"}</td></tr>
+       <tr><td><b>Capacity</b></td><td>${mw} MW</td></tr>
+       <tr><td><b>Est. recovery</b></td><td>~${estimate.annualRecoveryOMR.toLocaleString()} OMR/yr</td></tr>
+     </table>`
+  );
+
   return NextResponse.json({
     ok: true,
     illustrative: true,
