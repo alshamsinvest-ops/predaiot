@@ -32,6 +32,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Section, PageHeader, Card, Kicker, LinkButton } from "@/components/ui";
+import IndustrialImage from "@/components/IndustrialImage";
+import { SECTOR_HERO, IMAGES } from "@/lib/images";
 import EnergyNetwork from "@/components/kinetic/EnergyNetwork";
 import { Reveal, RevealGroup, RevealItem } from "@/components/kinetic/Reveal";
 import CursorSurface from "@/components/kinetic/CursorSurface";
@@ -273,8 +275,15 @@ export default async function SectorPage({
 
       {/* HERO */}
       <div className="relative overflow-hidden bg-primary-900">
-        <div className="aurora -z-10" />
-        <EnergyNetwork className="absolute inset-0 -z-10 opacity-40 [mask-image:radial-gradient(120%_100%_at_50%_0%,#000_30%,transparent_75%)]" />
+        <IndustrialImage
+          img={SECTOR_HERO[sector] ?? IMAGES.grid}
+          locale={locale}
+          variant="background"
+          priority
+          overlay="strong"
+        />
+        <div className="aurora -z-10 opacity-70" />
+        <EnergyNetwork className="absolute inset-0 -z-10 opacity-25 [mask-image:radial-gradient(120%_100%_at_50%_0%,#000_30%,transparent_75%)]" />
         <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-15" aria-hidden="true" />
         <Section className="relative pt-16">
           <div className="glass inline-flex items-center gap-2 rounded-full px-3 py-1">

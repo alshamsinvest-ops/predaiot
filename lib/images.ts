@@ -69,6 +69,29 @@ export interface SectorSlide {
  *   public/brand/industrial.jpg  → Petrochemical / industrial plant
  *   public/brand/renewable.jpg   → Solar panels + wind turbines at sunset
  */
+/**
+ * SECTOR_HERO — a real energy photograph behind every /industries/[sector]
+ * hero, so each sector page opens on a professional image, not only the SVG
+ * network. Reuses the production-verified IMAGES set, mapped thematically to
+ * each vertical, so the photos are guaranteed to render. (When bespoke
+ * per-sector art is generated, point each entry at `/brand/sectors/{key}.jpg`.)
+ */
+export const SECTOR_HERO: Record<string, Img> = {
+  oilgas: IMAGES.industrial,
+  power: IMAGES.grid,
+  utilities: IMAGES.controlRoom,
+  renewables: IMAGES.windSolar,
+  wind: IMAGES.windSolar,
+  tnd: IMAGES.grid,
+  smartgrid: IMAGES.controlRoom,
+  industrial: IMAGES.industrial,
+  water: IMAGES.grid,
+  hydrogen: IMAGES.industrial,
+  datacenters: IMAGES.controlRoom,
+  microgrids: IMAGES.windSolar,
+  vpp: IMAGES.grid,
+};
+
 export const SECTOR_SLIDES: SectorSlide[] = [
   { key: "oilgas", en: "Oil & Gas", ar: "النفط والغاز", src: "/brand/oilgas.jpg", fallback: U("photo-1518709268805-4e9042af9f23") },
   { key: "wind", en: "Wind", ar: "طاقة الرياح", src: "/brand/wind.jpg", fallback: U("photo-1497435334941-8c899ee9e8e9") },
