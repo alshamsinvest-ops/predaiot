@@ -15,6 +15,20 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
+  {
+    // Conservative CSP: locks the high-value, low-risk directives (clickjacking,
+    // plugin/object injection, <base> hijack, form-action exfiltration, mixed
+    // content) without restricting script/style-src — so Next hydration,
+    // next/font, and same-origin fetches keep working.
+    key: "Content-Security-Policy",
+    value: [
+      "frame-ancestors 'self'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "upgrade-insecure-requests",
+    ].join("; "),
+  },
 ];
 
 const nextConfig: NextConfig = {
