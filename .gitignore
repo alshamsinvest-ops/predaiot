@@ -24,3 +24,7 @@ npm-debug.log*
 
 # typescript build info
 *.tsbuildinfo
+
+# local tooling cache
+.claude/.cache/
+**/__pycache__/
