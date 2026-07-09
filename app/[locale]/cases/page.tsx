@@ -417,11 +417,13 @@ export default async function CasesPage({
       <Section className="py-8">
         <h2 className="font-display text-3xl font-extrabold">{t("tractionTitle")}</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {REAL_TRACTION.map((item) => (
+          {REAL_TRACTION.map((item, i) => (
             <Card key={item.key}>
-              <div className="flex items-center gap-2 text-secondary">
-                <span aria-hidden className="text-xl">{item.icon}</span>
-                <span className="text-sm font-semibold">{isAr ? item.ar : item.en}</span>
+              <div className="flex items-center gap-3">
+                <span aria-hidden className="font-mono text-xs text-ink-muted">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="text-sm font-semibold text-secondary">{isAr ? item.ar : item.en}</span>
               </div>
               <p className="mt-2 text-xs text-ink-muted">{isAr ? item.detailAr : item.detailEn}</p>
             </Card>
