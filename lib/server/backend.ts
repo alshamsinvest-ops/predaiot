@@ -152,4 +152,33 @@ export function checkRateLimit(email: string): boolean {
   return true;
 }
 
+/** Generic sliding-window per-key limiter (in-memory, per serverless instance).
+ *  Use for abuse control on public endpoints (copilot, lead). Returns false
+ *  when the caller has exceeded `max` hits within `windowMs`. */
+const ipHits = new Map<string, number[]>();
+export function checkIpRate(key: string, max: number, windowMs: number): boolean {
+  const now = Date.now();
+  const hits = (ipHits.get(key) || []).filter((t) => now - t < windowMs);
+  if (hits.length >= max) {
+    ipHits.set(key, hits);
+    return false;
+  }
+  hits.push(now);
+  ipHits.set(key, hits);
+  // Opportunistic cleanup so the map can't grow unbounded.
+  if (ipHits.size > 5000) {
+    for (const [k, v] of ipHits) if (v.every((t) => now - t >= windowMs)) ipHits.delete(k);
+  }
+  return true;
+}
+
+/** Best-effort client IP from proxy headers (Vercel sets x-forwarded-for). */
+export function clientIp(req: Request): string {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
 export { PRIMARY, COMPANY };

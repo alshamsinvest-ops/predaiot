@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeLead, notifyWhatsApp, sendEmail, COMPANY } from "@/lib/server/backend";
+import { writeLead, notifyWhatsApp, sendEmail, checkIpRate, clientIp, COMPANY } from "@/lib/server/backend";
 import { AIRTABLE } from "@/lib/constants";
 
 export const runtime = "nodejs";
@@ -7,12 +7,22 @@ export const runtime = "nodejs";
 /** Where lead notifications are delivered. Defaults to the founder's inbox. */
 const NOTIFY_TO = process.env.LEAD_NOTIFY_EMAIL || COMPANY.email;
 
+const cap = (s: unknown, n = 2000) => String(s ?? "").slice(0, n);
 const esc = (s: string) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
 
 export async function POST(req: NextRequest) {
+  // Abuse control: cap submissions per IP so the form can't be used to spam.
+  if (!checkIpRate(`lead:${clientIp(req)}`, 5, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
+  }
+
   const body = await req.json().catch(() => ({}));
-  const { type, fullName, email, company, message } = body;
+  const type = cap(body.type, 40);
+  const fullName = cap(body.fullName, 200);
+  const email = cap(body.email, 200);
+  const company = cap(body.company, 200);
+  const message = cap(body.message, 4000);
   if (!email) return NextResponse.json({ error: "Missing email." }, { status: 400 });
 
   try {
