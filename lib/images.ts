@@ -52,28 +52,27 @@ export interface SectorSlide {
   key: string;
   en: string;
   ar: string;
-  /** Preferred local 8K render at public/brand/sectors/{key}.jpg. */
+  /** Preferred local render under public/brand/. */
   src: string;
-  /** Production-verified stock shown until the local file exists. */
+  /** Production-verified stock shown if the local file is missing. */
   fallback: string;
 }
 
 /**
  * Slideshow ordered to the five founder-provided energy photos. Each slide
- * points at a local render — drop the real photo at the path below and it
- * shows immediately; until then a verified stock photo of the same subject
- * stands in (see SlideImage).
+ * points at the uploaded photo in public/brand/; if a file is ever missing,
+ * a verified stock photo of the same subject stands in (see SlideImage).
  *
- *   public/brand/sectors/oilgas.jpg      → Oil & Gas refinery (red/white stack, sunset)
- *   public/brand/sectors/wind.jpg        → Wind turbines at dusk
- *   public/brand/sectors/hydro.jpg       → Hydro dam + spillway
- *   public/brand/sectors/industrial.jpg  → Petrochemical / industrial plant
- *   public/brand/sectors/renewables.jpg  → Solar panels + wind turbines at sunset
+ *   public/brand/oilgas.jpg      → Oil & Gas refinery (red/white stack, sunset)
+ *   public/brand/wind.jpg        → Wind turbines at dusk
+ *   public/brand/hydro.jpg       → Hydro dam + spillway
+ *   public/brand/industrial.jpg  → Petrochemical / industrial plant
+ *   public/brand/renewable.jpg   → Solar panels + wind turbines at sunset
  */
 export const SECTOR_SLIDES: SectorSlide[] = [
-  { key: "oilgas", en: "Oil & Gas", ar: "النفط والغاز", src: "/brand/sectors/oilgas.jpg", fallback: U("photo-1518709268805-4e9042af9f23") },
-  { key: "wind", en: "Wind", ar: "طاقة الرياح", src: "/brand/sectors/wind.jpg", fallback: U("photo-1497435334941-8c899ee9e8e9") },
-  { key: "hydro", en: "Hydro Power", ar: "الطاقة الكهرومائية", src: "/brand/sectors/hydro.jpg", fallback: U("photo-1473341304170-971dccb5ac1e") },
-  { key: "industrial", en: "Industrial Energy", ar: "الطاقة الصناعية", src: "/brand/sectors/industrial.jpg", fallback: U("photo-1551288049-bebda4e38f71") },
-  { key: "renewables", en: "Renewables", ar: "الطاقة المتجددة", src: "/brand/sectors/renewables.jpg", fallback: U("photo-1509391366360-2e959784a276") },
+  { key: "oilgas", en: "Oil & Gas", ar: "النفط والغاز", src: "/brand/oilgas.jpg", fallback: U("photo-1518709268805-4e9042af9f23") },
+  { key: "wind", en: "Wind", ar: "طاقة الرياح", src: "/brand/wind.jpg", fallback: U("photo-1497435334941-8c899ee9e8e9") },
+  { key: "hydro", en: "Hydro Power", ar: "الطاقة الكهرومائية", src: "/brand/hydro.jpg", fallback: U("photo-1473341304170-971dccb5ac1e") },
+  { key: "industrial", en: "Industrial Energy", ar: "الطاقة الصناعية", src: "/brand/industrial.jpg", fallback: U("photo-1551288049-bebda4e38f71") },
+  { key: "renewables", en: "Renewables", ar: "الطاقة المتجددة", src: "/brand/renewable.jpg", fallback: U("photo-1509391366360-2e959784a276") },
 ];
