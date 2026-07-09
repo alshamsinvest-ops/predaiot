@@ -9,7 +9,7 @@ import { COMPANY } from "@/lib/constants";
 import { organizationJsonLd } from "@/lib/seo";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import CopilotWidget from "@/components/copilot/CopilotWidget";
+import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import JsonLd from "@/components/JsonLd";
 import { MotionProvider } from "@/components/kinetic/MotionProvider";
 
@@ -67,7 +67,7 @@ export default async function LocaleLayout({
             <Header locale={locale} />
             <main id="main">{children}</main>
             <Footer />
-            <CopilotWidget />
+            <WhatsAppFloat />
           </MotionProvider>
         </NextIntlClientProvider>
       </body>
