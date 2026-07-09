@@ -116,7 +116,7 @@ export default async function SectorPage({
       icon: EyeOff,
       title: isAr ? "قرارات بلا حلقة تغذية اقتصادية" : "Decisions with no economic feedback loop",
       body: isAr
-        ? "الأنظمة الحالية تقيس الأداء التقني — التوافر ووقت التشغيل — لا الجودة الاقتصادية للقرار. ما لا يُقاس لا يُحسَّن."
+        ? "الأنظمة الحالية تقيس الأداء التقني — التوافر ووقت التشغيل — لا الجودة الاقتصادية للقرار. ما لا يُقاس لا يُحسّن."
         : "Existing systems measure technical performance — availability, uptime — not the economic quality of the decision. What isn't measured can't be improved.",
     },
   ];
@@ -151,6 +151,84 @@ export default async function SectorPage({
         : "The economic decision gap in your currency — cited to official sources, independently verifiable.",
     },
   ];
+
+  // Provocative but honest one-liners — no fabricated per-sector figures.
+  const hooks: { k: string; v: string }[] = isAr
+    ? [
+        { k: "8,760", v: "قرار توزيع أو شراء في السنة — كل ساعة فرصة أو خسارة." },
+        { k: "0 CAPEX", v: "لا استبدال أجهزة. الطبقة الاقتصادية هي ما ينقص." },
+        { k: "بالريال", v: "الفجوة تُقاس بعملتك، لا بمؤشر تقني مجرّد." },
+        { k: "قابل للتدقيق", v: "كل قرار يحمل السعر والمعادلة التي بررته." },
+      ]
+    : [
+        { k: "8,760", v: "dispatch or procurement decisions a year — every hour is an opportunity or a loss." },
+        { k: "0 CAPEX", v: "no hardware to replace. The economic layer is what's missing." },
+        { k: "In OMR", v: "the gap is measured in your currency, not an abstract technical index." },
+        { k: "Auditable", v: "every decision carries the price and the calculation that justified it." },
+      ];
+
+  // What the diagnostic delivers — honest, sector-agnostic.
+  const deliverables = isAr
+    ? [
+        "خط الأساس: ما كسبه أصلك فعليًا مقابل أي سعر سوق، ساعةً بساعة.",
+        "التشغيل الظلّي: القرارات نفسها مُعاد تشغيلها بمنطق السعر أولًا.",
+        "فجوة القرار: الفرق بالريال، مُفصّلًا حسب نوع التسرّب.",
+        "أفضل 20 إجراءً مرتّبة بالريال — التاريخ والساعة والقرار البديل.",
+        "خارطة استرجاع: ما الذي يلتقط كل تسرّب، دون ربط ببرنامج معيّن.",
+      ]
+    : [
+        "Baseline — what your asset actually earned against real market prices, hour by hour.",
+        "Shadow run — the same decisions replayed with price-first logic.",
+        "Decision gap — the difference in OMR, broken down by leak type.",
+        "Top 20 actions ranked by OMR — date, hour, action taken vs. recommended.",
+        "Recovery roadmap — what captures each leak, with no software lock-in implied.",
+      ];
+
+  const faqs = isAr
+    ? [
+        {
+          q: `هل ينطبق هذا فعلًا على ${name}؟`,
+          a: "إذا كان أصلك يتّخذ قرار توزيع أو شراء طاقة مقابل سعر متغيّر، فالمنهجية تنطبق. المحرّك محايد للقطاع — يقرأ القرار والسعر، لا نوع الأصل.",
+        },
+        {
+          q: "هل نحتاج لاستبدال أنظمتنا؟",
+          a: "لا. نقرأ القياسات الموجودة عبر SCADA/EMS أو رفع ملف. لا أجهزة جديدة، ولا حلقة تحكم إجبارية.",
+        },
+        {
+          q: "من أين تأتي الأرقام؟",
+          a: "من إشارات السوق المنشورة رسميًا. كل رقم قابل للتحقق باستقلالية — لا صندوق أسود ولا نتائج ملفّقة.",
+        },
+        {
+          q: "ماذا لو لم نجد قيمة؟",
+          a: "التشخيص مجاني لمدة 7 أيام مع ضمان مكتوب. إن لم نجد قيمة قابلة للاسترجاع، لا تدفع شيئًا.",
+        },
+        {
+          q: "هل بياناتنا آمنة؟",
+          a: "القراءة فقط بشكل افتراضي، ومحصورة بنطاق العقد. لا نبيع بياناتك ولا الرؤى المشتقّة منها.",
+        },
+      ]
+    : [
+        {
+          q: `Does this really apply to ${name.toLowerCase()}?`,
+          a: "If your asset makes a dispatch or energy-procurement decision against a variable price, the methodology applies. The engine is sector-agnostic — it reads the decision and the price, not the asset type.",
+        },
+        {
+          q: "Do we have to replace our systems?",
+          a: "No. We read existing telemetry via SCADA/EMS or a file upload. No new hardware, no forced closed-loop control.",
+        },
+        {
+          q: "Where do the numbers come from?",
+          a: "Officially published market signals. Every figure is independently verifiable — no black box, no fabricated results.",
+        },
+        {
+          q: "What if you don't find value?",
+          a: "The diagnostic is free for 7 days with a written guarantee. If we don't find recoverable value, you pay nothing.",
+        },
+        {
+          q: "Is our data safe?",
+          a: "Read-only by default and scoped by contract. We don't sell your data or the insights derived from it.",
+        },
+      ];
 
   return (
     <>
@@ -191,6 +269,20 @@ export default async function SectorPage({
           </div>
         </Section>
       </div>
+
+      {/* HOOK STRIP */}
+      <Section className="py-8">
+        <RevealGroup className="grid gap-px overflow-hidden border border-line sm:grid-cols-2 lg:grid-cols-4">
+          {hooks.map((h) => (
+            <RevealItem key={h.k}>
+              <div className="h-full bg-primary-50 p-5">
+                <div className="font-mono text-2xl font-semibold text-secondary">{h.k}</div>
+                <p className="mt-2 text-sm text-ink-muted">{h.v}</p>
+              </div>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </Section>
 
       {/* WHERE VALUE LEAKS */}
       <Section className="py-10">
@@ -239,6 +331,46 @@ export default async function SectorPage({
                 <h3 className="mt-3 font-display text-base font-bold">{m.title}</h3>
                 <p className="mt-2 text-sm text-ink-muted">{m.body}</p>
               </CursorSurface>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </Section>
+
+      {/* WHAT THE DIAGNOSTIC DELIVERS */}
+      <Section className="py-10">
+        <Reveal>
+          <Kicker>{isAr ? "ماذا تستلم" : "What you get"}</Kicker>
+          <h2 className="mt-3 font-display text-3xl font-extrabold">
+            {isAr ? "تقرير فجوة القرار — لأصلك" : "A Decision Gap report — for your asset"}
+          </h2>
+        </Reveal>
+        <RevealGroup className="mt-8 grid gap-px overflow-hidden border border-line md:grid-cols-1">
+          {deliverables.map((d, i) => (
+            <RevealItem key={d}>
+              <div className="flex items-start gap-4 bg-primary-50 p-5">
+                <span className="font-mono text-sm text-ink-muted">{String(i + 1).padStart(2, "0")}</span>
+                <p className="text-sm text-ink">{d}</p>
+              </div>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </Section>
+
+      {/* FAQ */}
+      <Section className="py-10">
+        <Reveal>
+          <Kicker>{isAr ? "أسئلة قبل البدء" : "Before you start"}</Kicker>
+          <h2 className="mt-3 font-display text-3xl font-extrabold">
+            {isAr ? "أسئلة متكرّرة" : "Frequently asked"}
+          </h2>
+        </Reveal>
+        <RevealGroup className="mt-8 grid gap-4 lg:grid-cols-2">
+          {faqs.map((f) => (
+            <RevealItem key={f.q} className="h-full">
+              <div className="surface h-full p-6">
+                <h3 className="font-display text-base font-bold">{f.q}</h3>
+                <p className="mt-2 text-sm text-ink-muted">{f.a}</p>
+              </div>
             </RevealItem>
           ))}
         </RevealGroup>
