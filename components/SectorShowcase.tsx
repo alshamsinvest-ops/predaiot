@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { SECTOR_SLIDES } from "@/lib/images";
+import SlideImage from "@/components/SlideImage";
 import { useMotion } from "@/components/kinetic/MotionProvider";
 
 const HOLD_MS = 5000;
@@ -43,13 +43,11 @@ export default function SectorShowcase({ locale }: { locale: string }) {
           style={{ opacity: idx === i ? 1 : 0 }}
           aria-hidden={idx !== i}
         >
-          <Image
+          <SlideImage
             src={s.src}
+            fallback={s.fallback}
             alt={isAr ? s.ar : s.en}
-            fill
             priority={idx === 0}
-            sizes="100vw"
-            className="object-cover"
           />
           {/* Legibility scrim — single warm-black wash, not decorative */}
           <div
