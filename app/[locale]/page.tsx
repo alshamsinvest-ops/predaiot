@@ -50,10 +50,10 @@ export default async function HomePage({
   return (
     <>
       {/* HERO — cinematic energy-engine video behind sharp data + one accent */}
-      <div className="relative overflow-hidden border-b border-line bg-primary-900">
+      <div className="relative flex min-h-[86vh] items-center overflow-hidden border-b border-line bg-primary-900">
         <HeroVideo />
         <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
-        <Section className="relative pt-16 pb-10">
+        <Section className="relative w-full pt-20 pb-14">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
               <Kicker>
