@@ -70,26 +70,66 @@ export interface SectorSlide {
  *   public/brand/renewable.jpg   → Solar panels + wind turbines at sunset
  */
 /**
- * SECTOR_HERO — a real energy photograph behind every /industries/[sector]
- * hero, so each sector page opens on a professional image, not only the SVG
- * network. Reuses the production-verified IMAGES set, mapped thematically to
- * each vertical, so the photos are guaranteed to render. (When bespoke
- * per-sector art is generated, point each entry at `/brand/sectors/{key}.jpg`.)
+ * SECTOR_HERO — the bespoke, founder-provided energy artwork behind every
+ * /industries/[sector] hero (uploaded to public/brand/). Paths are URL-encoded
+ * because the source files carry human-readable names with spaces and symbols.
+ * Oil & Gas reuses the existing oilgas.jpg photograph. If a file is ever
+ * missing, IndustrialImage falls back gracefully; the sector page also passes
+ * IMAGES.grid as a last-resort default.
  */
 export const SECTOR_HERO: Record<string, Img> = {
-  oilgas: IMAGES.industrial,
-  power: IMAGES.grid,
-  utilities: IMAGES.controlRoom,
-  renewables: IMAGES.windSolar,
-  wind: IMAGES.windSolar,
-  tnd: IMAGES.grid,
-  smartgrid: IMAGES.controlRoom,
-  industrial: IMAGES.industrial,
-  water: IMAGES.grid,
-  hydrogen: IMAGES.industrial,
-  datacenters: IMAGES.controlRoom,
-  microgrids: IMAGES.windSolar,
-  vpp: IMAGES.grid,
+  oilgas: {
+    src: "/brand/oilgas.jpg",
+    alt: { en: "Oil & gas facility at sunset", ar: "منشأة نفط وغاز عند الغروب" },
+  },
+  power: {
+    src: "/brand/Power%20Generation.png",
+    alt: { en: "Power generation plant", ar: "محطة توليد الطاقة" },
+  },
+  utilities: {
+    src: "/brand/Utilities.png",
+    alt: { en: "Utility-scale energy infrastructure", ar: "بنية تحتية للطاقة على نطاق المرافق" },
+  },
+  renewables: {
+    src: "/brand/Renewables.png",
+    alt: { en: "Renewable energy generation", ar: "توليد الطاقة المتجددة" },
+  },
+  wind: {
+    src: "/brand/Wind%20Energy.png",
+    alt: { en: "Wind energy turbines", ar: "توربينات طاقة الرياح" },
+  },
+  tnd: {
+    src: "/brand/Transmission%20%26%20Distribution%20%28T%26D%29.png",
+    alt: { en: "Transmission & distribution network", ar: "شبكة النقل والتوزيع" },
+  },
+  smartgrid: {
+    src: "/brand/Smart%20Grid.png",
+    alt: { en: "Smart grid control", ar: "التحكم في الشبكة الذكية" },
+  },
+  industrial: {
+    src: "/brand/Industrial.png",
+    alt: { en: "Industrial energy plant", ar: "منشأة الطاقة الصناعية" },
+  },
+  water: {
+    src: "/brand/Water.png",
+    alt: { en: "Water & energy infrastructure", ar: "البنية التحتية للمياه والطاقة" },
+  },
+  hydrogen: {
+    src: "/brand/Hydrogen.png",
+    alt: { en: "Green hydrogen production", ar: "إنتاج الهيدروجين الأخضر" },
+  },
+  datacenters: {
+    src: "/brand/Data%20Centers.png",
+    alt: { en: "Data center power infrastructure", ar: "بنية الطاقة التحتية لمراكز البيانات" },
+  },
+  microgrids: {
+    src: "/brand/microgrid.png",
+    alt: { en: "Microgrid generation and storage", ar: "توليد وتخزين الشبكة المصغّرة" },
+  },
+  vpp: {
+    src: "/brand/Virtual%20Power%20Plant%20%28VPP%29.png",
+    alt: { en: "Virtual power plant fleet", ar: "أسطول محطة الطاقة الافتراضية" },
+  },
 };
 
 export const SECTOR_SLIDES: SectorSlide[] = [
