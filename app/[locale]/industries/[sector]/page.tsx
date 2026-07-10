@@ -31,7 +31,7 @@ import {
   Boxes,
   type LucideIcon,
 } from "lucide-react";
-import { Section, PageHeader, Card, Kicker, LinkButton } from "@/components/ui";
+import { Section, Kicker, LinkButton } from "@/components/ui";
 import IndustrialImage from "@/components/IndustrialImage";
 import { SECTOR_HERO, IMAGES } from "@/lib/images";
 import EnergyNetwork from "@/components/kinetic/EnergyNetwork";
@@ -41,6 +41,7 @@ import JsonLd from "@/components/JsonLd";
 import { buildMetadata, serviceJsonLd } from "@/lib/seo";
 import { SECTORS, COMPANY, POSITIONING } from "@/lib/constants";
 import { SECTOR_CONTENT } from "@/lib/sector-content";
+import { SECTOR_HOOKS, SECTOR_URGENCY } from "@/lib/sector-content/hooks";
 
 /** Fixed icon sets so bespoke per-sector content stays visual without extra config. */
 const LEAK_ICONS = [Clock, PauseCircle, EyeOff] as const;
@@ -183,8 +184,13 @@ export default async function SectorPage({
     },
   ];
 
-  // Provocative but honest one-liners — no fabricated per-sector figures.
-  const hooks: { k: string; v: string }[] = isAr
+  // Provocative but honest one-liners — bespoke per sector, no fabricated
+  // figures. Falls back to the universal strip only if a sector has no entry.
+  const bespokeHooks = SECTOR_HOOKS[sector];
+  const urgency = SECTOR_URGENCY[sector];
+  const hooks: { k: string; v: string }[] = bespokeHooks
+    ? bespokeHooks.map((h) => ({ k: isAr ? h.k.ar : h.k.en, v: isAr ? h.v.ar : h.v.en }))
+    : isAr
     ? [
         { k: "8,760", v: "قرار توزيع أو شراء في السنة — كل ساعة فرصة أو خسارة." },
         { k: "0 CAPEX", v: "لا استبدال أجهزة. الطبقة الاقتصادية هي ما ينقص." },
@@ -273,30 +279,30 @@ export default async function SectorPage({
         )}
       />
 
-      {/* HERO */}
-      <div className="relative overflow-hidden bg-primary-900">
+      {/* HERO — the sector photograph IS the stage; scrim only behind the copy */}
+      <div className="relative flex min-h-[68vh] items-center overflow-hidden bg-primary-900">
         <IndustrialImage
           img={SECTOR_HERO[sector] ?? IMAGES.grid}
           locale={locale}
           variant="background"
           priority
-          overlay="strong"
+          overlay="scrim"
         />
-        <div className="aurora -z-10 opacity-70" />
-        <EnergyNetwork className="absolute inset-0 -z-10 opacity-25 [mask-image:radial-gradient(120%_100%_at_50%_0%,#000_30%,transparent_75%)]" />
-        <div className="grid-bg pointer-events-none absolute inset-0 -z-10 opacity-15" aria-hidden="true" />
-        <Section className="relative pt-16">
+        <EnergyNetwork className="absolute inset-0 -z-10 opacity-10 [mask-image:radial-gradient(120%_100%_at_50%_0%,#000_30%,transparent_75%)]" />
+        <Section className="relative w-full pt-16 pb-12">
           <div className="glass inline-flex items-center gap-2 rounded-full px-3 py-1">
             <Icon className="h-4 w-4 text-secondary" />
             <span className="font-mono text-[11px] uppercase tracking-wider text-secondary">
               {name}
             </span>
           </div>
-          <PageHeader
-            title={heroTitle}
-            lead={heroLead}
-          />
-          <p className="mt-4 max-w-3xl text-ink-muted">
+          <h1 className="mt-5 max-w-2xl font-display text-4xl font-extrabold leading-[1.08] sm:text-5xl">
+            {heroTitle}
+          </h1>
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink">
+            {heroLead}
+          </p>
+          <p className="mt-4 max-w-xl text-sm text-ink-muted">
             {isAr ? POSITIONING.crossSector : POSITIONING.crossSector}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -451,10 +457,15 @@ export default async function SectorPage({
                 ? `كم تترك أصول ${name} على الطاولة؟`
                 : `How much is your ${name.toLowerCase()} leaving on the table?`}
             </h2>
+            {urgency ? (
+              <p className="mx-auto mt-4 max-w-2xl text-lg font-semibold text-[color:var(--color-gold)]">
+                {isAr ? urgency.ar : urgency.en}
+              </p>
+            ) : null}
             <p className="mx-auto mt-3 max-w-2xl text-ink-muted">
               {isAr
-                ? "تشخيص مجاني لمدة 7 أيام، مع ضمان مكتوب. لا يتطلّب استبدال أي جهاز."
-                : "A free 7-day diagnostic, with a written guarantee. No hardware to replace."}
+                ? "تشخيص مجاني لمدة 7 أيام، مع ضمان مكتوب — إن لم نجد قيمة قابلة للاسترجاع، لا تدفعون شيئًا."
+                : "Free 7-day diagnostic with a written guarantee — if we find no recoverable value, you pay nothing."}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <LinkButton href="/economic-audit" variant="accent" className="cta-shine">
