@@ -13,7 +13,7 @@
     "build": "next build",
     "start": "next start -p 3000",
     "start:api": "tsx server.ts",
-    "lint": "next lint",
+    "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "./globals.css";
 
 // Root-level not-found (e.g. unknown locale). Must render its own document
@@ -9,9 +10,9 @@ export default function NotFound() {
         <div className="text-center">
           <h1 className="text-5xl font-extrabold text-[#00b2ff]">404</h1>
           <p className="mt-3 text-[#93a4ba]">Page not found.</p>
-          <a href="/en" className="mt-6 inline-block rounded-full bg-[#00e676] px-6 py-3 font-semibold text-[#04101f]">
+          <Link href="/en" className="mt-6 inline-block rounded-full bg-[#00e676] px-6 py-3 font-semibold text-[#04101f]">
             Go home
-          </a>
+          </Link>
         </div>
       </body>
     </html>
