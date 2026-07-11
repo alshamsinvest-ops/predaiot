@@ -182,3 +182,14 @@ body::before {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Stacking-context guard for hero background layers ─────────────────────
+   Photos/videos are mounted as `absolute inset-0 -z-10` inside hero wrappers.
+   Without a stacking context on the wrapper, negative-z children paint BEHIND
+   the wrapper's own opaque background (bg-primary-900 = #0B0D0F) and are
+   invisible — the "photos don't appear / video invisible" bug. Isolating any
+   positioned overflow-hidden container that has a negative-z child makes the
+   child paint above the container's background and below its content. */
+.relative.overflow-hidden:has(> [class*="-z-10"]) {
+  isolation: isolate;
+}
