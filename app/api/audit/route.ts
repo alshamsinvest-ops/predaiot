@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { computeAudit } from "@/lib/audit/engine";
-import { writeLead, notifyWhatsApp, sendEmail, checkRateLimit, COMPANY } from "@/lib/server/backend";
+import {
+  writeLead,
+  notifyWhatsApp,
+  sendEmail,
+  checkRateLimit,
+  checkIpRate,
+  clientIp,
+  COMPANY,
+} from "@/lib/server/backend";
 import { AIRTABLE } from "@/lib/constants";
 import { estimateValue } from "@/lib/value";
 
@@ -10,16 +18,26 @@ export const runtime = "nodejs";
 const MAX_BYTES = 10 * 1024 * 1024;
 const OK_EXT = [".csv", ".xls", ".xlsx"];
 
+const cap = (s: unknown, n = 200) => String(s ?? "").slice(0, n);
+const esc = (s: string) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
+
 export async function POST(req: NextRequest) {
+  // Abuse control: parsing spreadsheets is CPU-heavy and each request can fan
+  // out to Airtable/WhatsApp/email — cap per IP.
+  if (!checkIpRate(`audit:${clientIp(req)}`, 5, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: "Too many uploads. Please try again later." }, { status: 429 });
+  }
+
   const form = await req.formData().catch(() => null);
   if (!form) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
 
   const file = form.get("file");
-  const email = String(form.get("email") || "");
-  const fullName = String(form.get("fullName") || "");
-  const company = String(form.get("company") || "");
-  const phone = String(form.get("phone") || "");
-  const assetType = String(form.get("assetType") || "");
+  const email = cap(form.get("email"));
+  const fullName = cap(form.get("fullName"));
+  const company = cap(form.get("company"));
+  const phone = cap(form.get("phone"), 60);
+  const assetType = cap(form.get("assetType"), 100);
   const capacityMW = Number(form.get("capacityMW")) || undefined;
 
   if (!(file instanceof File)) {
@@ -68,9 +86,9 @@ export async function POST(req: NextRequest) {
       await sendEmail(
         email,
         "Your PREDAIOT economic audit result",
-        `<p>Hi ${fullName || "there"},</p><p>We analyzed your uploaded data with PREDAIOT's Economic Decision method:</p>
+        `<p>Hi ${esc(fullName || "there")},</p><p>We analyzed your uploaded data with PREDAIOT's Economic Decision method:</p>
          <p><b>Recoverable economic value: ${audit.financialLossOMR.toLocaleString()} OMR</b> (${audit.recoverablePct}% of realized revenue), across ${audit.periods.toLocaleString()} periods.</p>
-         <p>Method: ${audit.method}.</p><p>— ${COMPANY.founder}, ${COMPANY.name}</p>`
+         <p>Method: ${esc(audit.method)}.</p><p>— ${COMPANY.founder}, ${COMPANY.name}</p>`
       );
     }
   }
