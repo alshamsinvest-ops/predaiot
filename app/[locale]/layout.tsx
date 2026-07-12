@@ -12,6 +12,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import JsonLd from "@/components/JsonLd";
 import { MotionProvider } from "@/components/kinetic/MotionProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 // IBM Plex Sans — display + body. Industrial geometric sans, no luxury serif.
 const plex = IBM_Plex_Sans({
@@ -70,6 +71,7 @@ export default async function LocaleLayout({
             <WhatsAppFloat />
           </MotionProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
